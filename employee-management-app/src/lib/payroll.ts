@@ -257,6 +257,7 @@ type DirectoryRecord = {
   Employment_End_Date: string | null;
   Employment_End_Date_ISO: string | null;
   Employment_Status: string | null;
+  Full_Name_Key?: string | null;
   Key: string | null;
 };
 
@@ -309,7 +310,7 @@ async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
       Employment_End_Date,
       Employment_End_Date_ISO,
       Employment_Status,
-      LOWER(TRIM(Full_Name)) AS Directory_Key
+      LOWER(TRIM(Full_Name)) AS Full_Name_Key
     FROM ${employeeRef}
   `;
   const [rows] = await bigquery.query({ query });
@@ -327,7 +328,8 @@ async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
       Employment_End_Date: preferValue(row.Employment_End_Date),
       Employment_End_Date_ISO: preferValue(row.Employment_End_Date_ISO ?? row.Employment_End_Date),
       Employment_Status: preferValue(row.Employment_Status),
-      Key: normaliseKey(row.Directory_Key ?? row.Full_Name ?? row.Employee_ID),
+      Full_Name_Key: normaliseKey(row.Full_Name_Key ?? row.Full_Name),
+      Key: normaliseKey(row.Full_Name_Key ?? row.Full_Name ?? row.Employee_ID),
     };
 
     const idKey = normaliseId(record.Employee_ID);
