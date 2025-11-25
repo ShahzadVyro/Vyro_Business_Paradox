@@ -4,10 +4,9 @@ import {
   insertEmployeeFromSubmission,
   updateSubmissionMeta,
   getNextEmployeeId,
-  updateEmploymentEndDate,
 } from "@/lib/onboarding";
-import { verifySlackSignature, ALLOWED_SLACK_USERS } from "@/lib/slack";
-import { postSlackMessage } from "@/lib/slack";
+import { updateEmploymentEndDate } from "@/lib/employees";
+import { verifySlackSignature, ALLOWED_SLACK_USERS, postSlackMessage } from "@/lib/slack";
 
 export const runtime = "nodejs";
 

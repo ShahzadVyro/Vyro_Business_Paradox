@@ -32,7 +32,7 @@ export async function GET(request: Request) {
     const result = await fetchSalaries(effectiveFilters);
 
     if (isDownload) {
-      const csv = recordsToCSV(result.rows);
+      const csv = recordsToCSV(result.rows as unknown as Record<string, unknown>[]);
       const filenameParts = [
         "salaries",
         effectiveFilters.currency?.toLowerCase() ?? "all",

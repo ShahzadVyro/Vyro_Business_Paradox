@@ -101,9 +101,12 @@ export async function GET(request: Request) {
     const result = await fetchEobiRecords(effectiveFilters);
 
     if (isDownload) {
-      const rows = view === "portal" ? result.rows.map((row) => mapPortalRow(row as Record<string, unknown>)) : result.rows;
+      const rows: Record<string, unknown>[] =
+        view === "portal"
+          ? result.rows.map((row) => mapPortalRow(row as unknown as Record<string, unknown>))
+          : (result.rows as unknown as Record<string, unknown>[]);
       const headerOrder = view === "portal" ? PORTAL_HEADERS : undefined;
-      const csv = recordsToCSV(rows as Record<string, unknown>[], headerOrder);
+      const csv = recordsToCSV(rows, headerOrder);
       const filename = view === "portal" ? `eobi-portal-${effectiveFilters.month ?? "all"}.csv` : `eobi-${effectiveFilters.month ?? "all"}.csv`;
       return new NextResponse(csv, {
         headers: {

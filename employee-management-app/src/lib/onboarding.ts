@@ -212,7 +212,7 @@ export const getNextEmployeeId = async () => {
 
 export const insertEmployeeFromSubmission = async (submission: OnboardingSubmission, employeeId: string) => {
   const bigquery = getBigQueryClient();
-  const payload = submission as Record<string, unknown>;
+  const payload = submission as unknown as Record<string, unknown>;
   const columns = ["Employee_ID", ...Object.keys(columnMap)];
   const payloadRow = columns.map((col) => {
     if (col === "Employee_ID") return employeeId;

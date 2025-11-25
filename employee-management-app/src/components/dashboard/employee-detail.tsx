@@ -270,9 +270,9 @@ const AllFieldsView = ({
   eobi: EmployeeFullDetail["eobi"];
 }) => (
   <div className="space-y-10">
-    <KeyValueDump title="Directory Fields" data={profile} />
-    <KeyValueDump title="Salary Sheet Fields" data={salary} />
-    <KeyValueDump title="EOBI Fields" data={eobi} />
+    <KeyValueDump title="Directory Fields" data={profile as unknown as Record<string, unknown>} />
+    <KeyValueDump title="Salary Sheet Fields" data={salary as unknown as Record<string, unknown>} />
+    <KeyValueDump title="EOBI Fields" data={eobi as unknown as Record<string, unknown>} />
   </div>
 );
 

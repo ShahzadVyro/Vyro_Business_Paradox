@@ -117,7 +117,9 @@ export async function GET(request: Request) {
     });
 
     if (isDownload) {
-      const prepared = employees.map((record) => renameColumnsForExport(prepareRecordForExport(record)));
+      const prepared = employees.map((record) =>
+        renameColumnsForExport(prepareRecordForExport(record as unknown as Record<string, unknown>)),
+      );
       const csv = recordsToCSV(prepared);
       const suffix = status ? status.replace(/\s+/g, '-').toLowerCase() : 'all';
       return new NextResponse(csv, {

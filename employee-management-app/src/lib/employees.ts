@@ -6,7 +6,7 @@ import type {
   EmployeeRecord,
   EmploymentStatus,
   SalaryRecord,
-  EobiRecord,
+  EOBIRecord,
   EmployeeHistoryRecord,
   EmployeeOffboardingRecord,
 } from "@/types/employee";
@@ -147,7 +147,7 @@ export async function fetchLatestSalaryByEmployee(employeeId: string): Promise<S
   return (rows[0] as SalaryRecord) ?? null;
 }
 
-export async function fetchLatestEobiByEmployee(employeeId: string): Promise<EobiRecord | null> {
+export async function fetchLatestEobiByEmployee(employeeId: string): Promise<EOBIRecord | null> {
   if (!eobiTableRef) return null;
   const bigquery = getBigQueryClient();
   const query = `
@@ -161,7 +161,7 @@ export async function fetchLatestEobiByEmployee(employeeId: string): Promise<Eob
     query,
     params: { employeeId },
   });
-  return (rows[0] as EobiRecord) ?? null;
+  return (rows[0] as EOBIRecord) ?? null;
 }
 
 export async function fetchEmployeeHistory(employeeId: string): Promise<EmployeeHistoryRecord[]> {
