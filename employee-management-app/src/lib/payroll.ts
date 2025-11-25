@@ -85,23 +85,23 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
   const params: Record<string, unknown> = {};
 
   if (filters.month) {
-    conditions.push(`FORMAT_DATE('%Y-%m', s.Payroll_Month) = @month`);
+    conditions.push(`FORMAT_DATE('%Y-%m', base.Payroll_Month) = @month`);
     params.month = filters.month;
   }
   if (filters.currency) {
-    conditions.push(`s.Currency = @currency`);
+    conditions.push(`base.Currency = @currency`);
     params.currency = filters.currency;
   }
   if (filters.status) {
-    conditions.push(`(COALESCE(s.Employment_Status, dir.Employment_Status) = @status OR s.Status = @status)`);
+    conditions.push(`(COALESCE(base.Employment_Status, dir.Employment_Status) = @status OR base.Status = @status)`);
     params.status = filters.status;
   }
   if (filters.search) {
     conditions.push(`(
-      LOWER(COALESCE(s.Employee_ID, dir.Employee_ID)) LIKE @search OR
-      LOWER(COALESCE(s.Employee_Name, dir.Full_Name)) LIKE @search OR
-      LOWER(COALESCE(s.Official_Email, dir.Official_Email)) LIKE @search OR
-      LOWER(COALESCE(s.Personal_Email, dir.Personal_Email)) LIKE @search
+      LOWER(COALESCE(NULLIF(TRIM(base.Employee_ID), ''), dir.Employee_ID)) LIKE @search OR
+      LOWER(COALESCE(NULLIF(TRIM(base.Employee_Name), ''), dir.Full_Name)) LIKE @search OR
+      LOWER(COALESCE(base.Official_Email, dir.Official_Email)) LIKE @search OR
+      LOWER(COALESCE(base.Personal_Email, dir.Personal_Email)) LIKE @search
     )`);
     params.search = normalizeSearch(filters.search);
   }
@@ -111,23 +111,22 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
   const offset = filters.offset ?? 0;
 
   const dataQuery = `
-    WITH joined_data AS (
-      SELECT 
-        s.*,
-        dir.Employee_ID AS dir_Employee_ID,
-        dir.Full_Name AS dir_Full_Name,
-        dir.Department AS dir_Department
-      FROM ${salariesRef} s
-      LEFT JOIN ${employeeRef} dir ON s.Employee_ID = dir.Employee_ID
-      ${whereClause}
+    WITH base_salaries AS (
+      SELECT * FROM ${salariesRef}
     )
     SELECT 
-      * EXCEPT(Employee_ID, Employee_Name, Department, dir_Employee_ID, dir_Full_Name, dir_Department),
-      COALESCE(Employee_ID, dir_Employee_ID) AS Employee_ID,
-      COALESCE(Employee_Name, dir_Full_Name) AS Employee_Name,
-      COALESCE(Department, dir_Department) AS Department
-    FROM joined_data
-    ORDER BY Payroll_Month DESC, Currency ASC, COALESCE(Employee_Name, dir_Full_Name) ASC
+      * EXCEPT(Employee_ID, Employee_Name, Department),
+      COALESCE(NULLIF(TRIM(base.Employee_ID), ''), dir.Employee_ID) AS Employee_ID,
+      COALESCE(NULLIF(TRIM(base.Employee_Name), ''), dir.Full_Name) AS Employee_Name,
+      COALESCE(NULLIF(TRIM(base.Department), ''), dir.Department) AS Department
+    FROM base_salaries base
+    LEFT JOIN ${employeeRef} dir ON (
+      TRIM(COALESCE(base.Employee_ID, '')) = TRIM(COALESCE(dir.Employee_ID, ''))
+      OR (base.Official_Email IS NOT NULL AND base.Official_Email = dir.Official_Email)
+      OR (base.Personal_Email IS NOT NULL AND base.Personal_Email = dir.Personal_Email)
+    )
+    ${whereClause}
+    ORDER BY base.Payroll_Month DESC, base.Currency ASC, COALESCE(NULLIF(TRIM(base.Employee_Name), ''), dir.Full_Name) ASC
     LIMIT @limit OFFSET @offset
   `;
 
