@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { listOnboardingSubmissions } from "@/lib/onboarding";
 
 export const dynamic = "force-dynamic";
 
@@ -92,22 +93,8 @@ const formatValue = (value: unknown) => {
   return String(value);
 };
 
-async function fetchSubmissions() {
-  const host =
-    process.env.NEXT_PUBLIC_APP_URL ??
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-  const res = await fetch(`${host}/api/onboarding`, {
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error("Failed to load submissions");
-  }
-  const data = await res.json();
-  return data.submissions as Array<Record<string, string>>;
-}
-
 export default async function SubmissionsPage() {
-  const submissions = await fetchSubmissions();
+  const submissions = await listOnboardingSubmissions();
 
   return (
     <div className="space-y-6">
@@ -163,7 +150,7 @@ export default async function SubmissionsPage() {
                       {section.fields.map((field) => (
                         <div key={field.key} className="text-sm">
                           <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{field.label}</p>
-                          <p className="font-medium text-slate-900">{formatValue(entry[field.key])}</p>
+                          <p className="font-medium text-slate-900">{formatValue((entry as unknown as Record<string, unknown>)[field.key])}</p>
                         </div>
                       ))}
                     </div>
