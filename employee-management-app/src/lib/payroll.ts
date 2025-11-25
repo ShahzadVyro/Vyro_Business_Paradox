@@ -388,9 +388,10 @@ const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryReco
     (typeof row.Employment_End_Date === "object" && row.Employment_End_Date !== null && "value" in row.Employment_End_Date
       ? String((row.Employment_End_Date as { value: unknown }).value)
       : null);
+  const rowRecord = row as unknown as Record<string, unknown>;
   const employmentEndDateIso =
-    (typeof (row as Record<string, unknown>).Employment_End_Date_ISO === "string"
-      ? ((row as Record<string, unknown>).Employment_End_Date_ISO as string)
+    (typeof rowRecord["Employment_End_Date_ISO"] === "string"
+      ? (rowRecord["Employment_End_Date_ISO"] as string)
       : null) ??
     directoryRecord.Employment_End_Date_ISO ??
     employmentEndDate;
@@ -427,9 +428,9 @@ const shouldIncludeRow = (row: SalaryRecord, filterMonth?: string | null) => {
   if (status !== "Resigned/Terminated") {
     return true;
   }
+  const rowRecord = row as unknown as Record<string, unknown>;
   const endMonth =
-    extractMonthKey((row as Record<string, unknown>).Employment_End_Date_ISO) ??
-    extractMonthKey(row.Employment_End_Date);
+    extractMonthKey(rowRecord["Employment_End_Date_ISO"]) ?? extractMonthKey(row.Employment_End_Date);
   if (!endMonth) {
     return false;
   }
