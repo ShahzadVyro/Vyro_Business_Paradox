@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchSalaries, fetchSalaryMonths } from "@/lib/payroll";
+import { fetchSalaries, fetchSalaryMonths, shapeSalaryRow } from "@/lib/payroll";
 import type { SalaryFilters } from "@/types/payroll";
 import { recordsToCSV } from "@/lib/csv";
 
@@ -46,8 +46,11 @@ export async function GET(request: Request) {
       });
     }
 
+    const shapedRows = result.rows.map((row) => shapeSalaryRow(row));
+
     return NextResponse.json({
-      ...result,
+      rows: shapedRows,
+      total: result.total,
       months,
       activeMonth,
     });

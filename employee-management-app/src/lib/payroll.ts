@@ -140,8 +140,9 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
 
   const directoryLookup = await fetchDirectoryLookup();
   const enrichedRows = rows.map((row) => enrichSalaryRow(row, directoryLookup));
+  const filteredRows = enrichedRows.filter((row) => shouldIncludeRow(row, filters.month));
 
-  return { rows: enrichedRows, total };
+  return { rows: filteredRows, total };
 }
 
 export async function fetchEobiRecords(filters: EobiFilters): Promise<{ rows: EOBIRecord[]; total: number }> {
@@ -253,6 +254,9 @@ type DirectoryRecord = {
   Department: string | null;
   Official_Email: string | null;
   Personal_Email: string | null;
+  Employment_End_Date: string | null;
+  Employment_End_Date_ISO: string | null;
+  Employment_Status: string | null;
   Key: string | null;
 };
 
@@ -301,7 +305,11 @@ async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
       Full_Name,
       Department,
       LOWER(Official_Email) AS Official_Email,
-      LOWER(Personal_Email) AS Personal_Email
+      LOWER(Personal_Email) AS Personal_Email,
+      Employment_End_Date,
+      Employment_End_Date_ISO,
+      Employment_Status,
+      LOWER(TRIM(Full_Name)) AS Directory_Key
     FROM ${employeeRef}
   `;
   const [rows] = await bigquery.query({ query });
@@ -316,7 +324,10 @@ async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
       Department: preferValue(row.Department),
       Official_Email: normaliseEmail(row.Official_Email),
       Personal_Email: normaliseEmail(row.Personal_Email),
-      Key: normaliseKey(row.Full_Name) ?? normaliseKey(row.Employee_ID),
+      Employment_End_Date: preferValue(row.Employment_End_Date),
+      Employment_End_Date_ISO: preferValue(row.Employment_End_Date_ISO ?? row.Employment_End_Date),
+      Employment_Status: preferValue(row.Employment_Status),
+      Key: normaliseKey(row.Directory_Key ?? row.Full_Name ?? row.Employee_ID),
     };
 
     const idKey = normaliseId(record.Employee_ID);
@@ -367,11 +378,74 @@ const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryReco
     preferValue(row.Employee_Name) ?? directoryRecord.Full_Name ?? row.Employee_Name;
   const department =
     preferValue(row.Department) ?? directoryRecord.Department ?? row.Department;
+  const employmentStatus =
+    preferValue(row.Employment_Status) ?? directoryRecord.Employment_Status ?? row.Employment_Status;
+  const employmentEndDate =
+    (typeof row.Employment_End_Date === "string" && row.Employment_End_Date) ??
+    directoryRecord.Employment_End_Date ??
+    (typeof row.Employment_End_Date === "object" && row.Employment_End_Date !== null && "value" in row.Employment_End_Date
+      ? String((row.Employment_End_Date as { value: unknown }).value)
+      : null);
+  const employmentEndDateIso =
+    (typeof (row as Record<string, unknown>).Employment_End_Date_ISO === "string"
+      ? ((row as Record<string, unknown>).Employment_End_Date_ISO as string)
+      : null) ??
+    directoryRecord.Employment_End_Date_ISO ??
+    employmentEndDate;
 
   return {
     ...row,
     Employee_ID: employeeId ?? row.Employee_ID,
     Employee_Name: employeeName ?? row.Employee_Name,
     Department: department ?? row.Department,
+    Employment_Status: employmentStatus ?? row.Employment_Status,
+    Employment_End_Date: employmentEndDate ?? row.Employment_End_Date,
+    Employment_End_Date_ISO: employmentEndDateIso ?? null,
+    Key: (typeof row.Key === "string" ? row.Key : null) ?? directoryRecord.Key ?? null,
   };
 };
+
+const extractMonthKey = (value: unknown): string | null => {
+  if (!value) return null;
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed.length >= 7 ? trimmed.slice(0, 7) : null;
+  }
+  if (typeof value === "object" && value !== null) {
+    if ("value" in (value as Record<string, unknown>)) {
+      return extractMonthKey((value as Record<string, unknown>).value);
+    }
+  }
+  return null;
+};
+
+const shouldIncludeRow = (row: SalaryRecord, filterMonth?: string | null) => {
+  if (!filterMonth) return true;
+  const status = preferValue(row.Employment_Status ?? row.Status);
+  if (status !== "Resigned/Terminated") {
+    return true;
+  }
+  const endMonth =
+    extractMonthKey((row as Record<string, unknown>).Employment_End_Date_ISO) ??
+    extractMonthKey(row.Employment_End_Date);
+  if (!endMonth) {
+    return false;
+  }
+  return endMonth === filterMonth;
+};
+
+export const shapeSalaryRow = (row: SalaryRecord) => ({
+  Employee_ID: row.Employee_ID,
+  Employee_Name: row.Employee_Name,
+  Department: row.Department,
+  Payroll_Month: row.Payroll_Month,
+  Currency: row.Currency,
+  Gross_Income: row.Gross_Income,
+  Net_Income: row.Net_Income,
+  Tax_Deduction: row.Tax_Deduction,
+  Employment_Status: row.Employment_Status ?? row.Status,
+  Status: row.Status,
+  Official_Email: row.Official_Email,
+  Personal_Email: row.Personal_Email,
+  Key: (typeof row.Key === "string" ? row.Key : null) ?? null,
+});

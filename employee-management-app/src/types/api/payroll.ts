@@ -39,6 +39,7 @@ export interface SalaryRecord {
   LinkedIn_URL: string | null;
   Recruiter_Name: string | null;
   Employment_End_Date: string | null;
+  Employment_End_Date_ISO?: string | null;
   Group_Name: string | null;
   Group_Email: string | null;
   Rejoined: string | null;
