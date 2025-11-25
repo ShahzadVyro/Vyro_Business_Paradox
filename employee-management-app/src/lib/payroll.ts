@@ -7,6 +7,7 @@ const projectId = process.env.GCP_PROJECT_ID;
 const dataset = process.env.BQ_DATASET;
 const salaryTable = process.env.BQ_SALARY_TABLE ?? "EmployeeSalaries_v1";
 const eobiTable = process.env.BQ_EOBI_TABLE ?? "EmployeeEOBI_v1";
+const employeeTable = process.env.BQ_TABLE ?? "EmployeeDirectoryLatest_v1";
 
 if (!projectId || !dataset) {
   throw new Error("Missing BigQuery configuration for payroll tables");
@@ -14,6 +15,7 @@ if (!projectId || !dataset) {
 
 const salariesRef = `\`${projectId}.${dataset}.${salaryTable}\``;
 const eobiRef = `\`${projectId}.${dataset}.${eobiTable}\``;
+const employeeRef = `\`${projectId}.${dataset}.${employeeTable}\``;
 
 const normalizeSearch = (value?: string | null) => (value ? `%${value.toLowerCase()}%` : undefined);
 
@@ -83,23 +85,23 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
   const params: Record<string, unknown> = {};
 
   if (filters.month) {
-    conditions.push(`FORMAT_DATE('%Y-%m', Payroll_Month) = @month`);
+    conditions.push(`FORMAT_DATE('%Y-%m', s.Payroll_Month) = @month`);
     params.month = filters.month;
   }
   if (filters.currency) {
-    conditions.push(`Currency = @currency`);
+    conditions.push(`s.Currency = @currency`);
     params.currency = filters.currency;
   }
   if (filters.status) {
-    conditions.push(`(Employment_Status = @status OR Status = @status)`);
+    conditions.push(`(COALESCE(s.Employment_Status, dir.Employment_Status) = @status OR s.Status = @status)`);
     params.status = filters.status;
   }
   if (filters.search) {
     conditions.push(`(
-      LOWER(Employee_ID) LIKE @search OR
-      LOWER(Employee_Name) LIKE @search OR
-      LOWER(Official_Email) LIKE @search OR
-      LOWER(Personal_Email) LIKE @search
+      LOWER(COALESCE(s.Employee_ID, dir.Employee_ID)) LIKE @search OR
+      LOWER(COALESCE(s.Employee_Name, dir.Full_Name)) LIKE @search OR
+      LOWER(COALESCE(s.Official_Email, dir.Official_Email)) LIKE @search OR
+      LOWER(COALESCE(s.Personal_Email, dir.Personal_Email)) LIKE @search
     )`);
     params.search = normalizeSearch(filters.search);
   }
@@ -109,16 +111,30 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
   const offset = filters.offset ?? 0;
 
   const dataQuery = `
-    SELECT *
-    FROM ${salariesRef}
-    ${whereClause}
-    ORDER BY Payroll_Month DESC, Currency ASC, Employee_Name ASC
+    WITH joined_data AS (
+      SELECT 
+        s.*,
+        dir.Employee_ID AS dir_Employee_ID,
+        dir.Full_Name AS dir_Full_Name,
+        dir.Department AS dir_Department
+      FROM ${salariesRef} s
+      LEFT JOIN ${employeeRef} dir ON s.Employee_ID = dir.Employee_ID
+      ${whereClause}
+    )
+    SELECT 
+      * EXCEPT(Employee_ID, Employee_Name, Department, dir_Employee_ID, dir_Full_Name, dir_Department),
+      COALESCE(Employee_ID, dir_Employee_ID) AS Employee_ID,
+      COALESCE(Employee_Name, dir_Full_Name) AS Employee_Name,
+      COALESCE(Department, dir_Department) AS Department
+    FROM joined_data
+    ORDER BY Payroll_Month DESC, Currency ASC, COALESCE(Employee_Name, dir_Full_Name) ASC
     LIMIT @limit OFFSET @offset
   `;
 
   const countQuery = `
     SELECT COUNT(1) as total
-    FROM ${salariesRef}
+    FROM ${salariesRef} s
+    LEFT JOIN ${employeeRef} dir ON s.Employee_ID = dir.Employee_ID
     ${whereClause}
   `;
 
