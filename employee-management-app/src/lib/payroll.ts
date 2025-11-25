@@ -412,9 +412,27 @@ const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryReco
 
 const extractMonthKey = (value: unknown): string | null => {
   if (!value) return null;
+  if (value instanceof Date) {
+    return `${value.getUTCFullYear()}-${String(value.getUTCMonth() + 1).padStart(2, "0")}`;
+  }
   if (typeof value === "string") {
     const trimmed = value.trim();
+    if (!trimmed) return null;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+      return trimmed.slice(0, 7);
+    }
+    const parsed = Date.parse(trimmed);
+    if (!Number.isNaN(parsed)) {
+      const date = new Date(parsed);
+      return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
+    }
     return trimmed.length >= 7 ? trimmed.slice(0, 7) : null;
+  }
+  if (typeof value === "number") {
+    const date = new Date(value);
+    if (!Number.isNaN(date.getTime())) {
+      return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
+    }
   }
   if (typeof value === "object" && value !== null) {
     if ("value" in (value as Record<string, unknown>)) {
@@ -432,7 +450,9 @@ const shouldIncludeRow = (row: SalaryRecord, filterMonth?: string | null) => {
   }
   const rowRecord = row as unknown as Record<string, unknown>;
   const endMonth =
-    extractMonthKey(rowRecord["Employment_End_Date_ISO"]) ?? extractMonthKey(row.Employment_End_Date);
+    extractMonthKey(rowRecord["Employment_End_Date_ISO"]) ??
+    extractMonthKey(row.Employment_End_Date) ??
+    extractMonthKey(row.Payroll_Month);
   if (!endMonth) {
     return false;
   }
