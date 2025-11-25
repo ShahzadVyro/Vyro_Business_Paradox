@@ -383,9 +383,11 @@ const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryReco
   const employmentStatus =
     preferValue(row.Employment_Status) ?? directoryRecord.Employment_Status ?? row.Employment_Status;
   const employmentEndDate =
-    (typeof row.Employment_End_Date === "string" && row.Employment_End_Date) ??
+    (typeof row.Employment_End_Date === "string" ? row.Employment_End_Date : null) ??
     directoryRecord.Employment_End_Date ??
-    (typeof row.Employment_End_Date === "object" && row.Employment_End_Date !== null && "value" in row.Employment_End_Date
+    (typeof row.Employment_End_Date === "object" &&
+    row.Employment_End_Date !== null &&
+    "value" in row.Employment_End_Date
       ? String((row.Employment_End_Date as { value: unknown }).value)
       : null);
   const rowRecord = row as unknown as Record<string, unknown>;
