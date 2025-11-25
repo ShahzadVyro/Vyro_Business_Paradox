@@ -117,8 +117,15 @@ const SalaryExplorer = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {data.rows.map((row) => (
-                    <tr key={`${row.Employee_ID}-${row.Payroll_Month}-${row.Currency}`} className="hover:bg-slate-50">
+                  {data.rows.map((row, index) => {
+                    const rowKey =
+                      row.Employee_ID ??
+                      row.Official_Email ??
+                      row.Personal_Email ??
+                      (typeof row.Key === "string" ? row.Key : null) ??
+                      `${row.Payroll_Month}-${row.Currency}-${index}`;
+                    return (
+                      <tr key={rowKey} className="hover:bg-slate-50">
                       <td className="whitespace-nowrap px-3 py-2 font-mono text-xs text-slate-500">{row.Employee_ID}</td>
                       <td className="px-3 py-2 font-semibold text-slate-900">{row.Employee_Name}</td>
                       <td className="px-3 py-2 text-slate-600">{row.Department ?? "—"}</td>
@@ -129,7 +136,8 @@ const SalaryExplorer = () => {
                       <td className="px-3 py-2 text-slate-600">{formatByCurrency(row.Tax_Deduction, row.Currency)}</td>
                       <td className="px-3 py-2 text-slate-600">{row.Employment_Status ?? row.Status ?? "—"}</td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

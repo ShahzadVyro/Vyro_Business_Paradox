@@ -253,11 +253,13 @@ type DirectoryRecord = {
   Department: string | null;
   Official_Email: string | null;
   Personal_Email: string | null;
+  Key: string | null;
 };
 
 type DirectoryLookup = {
   byEmail: Map<string, DirectoryRecord>;
   byId: Map<string, DirectoryRecord>;
+  byKey: Map<string, DirectoryRecord>;
 };
 
 const DIRECTORY_CACHE_TTL_MS = 1000 * 60; // 1 minute
@@ -280,6 +282,12 @@ const normaliseId = (value?: string | null) => {
   return trimmed ? trimmed.toLowerCase() : null;
 };
 
+const normaliseKey = (value?: string | null) => {
+  if (!value) return null;
+  const trimmed = value.trim().toLowerCase();
+  return trimmed || null;
+};
+
 async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
   const now = Date.now();
   if (directoryCache && now - directoryCache.fetchedAt < DIRECTORY_CACHE_TTL_MS) {
@@ -299,6 +307,7 @@ async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
   const [rows] = await bigquery.query({ query });
   const byEmail = new Map<string, DirectoryRecord>();
   const byId = new Map<string, DirectoryRecord>();
+  const byKey = new Map<string, DirectoryRecord>();
 
   (rows as DirectoryRecord[]).forEach((row) => {
     const record: DirectoryRecord = {
@@ -307,6 +316,7 @@ async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
       Department: preferValue(row.Department),
       Official_Email: normaliseEmail(row.Official_Email),
       Personal_Email: normaliseEmail(row.Personal_Email),
+      Key: normaliseKey(row.Full_Name) ?? normaliseKey(row.Employee_ID),
     };
 
     const idKey = normaliseId(record.Employee_ID);
@@ -320,9 +330,13 @@ async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
     if (record.Personal_Email) {
       byEmail.set(record.Personal_Email, record);
     }
+
+    if (record.Key) {
+      byKey.set(record.Key, record);
+    }
   });
 
-  const lookup = { byEmail, byId };
+  const lookup = { byEmail, byId, byKey };
   directoryCache = { lookup, fetchedAt: now };
   return lookup;
 }
@@ -331,11 +345,18 @@ const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryReco
   const idKey = normaliseId(row.Employee_ID);
   const officialKey = normaliseEmail(row.Official_Email);
   const personalKey = normaliseEmail(row.Personal_Email);
+  const keyKey = normaliseKey(
+    (typeof row.Key === "string" ? row.Key : null) ??
+      row.Employee_Name ??
+      row.Official_Email ??
+      row.Personal_Email
+  );
 
   const directoryRecord =
     (idKey && lookup.byId.get(idKey)) ||
     (officialKey && lookup.byEmail.get(officialKey)) ||
-    (personalKey && lookup.byEmail.get(personalKey));
+    (personalKey && lookup.byEmail.get(personalKey)) ||
+    (keyKey && lookup.byKey.get(keyKey));
 
   if (!directoryRecord) {
     return row;
