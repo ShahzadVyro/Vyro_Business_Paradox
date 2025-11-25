@@ -85,23 +85,23 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
   const params: Record<string, unknown> = {};
 
   if (filters.month) {
-    conditions.push(`FORMAT_DATE('%Y-%m', base.Payroll_Month) = @month`);
+    conditions.push(`FORMAT_DATE('%Y-%m', Payroll_Month) = @month`);
     params.month = filters.month;
   }
   if (filters.currency) {
-    conditions.push(`base.Currency = @currency`);
+    conditions.push(`Currency = @currency`);
     params.currency = filters.currency;
   }
   if (filters.status) {
-    conditions.push(`(COALESCE(base.Employment_Status, dir.Employment_Status) = @status OR base.Status = @status)`);
+    conditions.push(`(Employment_Status = @status OR Status = @status)`);
     params.status = filters.status;
   }
   if (filters.search) {
     conditions.push(`(
-      LOWER(COALESCE(NULLIF(TRIM(base.Employee_ID), ''), dir.Employee_ID)) LIKE @search OR
-      LOWER(COALESCE(NULLIF(TRIM(base.Employee_Name), ''), dir.Full_Name)) LIKE @search OR
-      LOWER(COALESCE(base.Official_Email, dir.Official_Email)) LIKE @search OR
-      LOWER(COALESCE(base.Personal_Email, dir.Personal_Email)) LIKE @search
+      LOWER(Employee_ID) LIKE @search OR
+      LOWER(Employee_Name) LIKE @search OR
+      LOWER(Official_Email) LIKE @search OR
+      LOWER(Personal_Email) LIKE @search
     )`);
     params.search = normalizeSearch(filters.search);
   }
@@ -111,29 +111,16 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
   const offset = filters.offset ?? 0;
 
   const dataQuery = `
-    WITH base_salaries AS (
-      SELECT * FROM ${salariesRef}
-    )
-    SELECT 
-      * EXCEPT(Employee_ID, Employee_Name, Department),
-      COALESCE(NULLIF(TRIM(base.Employee_ID), ''), dir.Employee_ID) AS Employee_ID,
-      COALESCE(NULLIF(TRIM(base.Employee_Name), ''), dir.Full_Name) AS Employee_Name,
-      COALESCE(NULLIF(TRIM(base.Department), ''), dir.Department) AS Department
-    FROM base_salaries base
-    LEFT JOIN ${employeeRef} dir ON (
-      TRIM(COALESCE(base.Employee_ID, '')) = TRIM(COALESCE(dir.Employee_ID, ''))
-      OR (base.Official_Email IS NOT NULL AND base.Official_Email = dir.Official_Email)
-      OR (base.Personal_Email IS NOT NULL AND base.Personal_Email = dir.Personal_Email)
-    )
+    SELECT *
+    FROM ${salariesRef}
     ${whereClause}
-    ORDER BY base.Payroll_Month DESC, base.Currency ASC, COALESCE(NULLIF(TRIM(base.Employee_Name), ''), dir.Full_Name) ASC
+    ORDER BY Payroll_Month DESC, Currency ASC, Employee_Name ASC
     LIMIT @limit OFFSET @offset
   `;
 
   const countQuery = `
     SELECT COUNT(1) as total
-    FROM ${salariesRef} s
-    LEFT JOIN ${employeeRef} dir ON s.Employee_ID = dir.Employee_ID
+    FROM ${salariesRef}
     ${whereClause}
   `;
 
@@ -151,7 +138,10 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
   const rows = rowsPromise[0] as SalaryRecord[];
   const total = Number((countPromise[0][0] as { total: number })?.total ?? 0);
 
-  return { rows, total };
+  const directoryLookup = await fetchDirectoryLookup();
+  const enrichedRows = rows.map((row) => enrichSalaryRow(row, directoryLookup));
+
+  return { rows: enrichedRows, total };
 }
 
 export async function fetchEobiRecords(filters: EobiFilters): Promise<{ rows: EOBIRecord[]; total: number }> {
@@ -256,3 +246,90 @@ export async function fetchEobiSummary(month: string): Promise<EobiSummary> {
     totalContribution: Number(raw?.totalContribution ?? 0),
   };
 }
+
+type DirectoryRecord = {
+  Employee_ID: string | null;
+  Full_Name: string | null;
+  Department: string | null;
+  Official_Email: string | null;
+  Personal_Email: string | null;
+};
+
+type DirectoryLookup = {
+  byEmail: Map<string, DirectoryRecord>;
+};
+
+const DIRECTORY_CACHE_TTL_MS = 1000 * 60; // 1 minute
+let directoryCache: { lookup: DirectoryLookup; fetchedAt: number } | null = null;
+
+const normaliseEmail = (value?: string | null) => {
+  if (!value) return null;
+  const trimmed = value.trim().toLowerCase();
+  return trimmed || null;
+};
+
+const preferValue = (value?: string | null) => {
+  if (!value) return null;
+  const trimmed = value.trim();
+  return trimmed || null;
+};
+
+async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
+  const now = Date.now();
+  if (directoryCache && now - directoryCache.fetchedAt < DIRECTORY_CACHE_TTL_MS) {
+    return directoryCache.lookup;
+  }
+
+  const bigquery = getBigQueryClient();
+  const query = `
+    SELECT
+      Employee_ID,
+      Full_Name,
+      Department,
+      LOWER(Official_Email) AS Official_Email,
+      LOWER(Personal_Email) AS Personal_Email
+    FROM ${employeeRef}
+  `;
+  const [rows] = await bigquery.query({ query });
+  const byEmail = new Map<string, DirectoryRecord>();
+
+  (rows as DirectoryRecord[]).forEach((row) => {
+    const official = normaliseEmail(row.Official_Email);
+    const personal = normaliseEmail(row.Personal_Email);
+    if (official) {
+      byEmail.set(official, row);
+    }
+    if (personal) {
+      byEmail.set(personal, row);
+    }
+  });
+
+  const lookup = { byEmail };
+  directoryCache = { lookup, fetchedAt: now };
+  return lookup;
+}
+
+const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryRecord => {
+  const officialKey = normaliseEmail(row.Official_Email);
+  const personalKey = normaliseEmail(row.Personal_Email);
+  const directoryRecord =
+    (officialKey && lookup.byEmail.get(officialKey)) ||
+    (personalKey && lookup.byEmail.get(personalKey));
+
+  if (!directoryRecord) {
+    return row;
+  }
+
+  const employeeId = preferValue(row.Employee_ID) ?? directoryRecord.Employee_ID ?? row.Employee_ID;
+  const employeeName =
+    preferValue(row.Employee_Name) ?? directoryRecord.Full_Name ?? row.Employee_Name;
+  const department =
+    preferValue(row.Department) ?? directoryRecord.Department ?? row.Department;
+
+  return {
+    ...row,
+    Employee_ID: employeeId ?? row.Employee_ID,
+    Employee_Name: employeeName ?? row.Employee_Name,
+    Department: department ?? row.Department,
+  };
+};
