@@ -1,0 +1,29 @@
+{
+  "total_employees": 291,
+  "by_status": {
+    "Active": 291
+  },
+  "by_source": {
+    "Employee_Information": 290,
+    "Active": 1
+  },
+  "by_department": {
+    "Marketing": 20,
+    "Product": 12,
+    "Business & Growth": 11,
+    "Creatives": 9,
+    "SEO": 6,
+    "Design": 6,
+    "Backend": 6,
+    "Admin": 6,
+    "Web Engineering": 5,
+    "Business": 5
+  },
+  "data_quality": {
+    "with_email": "290",
+    "with_phone": "290",
+    "with_department": "176",
+    "with_joining_date": "258"
+  },
+  "completeness_percentage": 44.387814201320516
+}

@@ -1,0 +1,308 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "Timestamp",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Email Address",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Full Name",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "National Id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Personal Email",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Contact Number",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Date of Birth",
+    "type": "DATE"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Gender",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Permanent Address",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Current Address",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Nationality",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "LinkedIn Profile URL",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Marital Status",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Joining Date",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Department",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Designation",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Reporting Manager",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Job Type",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Recruiter Name",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Preferred Device ",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Father's Name",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Emergency Contact Number",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Emergency Contact's Relationship",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Blood Group",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Degree Latest Transcript",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Last Salary Slip",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Previous Company Experience Letter",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Bank Name",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Bank Account Title",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "National Tax Number NTN",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Swift Code BIC Code",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Bank Account Number-IBAN 24 digits",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Passport Size Picture Blue background Only",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Scanned Copy of CNIC Front",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Scanned Copy of CNIC Back",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Vehicle Number",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Share a brief introduction that we can use in our official communication channel",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "A fun fact about you that you would like to share with the team",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Shirt Size",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Resume CV",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Job Location",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "KEY",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Employee_ID",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Official_Email",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Employement_Status",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Probation_Start_Date",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Probation_End_Date",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Age",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Employement_End_Date",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Assigned_Groups",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Rejoined",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Onboarding_Status",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "IFT",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Slack_ID",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Account_NUmber",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Bank_Code",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "CUSTOMERREFERENCENUMBER",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Department_Changed with Date",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Designation_Changed with Date",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Probation_Period",
+    "type": "STRING"
+  },
+  {
+    "description": "will have any changes we need to make to employee in json",
+    "mode": "NULLABLE",
+    "name": "Change_Details",
+    "type": "JSON"
+  }
+]

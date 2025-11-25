@@ -1,0 +1,120 @@
+{
+  "table_name": "EmployeeData_v2",
+  "description": "Unified employee data schema - combines all employee information in one place",
+  "fields": [
+    {
+      "category": "Core Employee Info",
+      "fields": [
+        {"name": "Employee_ID", "type": "STRING", "mode": "REQUIRED", "description": "Unique employee identifier (e.g., EMP-001)"},
+        {"name": "Full_Name", "type": "STRING", "mode": "REQUIRED", "description": "Employee's full legal name"},
+        {"name": "Official_Email", "type": "STRING", "mode": "NULLABLE", "description": "Company email address (@vyro.ai)"},
+        {"name": "Personal_Email", "type": "STRING", "mode": "NULLABLE", "description": "Personal email address"},
+        {"name": "National_ID", "type": "STRING", "mode": "NULLABLE", "description": "CNIC or National ID number"},
+        {"name": "Contact_Number", "type": "STRING", "mode": "NULLABLE", "description": "Primary phone number"},
+        {"name": "Date_of_Birth", "type": "DATE", "mode": "NULLABLE", "description": "Date of birth"},
+        {"name": "Gender", "type": "STRING", "mode": "NULLABLE", "description": "Gender (Male/Female/Other)"},
+        {"name": "Nationality", "type": "STRING", "mode": "NULLABLE", "description": "Nationality"},
+        {"name": "Marital_Status", "type": "STRING", "mode": "NULLABLE", "description": "Marital status (Single/Married/Divorced)"},
+        {"name": "Blood_Group", "type": "STRING", "mode": "NULLABLE", "description": "Blood group (A+/B+/O+/AB+ etc)"},
+        {"name": "Current_Address", "type": "STRING", "mode": "NULLABLE", "description": "Current residential address"},
+        {"name": "Permanent_Address", "type": "STRING", "mode": "NULLABLE", "description": "Permanent residential address"},
+        {"name": "LinkedIn_Profile_URL", "type": "STRING", "mode": "NULLABLE", "description": "LinkedIn profile URL"},
+        {"name": "Profile_Picture_URL", "type": "STRING", "mode": "NULLABLE", "description": "Passport size photo URL"}
+      ]
+    },
+    {
+      "category": "Employment Details",
+      "fields": [
+        {"name": "Joining_Date", "type": "DATE", "mode": "NULLABLE", "description": "Date of joining the company"},
+        {"name": "Employment_Status", "type": "STRING", "mode": "REQUIRED", "description": "Current status (Active/Resigned/Terminated/On Leave)"},
+        {"name": "Employment_End_Date", "type": "DATE", "mode": "NULLABLE", "description": "Last working day (for resigned/terminated employees)"},
+        {"name": "Department", "type": "STRING", "mode": "NULLABLE", "description": "Current department"},
+        {"name": "Designation", "type": "STRING", "mode": "NULLABLE", "description": "Current job title/designation"},
+        {"name": "Reporting_Manager", "type": "STRING", "mode": "NULLABLE", "description": "Name of direct manager"},
+        {"name": "Job_Type", "type": "STRING", "mode": "NULLABLE", "description": "Work arrangement (Onsite/Remote/Hybrid)"},
+        {"name": "Job_Location", "type": "STRING", "mode": "NULLABLE", "description": "Primary work location/office"},
+        {"name": "Probation_Period_Months", "type": "INTEGER", "mode": "NULLABLE", "description": "Length of probation period in months"},
+        {"name": "Probation_Start_Date", "type": "DATE", "mode": "NULLABLE", "description": "Probation start date"},
+        {"name": "Probation_End_Date", "type": "DATE", "mode": "NULLABLE", "description": "Probation end date"},
+        {"name": "Basic_Salary", "type": "FLOAT", "mode": "NULLABLE", "description": "Basic monthly salary"},
+        {"name": "Medical_Allowance", "type": "FLOAT", "mode": "NULLABLE", "description": "Monthly medical allowance"},
+        {"name": "Gross_Salary", "type": "FLOAT", "mode": "NULLABLE", "description": "Total monthly salary (Basic + Allowances)"},
+        {"name": "Recruiter_Name", "type": "STRING", "mode": "NULLABLE", "description": "Name of recruiter who hired this employee"},
+        {"name": "Preferred_Device", "type": "STRING", "mode": "NULLABLE", "description": "Preferred work device (MacBook/Windows/Linux)"},
+        {"name": "Onboarding_Status", "type": "STRING", "mode": "NULLABLE", "description": "Onboarding status (Pending/In Progress/Completed)"},
+        {"name": "Assigned_Groups", "type": "STRING", "mode": "NULLABLE", "description": "Comma-separated list of groups/teams"},
+        {"name": "Rejoined", "type": "BOOLEAN", "mode": "NULLABLE", "description": "Whether employee rejoined after leaving"},
+        {"name": "Slack_ID", "type": "STRING", "mode": "NULLABLE", "description": "Slack user ID for integrations"}
+      ]
+    },
+    {
+      "category": "Banking & Compliance",
+      "fields": [
+        {"name": "Bank_Name", "type": "STRING", "mode": "NULLABLE", "description": "Bank name for salary transfer"},
+        {"name": "Bank_Account_Title", "type": "STRING", "mode": "NULLABLE", "description": "Account holder name"},
+        {"name": "Account_Number_IBAN", "type": "STRING", "mode": "NULLABLE", "description": "Bank account number or IBAN (24 digits)"},
+        {"name": "Swift_Code_BIC", "type": "STRING", "mode": "NULLABLE", "description": "SWIFT/BIC code for international transfers"},
+        {"name": "Routing_Number", "type": "STRING", "mode": "NULLABLE", "description": "Bank routing number"},
+        {"name": "IFT_Type", "type": "STRING", "mode": "NULLABLE", "description": "Fund transfer type (IBFT/IFT)"},
+        {"name": "National_Tax_Number", "type": "STRING", "mode": "NULLABLE", "description": "NTN for tax purposes"},
+        {"name": "EOBI_Number", "type": "STRING", "mode": "NULLABLE", "description": "Employees Old-Age Benefits Institution number"}
+      ]
+    },
+    {
+      "category": "Emergency & Family",
+      "fields": [
+        {"name": "Father_Name", "type": "STRING", "mode": "NULLABLE", "description": "Father's full name"},
+        {"name": "Emergency_Contact_Name", "type": "STRING", "mode": "NULLABLE", "description": "Emergency contact person name"},
+        {"name": "Emergency_Contact_Relationship", "type": "STRING", "mode": "NULLABLE", "description": "Relationship with emergency contact"},
+        {"name": "Emergency_Contact_Number", "type": "STRING", "mode": "NULLABLE", "description": "Emergency contact phone number"},
+        {"name": "Number_of_Children", "type": "INTEGER", "mode": "NULLABLE", "description": "Number of children (for benefits)"},
+        {"name": "Spouse_Name", "type": "STRING", "mode": "NULLABLE", "description": "Spouse's name (if married)"},
+        {"name": "Spouse_DOB", "type": "DATE", "mode": "NULLABLE", "description": "Spouse's date of birth"}
+      ]
+    },
+    {
+      "category": "Documents",
+      "fields": [
+        {"name": "Resume_URL", "type": "STRING", "mode": "NULLABLE", "description": "Google Drive URL for resume/CV"},
+        {"name": "CNIC_Front_URL", "type": "STRING", "mode": "NULLABLE", "description": "Scanned CNIC front side URL"},
+        {"name": "CNIC_Back_URL", "type": "STRING", "mode": "NULLABLE", "description": "Scanned CNIC back side URL"},
+        {"name": "Degree_Transcript_URL", "type": "STRING", "mode": "NULLABLE", "description": "Educational certificates URL"},
+        {"name": "Last_Salary_Slip_URL", "type": "STRING", "mode": "NULLABLE", "description": "Last salary slip from previous employer"},
+        {"name": "Experience_Letter_URL", "type": "STRING", "mode": "NULLABLE", "description": "Experience letter from previous company"},
+        {"name": "Passport_Photo_URL", "type": "STRING", "mode": "NULLABLE", "description": "Passport size photo (blue background)"}
+      ]
+    },
+    {
+      "category": "Additional Info",
+      "fields": [
+        {"name": "Shirt_Size", "type": "STRING", "mode": "NULLABLE", "description": "T-shirt size (S/M/L/XL/XXL)"},
+        {"name": "Vehicle_Number", "type": "STRING", "mode": "NULLABLE", "description": "Vehicle registration number"},
+        {"name": "Introduction_Bio", "type": "STRING", "mode": "NULLABLE", "description": "Brief introduction for team communications"},
+        {"name": "Fun_Fact", "type": "STRING", "mode": "NULLABLE", "description": "Fun fact about the employee"},
+        {"name": "Department_Change_History", "type": "JSON", "mode": "NULLABLE", "description": "Array of department changes with dates"},
+        {"name": "Designation_Change_History", "type": "JSON", "mode": "NULLABLE", "description": "Array of designation changes with dates"},
+        {"name": "Change_Details", "type": "JSON", "mode": "NULLABLE", "description": "Audit trail of all changes made to this record"}
+      ]
+    },
+    {
+      "category": "System Fields",
+      "fields": [
+        {"name": "Created_At", "type": "TIMESTAMP", "mode": "REQUIRED", "description": "Record creation timestamp"},
+        {"name": "Updated_At", "type": "TIMESTAMP", "mode": "REQUIRED", "description": "Last update timestamp"},
+        {"name": "Created_By", "type": "STRING", "mode": "NULLABLE", "description": "User who created this record"},
+        {"name": "Updated_By", "type": "STRING", "mode": "NULLABLE", "description": "User who last updated this record"},
+        {"name": "Is_Deleted", "type": "BOOLEAN", "mode": "NULLABLE", "description": "Soft delete flag (true if deleted)"}
+      ]
+    }
+  ],
+  "total_fields": 68,
+  "notes": [
+    "All fields are NULLABLE except Employee_ID, Full_Name, Employment_Status, Created_At, Updated_At",
+    "Date fields should be DATE type, not STRING",
+    "Salary fields should be FLOAT for decimal precision",
+    "JSON fields for historical tracking and audit trails",
+    "Soft delete approach (Is_Deleted) to maintain data history",
+    "TIMESTAMP fields should auto-update on insert/update"
+  ]
+}
+
