@@ -257,6 +257,7 @@ type DirectoryRecord = {
 
 type DirectoryLookup = {
   byEmail: Map<string, DirectoryRecord>;
+  byId: Map<string, DirectoryRecord>;
 };
 
 const DIRECTORY_CACHE_TTL_MS = 1000 * 60; // 1 minute
@@ -272,6 +273,11 @@ const preferValue = (value?: string | null) => {
   if (!value) return null;
   const trimmed = value.trim();
   return trimmed || null;
+};
+
+const normaliseId = (value?: string | null) => {
+  const trimmed = preferValue(value);
+  return trimmed ? trimmed.toLowerCase() : null;
 };
 
 async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
@@ -292,27 +298,42 @@ async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
   `;
   const [rows] = await bigquery.query({ query });
   const byEmail = new Map<string, DirectoryRecord>();
+  const byId = new Map<string, DirectoryRecord>();
 
   (rows as DirectoryRecord[]).forEach((row) => {
-    const official = normaliseEmail(row.Official_Email);
-    const personal = normaliseEmail(row.Personal_Email);
-    if (official) {
-      byEmail.set(official, row);
+    const record: DirectoryRecord = {
+      Employee_ID: preferValue(row.Employee_ID),
+      Full_Name: preferValue(row.Full_Name),
+      Department: preferValue(row.Department),
+      Official_Email: normaliseEmail(row.Official_Email),
+      Personal_Email: normaliseEmail(row.Personal_Email),
+    };
+
+    const idKey = normaliseId(record.Employee_ID);
+    if (idKey) {
+      byId.set(idKey, record);
     }
-    if (personal) {
-      byEmail.set(personal, row);
+
+    if (record.Official_Email) {
+      byEmail.set(record.Official_Email, record);
+    }
+    if (record.Personal_Email) {
+      byEmail.set(record.Personal_Email, record);
     }
   });
 
-  const lookup = { byEmail };
+  const lookup = { byEmail, byId };
   directoryCache = { lookup, fetchedAt: now };
   return lookup;
 }
 
 const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryRecord => {
+  const idKey = normaliseId(row.Employee_ID);
   const officialKey = normaliseEmail(row.Official_Email);
   const personalKey = normaliseEmail(row.Personal_Email);
+
   const directoryRecord =
+    (idKey && lookup.byId.get(idKey)) ||
     (officialKey && lookup.byEmail.get(officialKey)) ||
     (personalKey && lookup.byEmail.get(personalKey));
 
