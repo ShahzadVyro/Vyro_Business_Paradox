@@ -47,7 +47,17 @@ export async function fetchLatestSalary(employeeId: string): Promise<SalaryRecor
     query,
     params: { employeeId: employeeIdNum },
   });
-  return (rows[0] as SalaryRecord) ?? null;
+  
+  const row = rows[0] as SalaryRecord | undefined;
+  if (!row) return null;
+
+  // Convert Employee_ID from string to number
+  return {
+    ...row,
+    Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+      ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+      : null,
+  };
 }
 
 export async function fetchLatestEOBI(employeeId: string): Promise<EOBIRecord | null> {
@@ -70,7 +80,17 @@ export async function fetchLatestEOBI(employeeId: string): Promise<EOBIRecord | 
     query,
     params: { employeeId: employeeIdNum },
   });
-  return (rows[0] as EOBIRecord) ?? null;
+  
+  const row = rows[0] as EOBIRecord | undefined;
+  if (!row) return null;
+
+  // Convert Employee_ID from string to number
+  return {
+    ...row,
+    Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+      ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+      : null,
+  };
 }
 
 export async function fetchSalaryMonths(): Promise<MonthOption[]> {
@@ -169,9 +189,19 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
   const rows = rowsPromise[0] as SalaryRecord[];
   const total = Number((countPromise[0][0] as { total: number })?.total ?? 0);
 
+  // Convert Employee_ID from string to number and filter out NULL Employee_IDs
+  const convertedRows = rows
+    .map((row) => ({
+      ...row,
+      Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+        ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+        : null,
+    }))
+    .filter((row) => row.Employee_ID !== null); // Filter out records with NULL Employee_ID
+
   // Still use directory lookup for backward compatibility with old data
   const directoryLookup = await fetchDirectoryLookup();
-  const enrichedRows = rows.map((row) => enrichSalaryRow(row, directoryLookup));
+  const enrichedRows = convertedRows.map((row) => enrichSalaryRow(row, directoryLookup));
   const filteredRows = enrichedRows.filter((row) => shouldIncludeRow(row, filters.month));
 
   return { rows: filteredRows, total };
@@ -386,12 +416,18 @@ async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
 }
 
 const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryRecord => {
-  // If row already has Employee_Name from join, use it directly
+  // Skip enrichment if Employee_ID is NULL - this prevents creating duplicates
+  // Note: NULL Employee_IDs are filtered out before enrichment, but this is a safety check
+  if (row.Employee_ID === null || row.Employee_ID === undefined) {
+    return row;
+  }
+
+  // If row already has Employee_Name from join, use it directly (no need to enrich)
   if (row.Employee_Name && row.Department && row.Employment_Status) {
     return row;
   }
   
-  // Employee_ID is now always a number (INT64)
+  // Employee_ID is now always a number (INT64) - convert to string for lookup
   const idKey = row.Employee_ID ? normaliseId(String(row.Employee_ID)) : null;
   const officialKey = normaliseEmail(row.Official_Email);
   const personalKey = normaliseEmail(row.Personal_Email);
@@ -402,18 +438,21 @@ const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryReco
       row.Personal_Email
   );
 
+  // Try to find matching directory record by ID first, then email, then name
   const directoryRecord =
     (idKey && lookup.byId.get(idKey)) ||
     (officialKey && lookup.byEmail.get(officialKey)) ||
     (personalKey && lookup.byEmail.get(personalKey)) ||
     (keyKey && lookup.byKey.get(keyKey));
 
+  // If no match found, return row as-is (don't create new data)
   if (!directoryRecord) {
     return row;
   }
 
-  // Employee_ID is number, keep it as number
-  const employeeId = row.Employee_ID ?? (directoryRecord.Employee_ID ? parseInt(directoryRecord.Employee_ID, 10) : null);
+  // Enrich with directory data, but preserve existing Employee_ID (never change it)
+  // Employee_ID is number, keep it as number - never override with directory lookup
+  const employeeId = row.Employee_ID; // Always preserve the original Employee_ID
   const employeeName =
     preferValue(row.Employee_Name) ?? directoryRecord.Full_Name ?? row.Employee_Name;
   const department =
@@ -436,9 +475,10 @@ const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryReco
     directoryRecord.Employment_End_Date_ISO ??
     employmentEndDate;
 
+  // Return enriched row - Employee_ID is never changed, only other fields are enriched
   return {
     ...row,
-    Employee_ID: employeeId ?? row.Employee_ID,
+    Employee_ID: employeeId, // Always preserve original Employee_ID
     Employee_Name: employeeName ?? row.Employee_Name,
     Department: department ?? row.Department,
     Employment_Status: employmentStatus ?? row.Employment_Status,

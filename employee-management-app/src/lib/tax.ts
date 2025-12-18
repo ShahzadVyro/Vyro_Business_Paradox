@@ -92,7 +92,18 @@ export async function fetchTaxCalculations(filters: TaxFilters): Promise<{ rows:
   const rows = rowsPromise[0] as TaxCalculationRecord[];
   const total = Number((countPromise[0][0] as { total: number })?.total ?? 0);
 
-  return { rows, total };
+  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
+  // Filter out records with NULL Employee_ID to prevent issues
+  const convertedRows = rows
+    .map((row) => ({
+      ...row,
+      Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+        ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+        : null,
+    }))
+    .filter((row) => row.Employee_ID !== null); // Filter out records with NULL Employee_ID
+
+  return { rows: convertedRows, total };
 }
 
 export async function fetchTaxByEmployee(employeeId: number): Promise<TaxCalculationRecord[]> {
@@ -112,6 +123,13 @@ export async function fetchTaxByEmployee(employeeId: number): Promise<TaxCalcula
     query,
     params: { employeeId },
   });
-  return rows as TaxCalculationRecord[];
+  
+  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
+  return (rows as TaxCalculationRecord[]).map((row) => ({
+    ...row,
+    Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+      ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+      : null,
+  }));
 }
 

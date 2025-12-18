@@ -63,11 +63,13 @@ export async function fetchEmployees(filters: EmployeeFilters): Promise<Employee
     conditions.push('base.Department = @department');
   }
   if (filters.search) {
+    // Normalize search term: trim and convert to lowercase for LIKE matching
+    const searchTerm = filters.search.trim().toLowerCase();
     conditions.push(`(
       CAST(base.Employee_ID AS STRING) LIKE @search OR
-      LOWER(base.Full_Name) LIKE @search OR
-      LOWER(base.Official_Email) LIKE @search OR
-      LOWER(base.Personal_Email) LIKE @search
+      LOWER(TRIM(base.Full_Name)) LIKE @search OR
+      LOWER(TRIM(COALESCE(base.Official_Email, ''))) LIKE @search OR
+      LOWER(TRIM(COALESCE(base.Personal_Email, ''))) LIKE @search
     )`);
   }
 
@@ -106,7 +108,9 @@ export async function fetchEmployees(filters: EmployeeFilters): Promise<Employee
     params.department = filters.department;
   }
   if (filters.search) {
-    params.search = `%${filters.search.toLowerCase()}%`;
+    // Normalize search term: trim whitespace and wrap with wildcards
+    const searchTerm = filters.search.trim().toLowerCase();
+    params.search = `%${searchTerm}%`;
   }
 
   const [rows] = await bigquery.query({
@@ -114,7 +118,11 @@ export async function fetchEmployees(filters: EmployeeFilters): Promise<Employee
     params,
   });
 
-  return rows as EmployeeRecord[];
+  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
+  return (rows as EmployeeRecord[]).map((row) => ({
+    ...row,
+    Employee_ID: typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID,
+  }));
 }
 
 export async function fetchEmployeeById(employeeId: string): Promise<EmployeeRecord | null> {
@@ -138,7 +146,14 @@ export async function fetchEmployeeById(employeeId: string): Promise<EmployeeRec
     params: { employeeId: employeeIdNum },
   });
 
-  return (rows[0] as EmployeeRecord) ?? null;
+  const row = rows[0] as EmployeeRecord | undefined;
+  if (!row) return null;
+
+  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
+  return {
+    ...row,
+    Employee_ID: typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID,
+  };
 }
 
 export async function fetchLatestSalaryByEmployee(employeeId: string): Promise<SalaryRecord | null> {
@@ -169,7 +184,17 @@ export async function fetchLatestSalaryByEmployee(employeeId: string): Promise<S
     query,
     params: { employeeId: employeeIdNum },
   });
-  return (rows[0] as SalaryRecord) ?? null;
+  
+  const row = rows[0] as SalaryRecord | undefined;
+  if (!row) return null;
+  
+  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
+  return {
+    ...row,
+    Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+      ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+      : null,
+  };
 }
 
 export async function fetchLatestEobiByEmployee(employeeId: string): Promise<EOBIRecord | null> {
@@ -193,7 +218,17 @@ export async function fetchLatestEobiByEmployee(employeeId: string): Promise<EOB
     query,
     params: { employeeId: employeeIdNum },
   });
-  return (rows[0] as EOBIRecord) ?? null;
+  
+  const row = rows[0] as EOBIRecord | undefined;
+  if (!row) return null;
+  
+  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
+  return {
+    ...row,
+    Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+      ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+      : null,
+  };
 }
 
 export async function fetchEmployeeHistory(employeeId: string): Promise<EmployeeHistoryRecord[]> {
@@ -216,7 +251,12 @@ export async function fetchEmployeeHistory(employeeId: string): Promise<Employee
     query,
     params: { employeeId: employeeIdNum },
   });
-  return rows as EmployeeHistoryRecord[];
+  
+  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
+  return (rows as EmployeeHistoryRecord[]).map((row) => ({
+    ...row,
+    Employee_ID: typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID,
+  }));
 }
 
 export async function updateEmploymentStatus(
@@ -304,7 +344,13 @@ export async function fetchEmployeeFull(employeeId: string) {
           LIMIT 12
         `;
         const [rows] = await bigquery.query({ query, params: { employeeId: employeeIdNum } });
-        return rows;
+        // Convert Employee_ID from string to number
+        return (rows as any[]).map((row) => ({
+          ...row,
+          Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+            ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+            : null,
+        }));
       } catch (e) {
         console.warn("[FETCH_OPD_ERROR]", e);
         return null;
@@ -322,7 +368,13 @@ export async function fetchEmployeeFull(employeeId: string) {
           LIMIT 12
         `;
         const [rows] = await bigquery.query({ query, params: { employeeId: employeeIdNum } });
-        return rows;
+        // Convert Employee_ID from string to number
+        return (rows as any[]).map((row) => ({
+          ...row,
+          Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+            ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+            : null,
+        }));
       } catch (e) {
         console.warn("[FETCH_TAX_ERROR]", e);
         return null;

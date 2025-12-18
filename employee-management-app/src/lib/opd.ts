@@ -96,7 +96,18 @@ export async function fetchOPDBenefits(filters: OPDFilters): Promise<{ rows: OPD
   const rows = rowsPromise[0] as OPDBenefitRecord[];
   const total = Number((countPromise[0][0] as { total: number })?.total ?? 0);
 
-  return { rows, total };
+  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
+  // Filter out records with NULL Employee_ID to prevent issues
+  const convertedRows = rows
+    .map((row) => ({
+      ...row,
+      Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+        ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+        : null,
+    }))
+    .filter((row) => row.Employee_ID !== null); // Filter out records with NULL Employee_ID
+
+  return { rows: convertedRows, total };
 }
 
 export async function fetchOPDBalance(employeeId: number): Promise<OPDBalance | null> {
@@ -146,6 +157,13 @@ export async function fetchOPDByEmployee(employeeId: number): Promise<OPDBenefit
     query,
     params: { employeeId },
   });
-  return rows as OPDBenefitRecord[];
+  
+  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
+  return (rows as OPDBenefitRecord[]).map((row) => ({
+    ...row,
+    Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+      ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+      : null,
+  }));
 }
 
