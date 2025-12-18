@@ -85,9 +85,9 @@ const EmployeeList = ({ filters, onFiltersChange, onSelect, selectedId }: Props)
         <div className="mt-6 grid gap-3">
           {data.map((employee) => (
             <EmployeeCard
-              key={employee.Employee_ID}
+              key={String(employee.Employee_ID)}
               employee={employee}
-              selected={selectedId === employee.Employee_ID}
+              selected={selectedId === String(employee.Employee_ID)}
               onSelect={onSelect}
             />
           ))}

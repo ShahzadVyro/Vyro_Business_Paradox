@@ -20,7 +20,7 @@ const EmployeeCard = ({ employee, selected, onSelect }: Props) => {
   return (
     <button
     type="button"
-    onClick={() => onSelect(employee.Employee_ID)}
+    onClick={() => onSelect(String(employee.Employee_ID))}
     className={clsx(
       "flex w-full items-center justify-between rounded-3xl border px-4 py-3 text-left shadow-sm transition",
       selected
