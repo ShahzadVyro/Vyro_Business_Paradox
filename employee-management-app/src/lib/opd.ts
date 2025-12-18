@@ -166,20 +166,20 @@ export async function fetchOPDByEmployee(employeeId: number): Promise<OPDBenefit
   });
   
   // Convert Employee_ID from string to number and normalize dates
-  return (rows as OPDBenefitRecord[]).map((row) => {
-    const normalized = {
-      ...row,
-      Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
-        ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
-        : null,
-      Benefit_Month: convertDateToString(row.Benefit_Month) ?? null,
-      Last_Contribution_Month: row.Last_Contribution_Month ? convertDateToString(row.Last_Contribution_Month) ?? null : null,
-      Last_Claim_Month: row.Last_Claim_Month ? convertDateToString(row.Last_Claim_Month) ?? null : null,
-      Created_At: row.Created_At ? convertDateToString(row.Created_At) ?? null : null,
-      Updated_At: row.Updated_At ? convertDateToString(row.Updated_At) ?? null : null,
-    };
-    
-    return normalized;
-  });
+  return (rows as any[])
+    .map((row) => {
+      const normalized = {
+        ...row,
+        Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+          ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+          : null,
+        Benefit_Month: convertDateToString(row.Benefit_Month) ?? null,
+        Created_At: row.Created_At ? convertDateToString(row.Created_At) ?? null : null,
+        Updated_At: row.Updated_At ? convertDateToString(row.Updated_At) ?? null : null,
+      };
+      
+      return normalized;
+    })
+    .filter((row): row is OPDBenefitRecord => row.Employee_ID !== null);
 }
 
