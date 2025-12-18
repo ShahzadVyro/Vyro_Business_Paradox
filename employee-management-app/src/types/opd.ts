@@ -1,7 +1,7 @@
 export interface OPDBenefitRecord {
   OPD_ID: number;
   Employee_ID: number;
-  Benefit_Month: string; // DATE as ISO string
+  Benefit_Month: string | null; // DATE as ISO string (can be null from BigQuery)
   Contribution_Amount: number | null;
   Claimed_Amount: number | null;
   Balance: number | null;
@@ -40,4 +40,5 @@ export interface OPDListResponse {
   months: Array<{ value: string; label: string }>;
   activeMonth?: string;
 }
+
 

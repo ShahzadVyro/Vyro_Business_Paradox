@@ -112,7 +112,7 @@ export async function fetchOPDBenefits(filters: OPDFilters): Promise<{ rows: OPD
       
       return normalized;
     })
-    .filter((row) => row.Employee_ID !== null); // Filter out records with NULL Employee_ID
+    .filter((row): row is OPDBenefitRecord => row.Employee_ID !== null); // Filter out records with NULL Employee_ID
 
   return { rows: convertedRows, total };
 }
