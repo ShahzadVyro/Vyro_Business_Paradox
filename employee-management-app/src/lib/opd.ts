@@ -106,8 +106,6 @@ export async function fetchOPDBenefits(filters: OPDFilters): Promise<{ rows: OPD
           ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
           : null,
         Benefit_Month: convertDateToString(row.Benefit_Month) ?? null,
-        Last_Contribution_Month: row.Last_Contribution_Month ? convertDateToString(row.Last_Contribution_Month) ?? null : null,
-        Last_Claim_Month: row.Last_Claim_Month ? convertDateToString(row.Last_Claim_Month) ?? null : null,
         Created_At: row.Created_At ? convertDateToString(row.Created_At) ?? null : null,
         Updated_At: row.Updated_At ? convertDateToString(row.Updated_At) ?? null : null,
       };
