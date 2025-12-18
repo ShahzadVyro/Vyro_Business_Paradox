@@ -1,57 +1,11 @@
 export interface SalaryRecord {
+  // Core fields
   Payroll_Month: string;
   Currency: string;
-  Employee_ID: string | null;
-  Employee_Name: string | null;
-  Personal_Email: string | null;
-  Official_Email: string | null;
-  Joining_Date: string | null;
-  Designation: string | null;
-  Department: string | null;
-  Reporting_Manager: string | null;
-  Job_Type: string | null;
-  Status: string | null;
-  Employment_Status: string | null;
-  Probation_Period: string | null;
-  Probation_End_Date: string | null;
-  Basic_Salary: number | null;
-  Medical: number | null;
-  Gross_Salary: number | null;
-  Contact_Number: string | null;
-  CNIC_ID: string | null;
-  Gender: string | null;
-  Bank_Name: string | null;
-  Bank_Account_Title: string | null;
-  Bank_Account_IBAN: string | null;
-  Swift_Code_BIC: string | null;
-  Routing_Number: string | null;
-  Employment_Location: string | null;
-  Date_of_Birth: string | null;
-  Address: string | null;
-  Nationality: string | null;
-  Marital_Status: string | null;
-  Number_of_Children: number | null;
-  Spouse_Name: string | null;
-  Spouse_DOB: string | null;
-  Father_Name: string | null;
-  Emergency_Contact_Relationship: string | null;
-  Emergency_Contact_Number: string | null;
-  LinkedIn_URL: string | null;
-  Recruiter_Name: string | null;
-  Employment_End_Date: string | null;
-  Employment_End_Date_ISO?: string | null;
-  Group_Name: string | null;
-  Group_Email: string | null;
-  Rejoined: string | null;
-  Key: string | null;
-  IBFT_IFT: string | null;
-  Slack_ID: string | null;
-  EOBI_Number: string | null;
-  Worked_Days: number | null;
-  Last_Month_Salary: number | null;
-  Increment_or_New_Addition: number | null;
-  Date_of_Increment: string | null;
-  Payable_From: string | null;
+  Employee_ID: string | number | null; // Support both STRING (old) and INT64 (new)
+  Employee_Name?: string | null; // From Employees join
+  
+  // Salary Components (new schema)
   Regular_Pay: number | null;
   Prorated_Pay: number | null;
   Prorated_Base_Pay: number | null;
@@ -61,22 +15,90 @@ export interface SalaryRecord {
   Performance_Bonus: number | null;
   Paid_Overtime: number | null;
   Reimbursements: number | null;
-  Other_Adjustments: number | null;
+  Other: number | null; // Renamed from Other_Adjustments
+  
+  // Income Calculations
   Taxable_Income: number | null;
   Gross_Income: number | null;
+  
+  // Deductions
   Unpaid_Leaves: number | null;
   Tax_Deduction: number | null;
   EOBI: number | null;
   Loan_Deduction: number | null;
   Recoveries: number | null;
   Deductions: number | null;
+  
+  // Final Amount
   Net_Income: number | null;
+  
+  // Additional Fields
+  Worked_Days: number | null;
   Comments: string | null;
-  Additional_Points: string | null;
-  Shahzad_Comments: string | null;
-  AccountNumber: string | null;
-  Bank_Code: string | null;
-  Loaded_At: string | null;
+  Internal_Comments?: string | null;
+  
+  // Employee State at Payroll (new fields)
+  Designation_At_Payroll?: string | null;
+  Department_At_Payroll?: string | null;
+  Bank_Account_At_Payroll?: string | null;
+  Bank_Name_At_Payroll?: string | null;
+  Salary_Effective_Date?: string | null;
+  
+  // Legacy fields (for backward compatibility with old schema)
+  Personal_Email?: string | null;
+  Official_Email?: string | null;
+  Joining_Date?: string | null;
+  Designation?: string | null;
+  Department?: string | null;
+  Reporting_Manager?: string | null;
+  Job_Type?: string | null;
+  Status?: string | null;
+  Employment_Status?: string | null;
+  Probation_Period?: string | null;
+  Probation_End_Date?: string | null;
+  Basic_Salary?: number | null;
+  Medical?: number | null;
+  Gross_Salary?: string | null;
+  Contact_Number?: string | null;
+  CNIC_ID?: string | null;
+  Gender?: string | null;
+  Bank_Name?: string | null;
+  Bank_Account_Title?: string | null;
+  Bank_Account_IBAN?: string | null;
+  Swift_Code_BIC?: string | null;
+  Routing_Number?: string | null;
+  Employment_Location?: string | null;
+  Date_of_Birth?: string | null;
+  Address?: string | null;
+  Nationality?: string | null;
+  Marital_Status?: string | null;
+  Number_of_Children?: number | null;
+  Spouse_Name?: string | null;
+  Spouse_DOB?: string | null;
+  Father_Name?: string | null;
+  Emergency_Contact_Relationship?: string | null;
+  Emergency_Contact_Number?: string | null;
+  LinkedIn_URL?: string | null;
+  Recruiter_Name?: string | null;
+  Employment_End_Date?: string | null;
+  Employment_End_Date_ISO?: string | null;
+  Group_Name?: string | null;
+  Group_Email?: string | null;
+  Rejoined?: string | null;
+  Key?: string | null;
+  IBFT_IFT?: string | null;
+  Slack_ID?: string | null;
+  EOBI_Number?: string | null;
+  Last_Month_Salary?: number | null;
+  Increment_or_New_Addition?: number | null;
+  Date_of_Increment?: string | null;
+  Payable_From?: string | null;
+  Other_Adjustments?: number | null; // Legacy name
+  Additional_Points?: string | null;
+  Shahzad_Comments?: string | null;
+  AccountNumber?: string | null;
+  Bank_Code?: string | null;
+  Loaded_At?: string | null;
 }
 
 export interface EOBIRecord {

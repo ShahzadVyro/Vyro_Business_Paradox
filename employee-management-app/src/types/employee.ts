@@ -3,7 +3,7 @@ import type { SalaryRecord, EOBIRecord } from "@/types/api/payroll";
 export type EmploymentStatus = 'Active' | 'Resigned/Terminated';
 
 export interface EmployeeRecord {
-  Employee_ID: string;
+  Employee_ID: string | number; // Support both STRING (old) and INT64 (new)
   Full_Name: string;
   Official_Email: string | null;
   Personal_Email: string | null;
@@ -29,6 +29,12 @@ export interface EmployeeRecord {
   Offboarding_Date?: string | null;
   Offboarding_Date_ISO?: string | null;
   Offboarding_Note?: string | null;
+  // New fields from unified schema
+  Lifecycle_Status?: string | null;
+  Age?: number | null;
+  Number_of_Children?: number | null;
+  Spouse_Name?: string | null;
+  Employment_Location?: string | null;
 }
 
 export interface EmployeeFilters {
@@ -45,6 +51,8 @@ export interface EmployeeFullDetail {
   eobi: EOBIRecord | null;
   history: EmployeeHistoryRecord[];
   offboarding: EmployeeOffboardingRecord | null;
+  opd?: import("./opd").OPDBenefitRecord[] | null;
+  tax?: import("./tax").TaxCalculationRecord[] | null;
 }
 
 export interface EmployeeHistoryRecord {

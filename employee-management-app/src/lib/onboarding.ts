@@ -17,9 +17,10 @@ const projectId = getEnv("GCP_PROJECT_ID");
 if (!projectId) {
   throw new Error("Missing GCP_PROJECT_ID for onboarding");
 }
-const employeeTableName = getEnv("BQ_TABLE") ?? "EmployeeDirectoryLatest_v1";
+const employeeTableName = getEnv("BQ_TABLE") ?? "Employees";
 const intakeTableRef = `\`${projectId}.${BQ_DATASET}.${intakeTable}\``;
 const employeeTableRef = `\`${projectId}.${BQ_DATASET}.${employeeTableName}\``;
+const lifecycleEventsTableRef = `\`${projectId}.${BQ_DATASET}.Employee_Lifecycle_Events\``;
 
 let tableEnsured = false;
 const ensureIntakeTable = async () => {
@@ -53,17 +54,137 @@ export const createOnboardingSubmission = async (input: OnboardingFormInput) => 
     Emergency_Contact_Number: sanitizePhone(input.Emergency_Contact_Number),
   };
 
-  const query = `
+  // Insert into intake table
+  const intakeQuery = `
     INSERT INTO ${intakeTableRef} (Submission_ID, Status, Payload)
     VALUES (@submissionId, "pending", TO_JSON(@payload))
   `;
   await bigquery.query({
-    query,
+    query: intakeQuery,
     params: {
       submissionId,
       payload,
     },
   });
+
+  // Also insert into Employees table with Lifecycle_Status = "Form_Submitted"
+  // Note: Employee_ID will be NULL initially, assigned later by People team
+  try {
+    const employeeInsertQuery = `
+      INSERT INTO ${employeeTableRef} (
+        Employee_ID, Full_Name, CNIC_ID, Personal_Email, Official_Email,
+        Contact_Number, Date_of_Birth, Gender, Temporary_Address, Permanent_Address,
+        Nationality, LinkedIn_URL, Marital_Status, Age, Number_of_Children,
+        Spouse_Name, Spouse_DOB, Joining_Date, Department, Designation,
+        Reporting_Manager, Job_Type, Job_Location, Recruiter_Name, Preferred_Device,
+        Employment_Location, Father_Name, Emergency_Contact_Number,
+        Emergency_Contact_Relationship, Blood_Group, Degree_Transcript_URL,
+        Last_Salary_Slip_URL, Experience_Letter_URL, Resume_URL, Passport_Photo_URL,
+        CNIC_Front_URL, CNIC_Back_URL, Bank_Name, Bank_Account_Title,
+        National_Tax_Number, Swift_Code_BIC, Bank_Account_Number_IBAN,
+        Vehicle_Number, Introduction, Fun_Fact, Shirt_Size,
+        Lifecycle_Status, Timestamp, Email_Address,
+        Created_At, Updated_At, Created_By, Is_Deleted
+      )
+      VALUES (
+        NULL, @fullName, @cnicId, @personalEmail, @officialEmail,
+        @contactNumber, @dateOfBirth, @gender, @currentAddress, @permanentAddress,
+        @nationality, @linkedInUrl, @maritalStatus, @age, @numberOfChildren,
+        @spouseName, @spouseDob, @joiningDate, @department, @designation,
+        @reportingManager, @jobType, @jobLocation, @recruiterName, @preferredDevice,
+        @employmentLocation, @fatherName, @emergencyContactNumber,
+        @emergencyContactRelationship, @bloodGroup, @degreeTranscriptUrl,
+        @lastSalarySlipUrl, @experienceLetterUrl, @resumeUrl, @passportPhotoUrl,
+        @cnicFrontUrl, @cnicBackUrl, @bankName, @bankAccountTitle,
+        @nationalTaxNumber, @swiftCodeBic, @bankAccountNumberIban,
+        @vehicleNumber, @introduction, @funFact, @shirtSize,
+        'Form_Submitted', CURRENT_TIMESTAMP(), @emailAddress,
+        CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'Onboarding Form', FALSE
+      )
+    `;
+    
+    await bigquery.query({
+      query: employeeInsertQuery,
+      params: {
+        fullName: input.Full_Name,
+        cnicId: input.CNIC_ID,
+        personalEmail: input.Personal_Email,
+        officialEmail: input.Official_Email || null,
+        contactNumber: payload.Contact_Number,
+        dateOfBirth: input.Date_of_Birth || null,
+        gender: input.Gender,
+        currentAddress: input.Current_Address,
+        permanentAddress: input.Permanent_Address,
+        nationality: input.Nationality,
+        linkedInUrl: input.LinkedIn_URL || null,
+        maritalStatus: input.Marital_Status,
+        age: input.Age ? parseInt(input.Age) : null,
+        numberOfChildren: input.Number_of_Children ? parseInt(input.Number_of_Children) : null,
+        spouseName: input.Spouse_Name || null,
+        spouseDob: input.Spouse_DOB || null,
+        joiningDate: input.Joining_Date || null,
+        department: input.Department,
+        designation: input.Designation,
+        reportingManager: input.Reporting_Manager,
+        jobType: input.Job_Type,
+        jobLocation: input.Job_Location,
+        recruiterName: input.Recruiter_Name,
+        preferredDevice: input.Preferred_Device,
+        employmentLocation: input.Employment_Location || null,
+        fatherName: input.Father_Name,
+        emergencyContactNumber: payload.Emergency_Contact_Number,
+        emergencyContactRelationship: input.Emergency_Contact_Relationship,
+        bloodGroup: input.Blood_Group,
+        degreeTranscriptUrl: input.Degree_Transcript_URL || null,
+        lastSalarySlipUrl: input.Last_Salary_Slip_URL || null,
+        experienceLetterUrl: input.Experience_Letter_URL || null,
+        resumeUrl: input.Resume_URL || null,
+        passportPhotoUrl: input.Passport_Photo_URL || null,
+        cnicFrontUrl: input.CNIC_Front_URL || null,
+        cnicBackUrl: input.CNIC_Back_URL || null,
+        bankName: input.Bank_Name,
+        bankAccountTitle: input.Bank_Account_Title,
+        nationalTaxNumber: input.National_Tax_Number || null,
+        swiftCodeBic: input.Swift_Code_BIC,
+        bankAccountNumberIban: input.Bank_Account_Number_IBAN,
+        vehicleNumber: input.Vehicle_Number || null,
+        introduction: input.Introduction || null,
+        funFact: input.Fun_Fact || null,
+        shirtSize: input.Shirt_Size || null,
+        emailAddress: input.Personal_Email || input.Official_Email || null,
+      },
+    });
+
+    // Create lifecycle event
+    try {
+      const lifecycleEventQuery = `
+        INSERT INTO ${lifecycleEventsTableRef} 
+          (Employee_ID, Lifecycle_Status, Event_Date, Event_By, Notes)
+        SELECT Employee_ID, 'Form_Submitted', CURRENT_TIMESTAMP(), 'Onboarding Form', 'Form submitted via onboarding form'
+        FROM ${employeeTableRef}
+        WHERE Full_Name = @fullName
+          AND CNIC_ID = @cnicId
+          AND Lifecycle_Status = 'Form_Submitted'
+        ORDER BY Created_At DESC
+        LIMIT 1
+      `;
+      await bigquery.query({
+        query: lifecycleEventQuery,
+        params: {
+          fullName: input.Full_Name,
+          cnicId: input.CNIC_ID,
+        },
+      });
+    } catch (e) {
+      // Lifecycle events table might not exist yet - that's OK
+      console.warn("[ONBOARDING_LIFECYCLE_EVENT] Could not create lifecycle event:", e);
+    }
+  } catch (e) {
+    // Employees table might not exist yet - log warning but don't fail
+    console.warn("[ONBOARDING_EMPLOYEE_INSERT] Could not insert into Employees table:", e);
+    console.warn("  This is OK if Employees table doesn't exist yet. Form submission was still saved to intake table.");
+  }
+
   return { submissionId, payload };
 };
 
@@ -202,12 +323,13 @@ const columnMap: Record<string, keyof OnboardingFormInput> = {
 export const getNextEmployeeId = async () => {
   const bigquery = getBigQueryClient();
   const query = `
-    SELECT CAST(MAX(CAST(Employee_ID AS INT64)) + 1 AS STRING) AS nextId
+    SELECT CAST(MAX(CAST(Employee_ID AS INT64)) + 1 AS INT64) AS nextId
     FROM ${employeeTableRef}
+    WHERE Employee_ID IS NOT NULL
   `;
   const [rows] = await bigquery.query({ query });
   const nextId = rows[0]?.nextId;
-  return nextId ?? "5000";
+  return nextId ? String(nextId) : "5000";
 };
 
 export const insertEmployeeFromSubmission = async (submission: OnboardingSubmission, employeeId: string) => {

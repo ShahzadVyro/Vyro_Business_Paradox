@@ -1,7 +1,7 @@
 import type { EmployeeRecord, EmployeeOffboardingRecord } from "@/types/employee";
 import type { SalaryRecord, EOBIRecord } from "@/types/api/payroll";
 
-export type DashboardView = "directory" | "payroll" | "eobi" | "all";
+export type DashboardView = "directory" | "payroll" | "eobi" | "opd" | "tax" | "all";
 
 export interface EmployeeSnapshot {
   directory: EmployeeRecord | null;

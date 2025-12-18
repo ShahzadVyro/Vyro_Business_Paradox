@@ -8,6 +8,7 @@ import type { DashboardView } from "@/types/dashboard";
 import { updateEmploymentStatusClient } from "@/lib/api-client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCancelOffboarding, useScheduleOffboarding } from "@/hooks/use-offboarding";
+import { useOPDByEmployee } from "@/hooks/use-opd";
 
 interface Props {
   view: DashboardView;
@@ -23,6 +24,8 @@ const VIEW_OPTIONS: { value: DashboardView; label: string }[] = [
   { value: "directory", label: "Directory" },
   { value: "payroll", label: "Salaries" },
   { value: "eobi", label: "EOBI" },
+  { value: "opd", label: "OPD" },
+  { value: "tax", label: "Tax" },
 ];
 
 const EmployeeDetail = ({ data, isLoading, view, onViewChange }: Props) => {
@@ -31,6 +34,8 @@ const EmployeeDetail = ({ data, isLoading, view, onViewChange }: Props) => {
   const eobi = data?.eobi ?? null;
   const history = data?.history ?? [];
   const offboarding = data?.offboarding ?? null;
+  const opd = data?.opd ?? null;
+  const tax = data?.tax ?? null;
 
   if (isLoading) {
     return (
@@ -52,6 +57,8 @@ const EmployeeDetail = ({ data, isLoading, view, onViewChange }: Props) => {
       eobi={eobi}
       history={history}
       offboarding={offboarding}
+      opd={opd}
+      tax={tax}
       view={view}
       onViewChange={onViewChange}
     />
@@ -64,6 +71,8 @@ const DetailBody = ({
   eobi,
   history,
   offboarding,
+  opd,
+  tax,
   view,
   onViewChange,
 }: {
@@ -72,6 +81,8 @@ const DetailBody = ({
   eobi: EmployeeFullDetail["eobi"];
   history: EmployeeFullDetail["history"];
   offboarding: EmployeeFullDetail["offboarding"];
+  opd: EmployeeFullDetail["opd"];
+  tax: EmployeeFullDetail["tax"];
   view: DashboardView;
   onViewChange: (view: DashboardView) => void;
 }) => {
@@ -135,12 +146,16 @@ const DetailBody = ({
       case "directory":
         return <DirectoryView profile={profile} />;
       case "payroll":
-        return <SalaryView salary={salary} />;
+        return <SalaryView salary={salary} opd={opd} tax={tax} />;
       case "eobi":
         return <EobiView eobi={eobi} />;
+      case "opd":
+        return <OPDView opd={opd} employeeId={profile.Employee_ID} />;
+      case "tax":
+        return <TaxView tax={tax} />;
       case "all":
       default:
-        return <AllFieldsView profile={profile} salary={salary} eobi={eobi} />;
+        return <AllFieldsView profile={profile} salary={salary} eobi={eobi} opd={opd} tax={tax} />;
     }
   })();
 
@@ -186,20 +201,57 @@ const DirectoryView = ({ profile }: { profile: NonNullable<EmployeeFullDetail["p
   </div>
 );
 
-const SalaryView = ({ salary }: { salary: EmployeeFullDetail["salary"] }) => {
+const SalaryView = ({ 
+  salary, 
+  opd, 
+  tax 
+}: { 
+  salary: EmployeeFullDetail["salary"];
+  opd: EmployeeFullDetail["opd"];
+  tax: EmployeeFullDetail["tax"];
+}) => {
   if (!salary) {
     return <Placeholder message="No salary records found for this teammate." />;
-    }
+  }
+  
+  // Get latest tax for this payroll month
+  const latestTax = tax && tax.length > 0 
+    ? tax.find(t => String(t.Payroll_Month).slice(0, 7) === String(salary.Payroll_Month).slice(0, 7))
+    : null;
+  
+  // Get latest OPD for this payroll month (if PKR)
+  const latestOPD = salary.Currency === "PKR" && opd && opd.length > 0
+    ? opd.find(o => String(o.Benefit_Month).slice(0, 7) === String(salary.Payroll_Month).slice(0, 7))
+    : null;
+  
   const summary = [
     { label: "Payroll Month", value: formatDate(salary.Payroll_Month ?? null) },
     { label: "Currency", value: salary.Currency },
     { label: "Regular Pay", value: formatCurrency(salary.Regular_Pay ?? null) },
     { label: "Gross Income", value: formatCurrency(salary.Gross_Income ?? null) },
     { label: "Net Income", value: formatCurrency(salary.Net_Income ?? null) },
-    { label: "Tax Deduction", value: formatCurrency(salary.Tax_Deduction ?? null) },
+    { label: "Tax Deduction", value: formatCurrency(latestTax?.Tax_Amount ?? salary.Tax_Deduction ?? null) },
     { label: "EOBI", value: formatCurrency(salary.EOBI ?? null) },
     { label: "Total Deductions", value: formatCurrency(salary.Deductions ?? null) },
   ];
+  
+  // Add OPD info if available
+  if (latestOPD) {
+    summary.push(
+      { label: "OPD Contribution", value: formatCurrency(latestOPD.Contribution_Amount) },
+      { label: "OPD Claimed", value: formatCurrency(latestOPD.Claimed_Amount) },
+      { label: "OPD Balance", value: formatCurrency(latestOPD.Balance) }
+    );
+  }
+  
+  // Add tax details if available
+  if (latestTax) {
+    summary.push(
+      { label: "Taxable Income", value: formatCurrency(latestTax.Taxable_Income) },
+      { label: "Tax Rate", value: latestTax.Tax_Rate ? `${latestTax.Tax_Rate}%` : "—" },
+      { label: "Tax Bracket", value: latestTax.Tax_Bracket ?? "—" }
+    );
+  }
 
   const prorated = [
     { label: "Prorated Base", value: formatCurrency(salary.Prorated_Base_Pay ?? null) },
@@ -260,19 +312,119 @@ const EobiView = ({ eobi }: { eobi: EmployeeFullDetail["eobi"] }) => {
   );
 };
 
+const OPDView = ({ 
+  opd, 
+  employeeId 
+}: { 
+  opd: EmployeeFullDetail["opd"];
+  employeeId: string | number;
+}) => {
+  const employeeIdNum = typeof employeeId === "number" ? employeeId : parseInt(String(employeeId), 10);
+  const { data: opdData } = useOPDByEmployee(isNaN(employeeIdNum) ? 0 : employeeIdNum);
+  
+  const benefits = opdData?.benefits ?? opd ?? [];
+  const balance = opdData?.balance;
+  
+  if (!benefits || benefits.length === 0) {
+    return <Placeholder message="No OPD benefits found for this teammate." />;
+  }
+  
+  const balanceInfo = balance ? [
+    { label: "Total Contributions", value: formatCurrency(balance.Total_Contributions) },
+    { label: "Total Claimed", value: formatCurrency(balance.Total_Claimed) },
+    { label: "Available Balance", value: formatCurrency(balance.Available_Balance) },
+    { label: "Last Contribution", value: formatDate(balance.Last_Contribution_Month) },
+    { label: "Last Claim", value: formatDate(balance.Last_Claim_Month) },
+  ] : [];
+  
+  const recentBenefits = benefits.slice(0, 12).map((benefit) => ({
+    month: formatDate(benefit.Benefit_Month),
+    contribution: formatCurrency(benefit.Contribution_Amount),
+    claimed: formatCurrency(benefit.Claimed_Amount),
+    balance: formatCurrency(benefit.Balance),
+  }));
+  
+  return (
+    <div className="space-y-8">
+      {balanceInfo.length > 0 && <DetailSection title="OPD Balance Summary" items={balanceInfo} />}
+      <div>
+        <p className="text-xs uppercase tracking-wide text-slate-400">Recent Benefits History</p>
+        <div className="mt-3 space-y-2">
+          {recentBenefits.map((benefit, idx) => (
+            <div key={idx} className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-semibold text-slate-900">{benefit.month}</span>
+                <div className="flex gap-4 text-slate-600">
+                  <span>Contribution: {benefit.contribution}</span>
+                  <span>Claimed: {benefit.claimed}</span>
+                  <span className="font-semibold text-slate-900">Balance: {benefit.balance}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const TaxView = ({ tax }: { tax: EmployeeFullDetail["tax"] }) => {
+  if (!tax || tax.length === 0) {
+    return <Placeholder message="No tax calculations found for this teammate." />;
+  }
+  
+  const recentTax = tax.slice(0, 12).map((record) => ({
+    month: formatDate(record.Payroll_Month),
+    taxableIncome: formatCurrency(record.Taxable_Income),
+    taxAmount: formatCurrency(record.Tax_Amount),
+    taxRate: record.Tax_Rate ? `${record.Tax_Rate}%` : "—",
+    taxBracket: record.Tax_Bracket ?? "—",
+    taxType: record.Tax_Type ?? "—",
+  }));
+  
+  return (
+    <div className="space-y-8">
+      <div>
+        <p className="text-xs uppercase tracking-wide text-slate-400">Tax Calculation History</p>
+        <div className="mt-3 space-y-2">
+          {recentTax.map((record, idx) => (
+            <div key={idx} className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-semibold text-slate-900">{record.month}</span>
+                <div className="flex gap-4 text-slate-600">
+                  <span>TI: {record.taxableIncome}</span>
+                  <span>Tax: {record.taxAmount}</span>
+                  <span>Rate: {record.taxRate}</span>
+                  <span className="text-xs text-slate-500">({record.taxBracket})</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const AllFieldsView = ({
   profile,
   salary,
   eobi,
+  opd,
+  tax,
 }: {
   profile: NonNullable<EmployeeFullDetail["profile"]>;
   salary: EmployeeFullDetail["salary"];
   eobi: EmployeeFullDetail["eobi"];
+  opd: EmployeeFullDetail["opd"];
+  tax: EmployeeFullDetail["tax"];
 }) => (
   <div className="space-y-10">
     <KeyValueDump title="Directory Fields" data={profile as unknown as Record<string, unknown>} />
     <KeyValueDump title="Salary Sheet Fields" data={salary as unknown as Record<string, unknown>} />
     <KeyValueDump title="EOBI Fields" data={eobi as unknown as Record<string, unknown>} />
+    {opd && opd.length > 0 && <KeyValueDump title="OPD Benefits" data={opd[0] as unknown as Record<string, unknown>} />}
+    {tax && tax.length > 0 && <KeyValueDump title="Tax Calculations" data={tax[0] as unknown as Record<string, unknown>} />}
   </div>
 );
 

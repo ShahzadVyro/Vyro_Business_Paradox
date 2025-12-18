@@ -5,9 +5,9 @@ import { getBigQueryClient } from "./bigquery";
 
 const projectId = process.env.GCP_PROJECT_ID;
 const dataset = process.env.BQ_DATASET;
-const salaryTable = process.env.BQ_SALARY_TABLE ?? "EmployeeSalaries_v1";
-const eobiTable = process.env.BQ_EOBI_TABLE ?? "EmployeeEOBI_v1";
-const employeeTable = process.env.BQ_TABLE ?? "EmployeeDirectoryLatest_v1";
+const salaryTable = process.env.BQ_SALARY_TABLE ?? "Employee_Salaries";
+const eobiTable = process.env.BQ_EOBI_TABLE ?? "Employee_EOBI";
+const employeeTable = process.env.BQ_TABLE ?? "Employees";
 
 if (!projectId || !dataset) {
   throw new Error("Missing BigQuery configuration for payroll tables");
@@ -21,22 +21,40 @@ const normalizeSearch = (value?: string | null) => (value ? `%${value.toLowerCas
 
 export async function fetchLatestSalary(employeeId: string): Promise<SalaryRecord | null> {
   const bigquery = getBigQueryClient();
+  
+  // Handle both STRING and INT64 Employee_ID
+  const employeeIdNum = parseInt(employeeId, 10);
+  const isNumeric = !isNaN(employeeIdNum);
+  
   const query = `
-    SELECT *
-    FROM ${salariesRef}
-    WHERE Employee_ID = @employeeId
-    ORDER BY Payroll_Month DESC, Currency ASC
+    SELECT 
+      s.*,
+      e.Full_Name AS Employee_Name,
+      e.Official_Email,
+      e.Personal_Email,
+      e.Designation,
+      e.Department,
+      e.Employment_Status
+    FROM ${salariesRef} s
+    LEFT JOIN ${employeeRef} e ON s.Employee_ID = e.Employee_ID
+    WHERE s.Employee_ID = @employeeId
+    ORDER BY s.Payroll_Month DESC, s.Currency ASC
     LIMIT 1
   `;
   const [rows] = await bigquery.query({
     query,
-    params: { employeeId },
+    params: { employeeId: isNumeric ? employeeIdNum : employeeId },
   });
   return (rows[0] as SalaryRecord) ?? null;
 }
 
 export async function fetchLatestEOBI(employeeId: string): Promise<EOBIRecord | null> {
   const bigquery = getBigQueryClient();
+  
+  // Handle both STRING and INT64 Employee_ID
+  const employeeIdNum = parseInt(employeeId, 10);
+  const isNumeric = !isNaN(employeeIdNum);
+  
   const query = `
     SELECT *
     FROM ${eobiRef}
@@ -46,7 +64,7 @@ export async function fetchLatestEOBI(employeeId: string): Promise<EOBIRecord | 
   `;
   const [rows] = await bigquery.query({
     query,
-    params: { employeeId },
+    params: { employeeId: isNumeric ? employeeIdNum : employeeId },
   });
   return (rows[0] as EOBIRecord) ?? null;
 }
@@ -93,15 +111,15 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
     params.currency = filters.currency;
   }
   if (filters.status) {
-    conditions.push(`(Employment_Status = @status OR Status = @status)`);
+    conditions.push(`e.Employment_Status = @status`);
     params.status = filters.status;
   }
   if (filters.search) {
     conditions.push(`(
-      LOWER(Employee_ID) LIKE @search OR
-      LOWER(Employee_Name) LIKE @search OR
-      LOWER(Official_Email) LIKE @search OR
-      LOWER(Personal_Email) LIKE @search
+      CAST(s.Employee_ID AS STRING) LIKE @search OR
+      LOWER(e.Full_Name) LIKE @search OR
+      LOWER(e.Official_Email) LIKE @search OR
+      LOWER(e.Personal_Email) LIKE @search
     )`);
     params.search = normalizeSearch(filters.search);
   }
@@ -111,16 +129,25 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
   const offset = filters.offset ?? 0;
 
   const dataQuery = `
-    SELECT *
-    FROM ${salariesRef}
+    SELECT 
+      s.*,
+      e.Full_Name AS Employee_Name,
+      e.Official_Email,
+      e.Personal_Email,
+      e.Designation,
+      e.Department,
+      e.Employment_Status
+    FROM ${salariesRef} s
+    LEFT JOIN ${employeeRef} e ON s.Employee_ID = e.Employee_ID
     ${whereClause}
-    ORDER BY Payroll_Month DESC, Currency ASC, Employee_Name ASC
+    ORDER BY s.Payroll_Month DESC, s.Currency ASC, e.Full_Name ASC
     LIMIT @limit OFFSET @offset
   `;
 
   const countQuery = `
     SELECT COUNT(1) as total
-    FROM ${salariesRef}
+    FROM ${salariesRef} s
+    LEFT JOIN ${employeeRef} e ON s.Employee_ID = e.Employee_ID
     ${whereClause}
   `;
 
@@ -138,6 +165,7 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
   const rows = rowsPromise[0] as SalaryRecord[];
   const total = Number((countPromise[0][0] as { total: number })?.total ?? 0);
 
+  // Still use directory lookup for backward compatibility with old data
   const directoryLookup = await fetchDirectoryLookup();
   const enrichedRows = rows.map((row) => enrichSalaryRow(row, directoryLookup));
   const filteredRows = enrichedRows.filter((row) => shouldIncludeRow(row, filters.month));
@@ -302,13 +330,12 @@ async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
   const bigquery = getBigQueryClient();
   const query = `
     SELECT
-      Employee_ID,
+      CAST(Employee_ID AS STRING) AS Employee_ID,
       Full_Name,
       Department,
       LOWER(Official_Email) AS Official_Email,
       LOWER(Personal_Email) AS Personal_Email,
       Employment_End_Date,
-      Employment_End_Date_ISO,
       Employment_Status,
       LOWER(TRIM(Full_Name)) AS Full_Name_Key
     FROM ${employeeRef}
@@ -320,16 +347,16 @@ async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
 
   (rows as DirectoryRecord[]).forEach((row) => {
     const record: DirectoryRecord = {
-      Employee_ID: preferValue(row.Employee_ID),
+      Employee_ID: preferValue(String(row.Employee_ID)),
       Full_Name: preferValue(row.Full_Name),
       Department: preferValue(row.Department),
       Official_Email: normaliseEmail(row.Official_Email),
       Personal_Email: normaliseEmail(row.Personal_Email),
-      Employment_End_Date: preferValue(row.Employment_End_Date),
-      Employment_End_Date_ISO: preferValue(row.Employment_End_Date_ISO ?? row.Employment_End_Date),
+      Employment_End_Date: preferValue(row.Employment_End_Date ? String(row.Employment_End_Date).slice(0, 10) : null),
+      Employment_End_Date_ISO: preferValue(row.Employment_End_Date ? String(row.Employment_End_Date).slice(0, 10) : null),
       Employment_Status: preferValue(row.Employment_Status),
       Full_Name_Key: normaliseKey(row.Full_Name_Key ?? row.Full_Name),
-      Key: normaliseKey(row.Full_Name_Key ?? row.Full_Name ?? row.Employee_ID),
+      Key: normaliseKey(row.Full_Name_Key ?? row.Full_Name ?? String(row.Employee_ID)),
     };
 
     const idKey = normaliseId(record.Employee_ID);
@@ -355,7 +382,12 @@ async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
 }
 
 const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryRecord => {
-  const idKey = normaliseId(row.Employee_ID);
+  // If row already has Employee_Name from join, use it directly
+  if (row.Employee_Name && row.Department && row.Employment_Status) {
+    return row;
+  }
+  
+  const idKey = normaliseId(String(row.Employee_ID));
   const officialKey = normaliseEmail(row.Official_Email);
   const personalKey = normaliseEmail(row.Personal_Email);
   const keyKey = normaliseKey(
@@ -375,7 +407,7 @@ const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryReco
     return row;
   }
 
-  const employeeId = preferValue(row.Employee_ID) ?? directoryRecord.Employee_ID ?? row.Employee_ID;
+  const employeeId = preferValue(String(row.Employee_ID)) ?? directoryRecord.Employee_ID ?? String(row.Employee_ID);
   const employeeName =
     preferValue(row.Employee_Name) ?? directoryRecord.Full_Name ?? row.Employee_Name;
   const department =

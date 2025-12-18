@@ -8,6 +8,8 @@ const NAV_ITEMS = [
   { label: "Employee Directory", href: "/directory" },
   { label: "Salaries", href: "/salaries" },
   { label: "EOBI", href: "/eobi" },
+  { label: "OPD Benefits", href: "/opd" },
+  { label: "Tax Calculations", href: "/tax" },
   { label: "Notifications", href: "/notifications" },
   { label: "Submissions", href: "/submissions" },
 ];

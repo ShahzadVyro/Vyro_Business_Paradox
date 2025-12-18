@@ -78,3 +78,23 @@ export const fetchOffboardingNotificationsClient = async () => {
   return data;
 };
 
+export const fetchOPDBenefitsClient = async (filters: import("@/types/opd").OPDFilters) => {
+  const { data } = await client.get<import("@/types/opd").OPDListResponse>("/opd", { params: filters });
+  return data;
+};
+
+export const fetchOPDByEmployeeClient = async (employeeId: number) => {
+  const { data } = await client.get<{ benefits: import("@/types/opd").OPDBenefitRecord[]; balance: import("@/types/opd").OPDBalance | null }>(`/opd/${employeeId}`);
+  return data;
+};
+
+export const fetchTaxCalculationsClient = async (filters: import("@/types/tax").TaxFilters) => {
+  const { data } = await client.get<import("@/types/tax").TaxListResponse>("/tax", { params: filters });
+  return data;
+};
+
+export const fetchTaxByEmployeeClient = async (employeeId: number) => {
+  const { data } = await client.get<{ tax: import("@/types/tax").TaxCalculationRecord[] }>(`/tax/${employeeId}`);
+  return data;
+};
+

@@ -25,6 +25,10 @@ const personalFields: FieldConfig[] = [
   { name: "Nationality", label: "Nationality", required: true },
   { name: "LinkedIn_URL", label: "LinkedIn URL" },
   { name: "Marital_Status", label: "Marital Status", type: "select", options: ["Single", "Married"], required: true },
+  { name: "Age", label: "Age", type: "text", placeholder: "Enter age in years" },
+  { name: "Number_of_Children", label: "Number of Children", type: "text", placeholder: "0 if none" },
+  { name: "Spouse_Name", label: "Spouse Name", placeholder: "If married" },
+  { name: "Spouse_DOB", label: "Spouse Date of Birth", type: "date", placeholder: "If married" },
 ];
 
 const employmentFields: FieldConfig[] = [
@@ -71,6 +75,7 @@ const employmentFields: FieldConfig[] = [
     required: true,
   },
   { name: "Preferred_Device", label: "Preferred Device", type: "select", options: ["MacBook", "Windows"], required: true },
+  { name: "Employment_Location", label: "Employment Location", placeholder: "City/Office location", required: true },
 ];
 
 const emergencyFields: FieldConfig[] = [

@@ -17,6 +17,10 @@ export interface OnboardingFormInput {
   Nationality: string;
   LinkedIn_URL?: string | null;
   Marital_Status: string;
+  Age?: string | null;
+  Number_of_Children?: string | null;
+  Spouse_Name?: string | null;
+  Spouse_DOB?: string | null;
   Joining_Date: string;
   Department: string;
   Designation: string;
@@ -25,6 +29,7 @@ export interface OnboardingFormInput {
   Job_Location: JobLocation;
   Recruiter_Name: string;
   Preferred_Device: PreferredDevice;
+  Employment_Location?: string | null;
   Father_Name: string;
   Emergency_Contact_Number: string;
   Emergency_Contact_Relationship: string;
