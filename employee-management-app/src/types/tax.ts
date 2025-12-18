@@ -1,7 +1,7 @@
 export interface TaxCalculationRecord {
   Tax_ID: number;
   Employee_ID: number;
-  Payroll_Month: string; // DATE as ISO string
+  Payroll_Month: string | null; // DATE as ISO string (can be null from BigQuery)
   Taxable_Income: number | null;
   Tax_Rate: number | null;
   Tax_Amount: number | null;
@@ -30,4 +30,5 @@ export interface TaxListResponse {
   months: Array<{ value: string; label: string }>;
   activeMonth?: string;
 }
+
 

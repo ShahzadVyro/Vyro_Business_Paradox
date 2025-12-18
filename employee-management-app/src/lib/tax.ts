@@ -108,7 +108,7 @@ export async function fetchTaxCalculations(filters: TaxFilters): Promise<{ rows:
       
       return normalized;
     })
-    .filter((row) => row.Employee_ID !== null); // Filter out records with NULL Employee_ID
+    .filter((row): row is TaxCalculationRecord => row.Employee_ID !== null); // Filter out records with NULL Employee_ID
 
   return { rows: convertedRows, total };
 }
@@ -132,18 +132,20 @@ export async function fetchTaxByEmployee(employeeId: number): Promise<TaxCalcula
   });
   
   // Convert Employee_ID from string to number and normalize dates
-  return (rows as TaxCalculationRecord[]).map((row) => {
-    const normalized = {
-      ...row,
-      Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
-        ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
-        : null,
-      Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
-      Calculated_At: row.Calculated_At ? convertDateToString(row.Calculated_At) ?? null : null,
-      Created_At: row.Created_At ? convertDateToString(row.Created_At) ?? null : null,
-    };
-    
-    return normalized;
-  });
+  return (rows as any[])
+    .map((row) => {
+      const normalized = {
+        ...row,
+        Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+          ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+          : null,
+        Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
+        Calculated_At: row.Calculated_At ? convertDateToString(row.Calculated_At) ?? null : null,
+        Created_At: row.Created_At ? convertDateToString(row.Created_At) ?? null : null,
+      };
+      
+      return normalized;
+    })
+    .filter((row): row is TaxCalculationRecord => row.Employee_ID !== null);
 }
 
