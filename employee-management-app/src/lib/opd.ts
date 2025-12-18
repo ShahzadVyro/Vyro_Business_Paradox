@@ -1,5 +1,6 @@
 import "server-only";
-import type { OPDBenefitRecord, OPDBalance, OPDFilters, OPDListResponse, MonthOption } from "@/types/opd";
+import type { OPDBenefitRecord, OPDBalance, OPDFilters, OPDListResponse } from "@/types/opd";
+import type { MonthOption } from "@/types/payroll";
 import { getBigQueryClient } from "./bigquery";
 
 const projectId = process.env.GCP_PROJECT_ID;

@@ -1,5 +1,6 @@
 import "server-only";
-import type { TaxCalculationRecord, TaxFilters, TaxListResponse, MonthOption } from "@/types/tax";
+import type { TaxCalculationRecord, TaxFilters, TaxListResponse } from "@/types/tax";
+import type { MonthOption } from "@/types/payroll";
 import { getBigQueryClient } from "./bigquery";
 
 const projectId = process.env.GCP_PROJECT_ID;
