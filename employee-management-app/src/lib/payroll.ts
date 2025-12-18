@@ -2,6 +2,7 @@ import "server-only";
 import type { SalaryRecord, EOBIRecord } from "@/types/api/payroll";
 import type { SalaryFilters, EobiFilters, MonthOption, PayrollSummaryRow, EobiSummary } from "@/types/payroll";
 import { getBigQueryClient } from "./bigquery";
+import { convertDateToString } from "./formatters";
 
 const projectId = process.env.GCP_PROJECT_ID;
 const dataset = process.env.BQ_DATASET;
@@ -51,13 +52,24 @@ export async function fetchLatestSalary(employeeId: string): Promise<SalaryRecor
   const row = rows[0] as SalaryRecord | undefined;
   if (!row) return null;
 
-  // Convert Employee_ID from string to number
-  return {
+  // Convert Employee_ID from string to number and normalize dates
+  const normalized = {
     ...row,
     Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
       ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
       : null,
+    Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
+    Loaded_At: row.Loaded_At ? convertDateToString(row.Loaded_At) ?? null : null,
+    Created_At: 'Created_At' in row && row.Created_At ? convertDateToString(row.Created_At as unknown) ?? null : null,
+    Joining_Date: row.Joining_Date ? convertDateToString(row.Joining_Date) ?? null : null,
+    Date_of_Birth: row.Date_of_Birth ? convertDateToString(row.Date_of_Birth) ?? null : null,
+    Spouse_DOB: row.Spouse_DOB ? convertDateToString(row.Spouse_DOB) ?? null : null,
+    Date_of_Increment: row.Date_of_Increment ? convertDateToString(row.Date_of_Increment) ?? null : null,
+    Payable_From: row.Payable_From ? convertDateToString(row.Payable_From) ?? null : null,
+    Salary_Effective_Date: row.Salary_Effective_Date ? convertDateToString(row.Salary_Effective_Date) ?? null : null,
   };
+  
+  return normalized;
 }
 
 export async function fetchLatestEOBI(employeeId: string): Promise<EOBIRecord | null> {
@@ -84,13 +96,21 @@ export async function fetchLatestEOBI(employeeId: string): Promise<EOBIRecord | 
   const row = rows[0] as EOBIRecord | undefined;
   if (!row) return null;
 
-  // Convert Employee_ID from string to number
-  return {
+  // Convert Employee_ID from string to number and normalize dates
+  const normalized = {
     ...row,
     Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
       ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
       : null,
+    Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
+    From_Date: convertDateToString(row.From_Date) ?? null,
+    To_Date: convertDateToString(row.To_Date) ?? null,
+    DOJ: row.DOJ ? convertDateToString(row.DOJ) ?? null : null,
+    DOB: row.DOB ? convertDateToString(row.DOB) ?? null : null,
+    Loaded_At: row.Loaded_At ? convertDateToString(row.Loaded_At) ?? null : null,
   };
+  
+  return normalized;
 }
 
 export async function fetchSalaryMonths(): Promise<MonthOption[]> {
@@ -189,14 +209,27 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
   const rows = rowsPromise[0] as SalaryRecord[];
   const total = Number((countPromise[0][0] as { total: number })?.total ?? 0);
 
-  // Convert Employee_ID from string to number and filter out NULL Employee_IDs
+  // Convert Employee_ID from string to number, normalize dates, and filter out NULL Employee_IDs
   const convertedRows = rows
-    .map((row) => ({
-      ...row,
-      Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
-        ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
-        : null,
-    }))
+    .map((row) => {
+      const normalized = {
+        ...row,
+        Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+          ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+          : null,
+        Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
+        Loaded_At: row.Loaded_At ? convertDateToString(row.Loaded_At) ?? null : null,
+        Created_At: 'Created_At' in row && row.Created_At ? convertDateToString(row.Created_At as unknown) ?? null : null,
+        Joining_Date: row.Joining_Date ? convertDateToString(row.Joining_Date) ?? null : null,
+        Date_of_Birth: row.Date_of_Birth ? convertDateToString(row.Date_of_Birth) ?? null : null,
+        Spouse_DOB: row.Spouse_DOB ? convertDateToString(row.Spouse_DOB) ?? null : null,
+        Date_of_Increment: row.Date_of_Increment ? convertDateToString(row.Date_of_Increment) ?? null : null,
+        Payable_From: row.Payable_From ? convertDateToString(row.Payable_From) ?? null : null,
+        Salary_Effective_Date: row.Salary_Effective_Date ? convertDateToString(row.Salary_Effective_Date) ?? null : null,
+      };
+      
+      return normalized;
+    })
     .filter((row) => row.Employee_ID !== null); // Filter out records with NULL Employee_ID
 
   // Still use directory lookup for backward compatibility with old data
@@ -258,7 +291,22 @@ export async function fetchEobiRecords(filters: EobiFilters): Promise<{ rows: EO
   const rows = rowsPromise[0] as EOBIRecord[];
   const total = Number((countPromise[0][0] as { total: number })?.total ?? 0);
 
-  return { rows, total };
+  // Normalize dates in EOBI records
+  const normalizedRows = rows.map((row) => {
+    const normalized = {
+      ...row,
+      Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
+      From_Date: convertDateToString(row.From_Date) ?? null,
+      To_Date: convertDateToString(row.To_Date) ?? null,
+      DOJ: row.DOJ ? convertDateToString(row.DOJ) ?? null : null,
+      DOB: row.DOB ? convertDateToString(row.DOB) ?? null : null,
+      Loaded_At: row.Loaded_At ? convertDateToString(row.Loaded_At) ?? null : null,
+    };
+    
+    return normalized;
+  });
+
+  return { rows: normalizedRows, total };
 }
 
 export async function fetchPayrollSummary(month: string): Promise<PayrollSummaryRow[]> {
@@ -380,14 +428,16 @@ async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
   const byKey = new Map<string, DirectoryRecord>();
 
   (rows as DirectoryRecord[]).forEach((row) => {
+    // Normalize Employment_End_Date using convertDateToString to handle BigQueryDate objects
+    const employmentEndDate = convertDateToString(row.Employment_End_Date);
     const record: DirectoryRecord = {
       Employee_ID: preferValue(String(row.Employee_ID)),
       Full_Name: preferValue(row.Full_Name),
       Department: preferValue(row.Department),
       Official_Email: normaliseEmail(row.Official_Email),
       Personal_Email: normaliseEmail(row.Personal_Email),
-      Employment_End_Date: preferValue(row.Employment_End_Date ? String(row.Employment_End_Date).slice(0, 10) : null),
-      Employment_End_Date_ISO: preferValue(row.Employment_End_Date ? String(row.Employment_End_Date).slice(0, 10) : null),
+      Employment_End_Date: employmentEndDate,
+      Employment_End_Date_ISO: employmentEndDate,
       Employment_Status: preferValue(row.Employment_Status),
       Full_Name_Key: normaliseKey(row.Full_Name_Key ?? row.Full_Name),
       Key: normaliseKey(row.Full_Name_Key ?? row.Full_Name ?? String(row.Employee_ID)),
@@ -476,7 +526,8 @@ const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryReco
     employmentEndDate;
 
   // Return enriched row - Employee_ID is never changed, only other fields are enriched
-  return {
+  // Normalize all date fields after enrichment
+  const enriched = {
     ...row,
     Employee_ID: employeeId, // Always preserve original Employee_ID
     Employee_Name: employeeName ?? row.Employee_Name,
@@ -485,6 +536,22 @@ const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryReco
     Employment_End_Date: employmentEndDate ?? row.Employment_End_Date,
     Employment_End_Date_ISO: employmentEndDateIso ?? null,
     Key: (typeof row.Key === "string" ? row.Key : null) ?? directoryRecord.Key ?? null,
+  };
+  
+  // Normalize all date fields (including Loaded_At, Created_At, Updated_At)
+  return {
+    ...enriched,
+    Joining_Date: enriched.Joining_Date ? convertDateToString(enriched.Joining_Date) ?? null : null,
+    Date_of_Birth: enriched.Date_of_Birth ? convertDateToString(enriched.Date_of_Birth) ?? null : null,
+    Spouse_DOB: enriched.Spouse_DOB ? convertDateToString(enriched.Spouse_DOB) ?? null : null,
+    Employment_End_Date: enriched.Employment_End_Date ? convertDateToString(enriched.Employment_End_Date) ?? null : null,
+    Probation_End_Date: enriched.Probation_End_Date ? convertDateToString(enriched.Probation_End_Date) ?? null : null,
+    Date_of_Increment: enriched.Date_of_Increment ? convertDateToString(enriched.Date_of_Increment) ?? null : null,
+    Payable_From: enriched.Payable_From ? convertDateToString(enriched.Payable_From) ?? null : null,
+    Salary_Effective_Date: enriched.Salary_Effective_Date ? convertDateToString(enriched.Salary_Effective_Date) ?? null : null,
+    Loaded_At: enriched.Loaded_At ? convertDateToString(enriched.Loaded_At) ?? null : null,
+    Created_At: 'Created_At' in enriched && enriched.Created_At ? convertDateToString(enriched.Created_At as unknown) ?? null : null,
+    Updated_At: 'Updated_At' in enriched && enriched.Updated_At ? convertDateToString(enriched.Updated_At as unknown) ?? null : null,
   };
 };
 

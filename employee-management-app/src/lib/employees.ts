@@ -1,6 +1,7 @@
 import 'server-only';
 import { getBigQueryClient } from "./bigquery";
 import { fetchOffboardingRecord } from "./offboarding";
+import { convertDateToString } from "./formatters";
 import type {
   EmployeeFilters,
   EmployeeRecord,
@@ -52,6 +53,28 @@ const offboardingTableRef = offboardingTable
 const opdTableRef = `\`${process.env.GCP_PROJECT_ID}.${datasetId}.${opdTable}\``;
 const taxTableRef = `\`${process.env.GCP_PROJECT_ID}.${datasetId}.${taxTable}\``;
 
+/**
+ * Normalizes date fields in an employee record to strings (YYYY-MM-DD format).
+ * This ensures dates are properly serialized in API responses.
+ */
+function normalizeEmployeeDates(employee: EmployeeRecord): EmployeeRecord {
+  // Normalize all date fields to strings (YYYY-MM-DD format)
+  // Note: Created_At and Updated_At are returned from BigQuery but not in EmployeeRecord type
+  const employeeAny = employee as any;
+  return {
+    ...employee,
+    Joining_Date: convertDateToString(employee.Joining_Date) ?? null,
+    Date_of_Birth: employee.Date_of_Birth ? convertDateToString(employee.Date_of_Birth) ?? null : null,
+    Probation_End_Date: employee.Probation_End_Date ? convertDateToString(employee.Probation_End_Date) ?? null : null,
+    Employment_End_Date: employee.Employment_End_Date ? convertDateToString(employee.Employment_End_Date) ?? null : null,
+    Spouse_DOB: employee.Spouse_DOB ? convertDateToString(employee.Spouse_DOB) ?? null : null,
+    // Normalize timestamp fields that may be present in BigQuery results
+    Created_At: employeeAny.Created_At ? convertDateToString(employeeAny.Created_At) ?? null : null,
+    Updated_At: employeeAny.Updated_At ? convertDateToString(employeeAny.Updated_At) ?? null : null,
+    Loaded_At: employeeAny.Loaded_At ? convertDateToString(employeeAny.Loaded_At) ?? null : null,
+  } as EmployeeRecord;
+}
+
 export async function fetchEmployees(filters: EmployeeFilters): Promise<EmployeeRecord[]> {
   const bigquery = getBigQueryClient();
   const conditions: string[] = [];
@@ -80,7 +103,7 @@ export async function fetchEmployees(filters: EmployeeFilters): Promise<Employee
     FROM ${tableRef} base
     ${
       offboardingTableRef
-        ? `LEFT JOIN ${offboardingTableRef} off ON base.Employee_ID = off.Employee_ID`
+        ? `LEFT JOIN ${offboardingTableRef} off ON CAST(base.Employee_ID AS STRING) = off.Employee_ID`
         : `LEFT JOIN (
             SELECT NULL AS Employee_ID,
                    NULL AS Offboarding_Status,
@@ -118,11 +141,14 @@ export async function fetchEmployees(filters: EmployeeFilters): Promise<Employee
     params,
   });
 
-  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
-  return (rows as EmployeeRecord[]).map((row) => ({
-    ...row,
-    Employee_ID: typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID,
-  }));
+  // Convert Employee_ID from string to number and normalize dates
+  return (rows as EmployeeRecord[]).map((row) => {
+    const normalized = {
+      ...row,
+      Employee_ID: typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID,
+    };
+    return normalizeEmployeeDates(normalized);
+  });
 }
 
 export async function fetchEmployeeById(employeeId: string): Promise<EmployeeRecord | null> {
@@ -149,11 +175,12 @@ export async function fetchEmployeeById(employeeId: string): Promise<EmployeeRec
   const row = rows[0] as EmployeeRecord | undefined;
   if (!row) return null;
 
-  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
-  return {
+  // Convert Employee_ID from string to number and normalize dates
+  const normalized = {
     ...row,
     Employee_ID: typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID,
   };
+  return normalizeEmployeeDates(normalized);
 }
 
 export async function fetchLatestSalaryByEmployee(employeeId: string): Promise<SalaryRecord | null> {
@@ -175,8 +202,8 @@ export async function fetchLatestSalaryByEmployee(employeeId: string): Promise<S
       e.Designation,
       e.Department
     FROM ${salaryTableRef} s
-    LEFT JOIN ${tableRef} e ON s.Employee_ID = e.Employee_ID
-    WHERE s.Employee_ID = @employeeId
+    LEFT JOIN ${tableRef} e ON SAFE_CAST(s.Employee_ID AS INT64) = e.Employee_ID
+    WHERE SAFE_CAST(s.Employee_ID AS INT64) = @employeeId
     ORDER BY s.Payroll_Month DESC
     LIMIT 1
   `;
@@ -188,13 +215,27 @@ export async function fetchLatestSalaryByEmployee(employeeId: string): Promise<S
   const row = rows[0] as SalaryRecord | undefined;
   if (!row) return null;
   
-  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
-  return {
+  // Convert Employee_ID from string to number and normalize ALL date fields
+  const normalized = {
     ...row,
     Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
       ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
       : null,
+    Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
+    Loaded_At: row.Loaded_At ? convertDateToString(row.Loaded_At) ?? null : null,
+    Created_At: (row as any).Created_At ? convertDateToString((row as any).Created_At) ?? null : null,
+    Updated_At: (row as any).Updated_At ? convertDateToString((row as any).Updated_At) ?? null : null,
+    Joining_Date: row.Joining_Date ? convertDateToString(row.Joining_Date) ?? null : null,
+    Date_of_Birth: row.Date_of_Birth ? convertDateToString(row.Date_of_Birth) ?? null : null,
+    Spouse_DOB: row.Spouse_DOB ? convertDateToString(row.Spouse_DOB) ?? null : null,
+    Probation_End_Date: row.Probation_End_Date ? convertDateToString(row.Probation_End_Date) ?? null : null,
+    Employment_End_Date: row.Employment_End_Date ? convertDateToString(row.Employment_End_Date) ?? null : null,
+    Date_of_Increment: row.Date_of_Increment ? convertDateToString(row.Date_of_Increment) ?? null : null,
+    Payable_From: row.Payable_From ? convertDateToString(row.Payable_From) ?? null : null,
+    Salary_Effective_Date: row.Salary_Effective_Date ? convertDateToString(row.Salary_Effective_Date) ?? null : null,
   };
+  
+  return normalized;
 }
 
 export async function fetchLatestEobiByEmployee(employeeId: string): Promise<EOBIRecord | null> {
@@ -210,7 +251,7 @@ export async function fetchLatestEobiByEmployee(employeeId: string): Promise<EOB
   const query = `
     SELECT *
     FROM ${eobiTableRef}
-    WHERE Employee_ID = @employeeId
+    WHERE SAFE_CAST(Employee_ID AS INT64) = @employeeId
     ORDER BY Payroll_Month DESC
     LIMIT 1
   `;
@@ -222,13 +263,21 @@ export async function fetchLatestEobiByEmployee(employeeId: string): Promise<EOB
   const row = rows[0] as EOBIRecord | undefined;
   if (!row) return null;
   
-  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
-  return {
+  // Convert Employee_ID from string to number and normalize dates
+  const normalized = {
     ...row,
     Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
       ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
       : null,
+    Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
+    From_Date: convertDateToString(row.From_Date) ?? null,
+    To_Date: convertDateToString(row.To_Date) ?? null,
+    DOJ: row.DOJ ? convertDateToString(row.DOJ) ?? null : null,
+    DOB: row.DOB ? convertDateToString(row.DOB) ?? null : null,
+    Loaded_At: row.Loaded_At ? convertDateToString(row.Loaded_At) ?? null : null,
   };
+  
+  return normalized;
 }
 
 export async function fetchEmployeeHistory(employeeId: string): Promise<EmployeeHistoryRecord[]> {
@@ -244,7 +293,7 @@ export async function fetchEmployeeHistory(employeeId: string): Promise<Employee
   const query = `
     SELECT *
     FROM ${historyTableRef}
-    WHERE Employee_ID = @employeeId
+    WHERE SAFE_CAST(Employee_ID AS INT64) = @employeeId
     ORDER BY Rejoin_Sequence DESC
   `;
   const [rows] = await bigquery.query({
@@ -252,11 +301,17 @@ export async function fetchEmployeeHistory(employeeId: string): Promise<Employee
     params: { employeeId: employeeIdNum },
   });
   
-  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
-  return (rows as EmployeeHistoryRecord[]).map((row) => ({
-    ...row,
-    Employee_ID: typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID,
-  }));
+  // Convert Employee_ID from string to number and normalize dates
+  return (rows as EmployeeHistoryRecord[]).map((row) => {
+    const normalized = {
+      ...row,
+      Employee_ID: typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID,
+      Joining_Date: convertDateToString(row.Joining_Date) ?? null,
+      Employment_End_Date: row.Employment_End_Date ? convertDateToString(row.Employment_End_Date) ?? null : null,
+    };
+    
+    return normalized;
+  });
 }
 
 export async function updateEmploymentStatus(
@@ -339,18 +394,27 @@ export async function fetchEmployeeFull(employeeId: string) {
         const query = `
           SELECT *
           FROM ${opdTableRef}
-          WHERE Employee_ID = @employeeId
+          WHERE SAFE_CAST(Employee_ID AS INT64) = @employeeId
           ORDER BY Benefit_Month DESC
           LIMIT 12
         `;
         const [rows] = await bigquery.query({ query, params: { employeeId: employeeIdNum } });
-        // Convert Employee_ID from string to number
-        return (rows as any[]).map((row) => ({
-          ...row,
-          Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
-            ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
-            : null,
-        }));
+        // Convert Employee_ID from string to number and normalize dates
+        return (rows as any[]).map((row) => {
+          const normalized = {
+            ...row,
+            Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+              ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+              : null,
+            Benefit_Month: convertDateToString(row.Benefit_Month) ?? null,
+            Last_Contribution_Month: row.Last_Contribution_Month ? convertDateToString(row.Last_Contribution_Month) ?? null : null,
+            Last_Claim_Month: row.Last_Claim_Month ? convertDateToString(row.Last_Claim_Month) ?? null : null,
+            Created_At: row.Created_At ? convertDateToString(row.Created_At) ?? null : null,
+            Updated_At: row.Updated_At ? convertDateToString(row.Updated_At) ?? null : null,
+          };
+          
+          return normalized;
+        });
       } catch (e) {
         console.warn("[FETCH_OPD_ERROR]", e);
         return null;
@@ -363,18 +427,25 @@ export async function fetchEmployeeFull(employeeId: string) {
         const query = `
           SELECT *
           FROM ${taxTableRef}
-          WHERE Employee_ID = @employeeId
+          WHERE SAFE_CAST(Employee_ID AS INT64) = @employeeId
           ORDER BY Payroll_Month DESC
           LIMIT 12
         `;
         const [rows] = await bigquery.query({ query, params: { employeeId: employeeIdNum } });
-        // Convert Employee_ID from string to number
-        return (rows as any[]).map((row) => ({
-          ...row,
-          Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
-            ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
-            : null,
-        }));
+        // Convert Employee_ID from string to number and normalize dates
+        return (rows as any[]).map((row) => {
+          const normalized = {
+            ...row,
+            Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+              ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+              : null,
+            Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
+            Calculated_At: row.Calculated_At ? convertDateToString(row.Calculated_At) ?? null : null,
+            Created_At: row.Created_At ? convertDateToString(row.Created_At) ?? null : null,
+          };
+          
+          return normalized;
+        });
       } catch (e) {
         console.warn("[FETCH_TAX_ERROR]", e);
         return null;

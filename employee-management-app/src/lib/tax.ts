@@ -2,6 +2,7 @@ import "server-only";
 import type { TaxCalculationRecord, TaxFilters, TaxListResponse } from "@/types/tax";
 import type { MonthOption } from "@/types/payroll";
 import { getBigQueryClient } from "./bigquery";
+import { convertDateToString } from "./formatters";
 
 const projectId = process.env.GCP_PROJECT_ID;
 const dataset = process.env.BQ_DATASET;
@@ -92,15 +93,21 @@ export async function fetchTaxCalculations(filters: TaxFilters): Promise<{ rows:
   const rows = rowsPromise[0] as TaxCalculationRecord[];
   const total = Number((countPromise[0][0] as { total: number })?.total ?? 0);
 
-  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
-  // Filter out records with NULL Employee_ID to prevent issues
+  // Convert Employee_ID from string to number, normalize dates, and filter out NULL Employee_IDs
   const convertedRows = rows
-    .map((row) => ({
-      ...row,
-      Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
-        ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
-        : null,
-    }))
+    .map((row) => {
+      const normalized = {
+        ...row,
+        Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+          ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+          : null,
+        Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
+        Calculated_At: row.Calculated_At ? convertDateToString(row.Calculated_At) ?? null : null,
+        Created_At: row.Created_At ? convertDateToString(row.Created_At) ?? null : null,
+      };
+      
+      return normalized;
+    })
     .filter((row) => row.Employee_ID !== null); // Filter out records with NULL Employee_ID
 
   return { rows: convertedRows, total };
@@ -124,12 +131,19 @@ export async function fetchTaxByEmployee(employeeId: number): Promise<TaxCalcula
     params: { employeeId },
   });
   
-  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
-  return (rows as TaxCalculationRecord[]).map((row) => ({
-    ...row,
-    Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
-      ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
-      : null,
-  }));
+  // Convert Employee_ID from string to number and normalize dates
+  return (rows as TaxCalculationRecord[]).map((row) => {
+    const normalized = {
+      ...row,
+      Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+        ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+        : null,
+      Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
+      Calculated_At: row.Calculated_At ? convertDateToString(row.Calculated_At) ?? null : null,
+      Created_At: row.Created_At ? convertDateToString(row.Created_At) ?? null : null,
+    };
+    
+    return normalized;
+  });
 }
 

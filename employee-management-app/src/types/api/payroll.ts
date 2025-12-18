@@ -1,6 +1,6 @@
 export interface SalaryRecord {
   // Core fields
-  Payroll_Month: string;
+  Payroll_Month: string | null; // Can be null from BigQuery
   Currency: string;
   Employee_ID: number | null; // INT64 - standardized numeric ID
   Employee_Name?: string | null; // From Employees join
@@ -99,10 +99,12 @@ export interface SalaryRecord {
   AccountNumber?: string | null;
   Bank_Code?: string | null;
   Loaded_At?: string | null;
+  Created_At?: string | null;
+  Updated_At?: string | null;
 }
 
 export interface EOBIRecord {
-  Payroll_Month: string;
+  Payroll_Month: string | null; // Can be null from BigQuery
   Employee_ID: number | null; // INT64 - standardized numeric ID
   EMP_AREA_CODE: string;
   EMP_REG_SERIAL_NO: string;

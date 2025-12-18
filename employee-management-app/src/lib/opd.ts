@@ -2,6 +2,7 @@ import "server-only";
 import type { OPDBenefitRecord, OPDBalance, OPDFilters, OPDListResponse } from "@/types/opd";
 import type { MonthOption } from "@/types/payroll";
 import { getBigQueryClient } from "./bigquery";
+import { convertDateToString } from "./formatters";
 
 const projectId = process.env.GCP_PROJECT_ID;
 const dataset = process.env.BQ_DATASET;
@@ -96,15 +97,23 @@ export async function fetchOPDBenefits(filters: OPDFilters): Promise<{ rows: OPD
   const rows = rowsPromise[0] as OPDBenefitRecord[];
   const total = Number((countPromise[0][0] as { total: number })?.total ?? 0);
 
-  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
-  // Filter out records with NULL Employee_ID to prevent issues
+  // Convert Employee_ID from string to number, normalize dates, and filter out NULL Employee_IDs
   const convertedRows = rows
-    .map((row) => ({
-      ...row,
-      Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
-        ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
-        : null,
-    }))
+    .map((row) => {
+      const normalized = {
+        ...row,
+        Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+          ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+          : null,
+        Benefit_Month: convertDateToString(row.Benefit_Month) ?? null,
+        Last_Contribution_Month: row.Last_Contribution_Month ? convertDateToString(row.Last_Contribution_Month) ?? null : null,
+        Last_Claim_Month: row.Last_Claim_Month ? convertDateToString(row.Last_Claim_Month) ?? null : null,
+        Created_At: row.Created_At ? convertDateToString(row.Created_At) ?? null : null,
+        Updated_At: row.Updated_At ? convertDateToString(row.Updated_At) ?? null : null,
+      };
+      
+      return normalized;
+    })
     .filter((row) => row.Employee_ID !== null); // Filter out records with NULL Employee_ID
 
   return { rows: convertedRows, total };
@@ -135,8 +144,8 @@ export async function fetchOPDBalance(employeeId: number): Promise<OPDBalance | 
     Total_Contributions: Number(row.Total_Contributions ?? 0),
     Total_Claimed: Number(row.Total_Claimed ?? 0),
     Available_Balance: Number(row.Available_Balance ?? 0),
-    Last_Contribution_Month: row.Last_Contribution_Month ? String(row.Last_Contribution_Month).slice(0, 10) : null,
-    Last_Claim_Month: row.Last_Claim_Month ? String(row.Last_Claim_Month).slice(0, 10) : null,
+    Last_Contribution_Month: convertDateToString(row.Last_Contribution_Month),
+    Last_Claim_Month: convertDateToString(row.Last_Claim_Month),
   };
 }
 
@@ -158,12 +167,21 @@ export async function fetchOPDByEmployee(employeeId: number): Promise<OPDBenefit
     params: { employeeId },
   });
   
-  // Convert Employee_ID from string to number (BigQuery returns INT64 as strings in JSON)
-  return (rows as OPDBenefitRecord[]).map((row) => ({
-    ...row,
-    Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
-      ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
-      : null,
-  }));
+  // Convert Employee_ID from string to number and normalize dates
+  return (rows as OPDBenefitRecord[]).map((row) => {
+    const normalized = {
+      ...row,
+      Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+        ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+        : null,
+      Benefit_Month: convertDateToString(row.Benefit_Month) ?? null,
+      Last_Contribution_Month: row.Last_Contribution_Month ? convertDateToString(row.Last_Contribution_Month) ?? null : null,
+      Last_Claim_Month: row.Last_Claim_Month ? convertDateToString(row.Last_Claim_Month) ?? null : null,
+      Created_At: row.Created_At ? convertDateToString(row.Created_At) ?? null : null,
+      Updated_At: row.Updated_At ? convertDateToString(row.Updated_At) ?? null : null,
+    };
+    
+    return normalized;
+  });
 }
 
