@@ -13,7 +13,7 @@ export const useOffboardingNotifications = () =>
     queryFn: fetchOffboardingNotificationsClient,
   });
 
-export const useScheduleOffboarding = (employeeId: string) => {
+export const useScheduleOffboarding = (employeeId: number) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: { Employment_End_Date: string; Note?: string; Scheduled_By?: string }) =>
@@ -26,7 +26,7 @@ export const useScheduleOffboarding = (employeeId: string) => {
   });
 };
 
-export const useCancelOffboarding = (employeeId: string) => {
+export const useCancelOffboarding = (employeeId: number) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => cancelOffboardingClient(employeeId),

@@ -22,9 +22,11 @@ const normalizeSearch = (value?: string | null) => (value ? `%${value.toLowerCas
 export async function fetchLatestSalary(employeeId: string): Promise<SalaryRecord | null> {
   const bigquery = getBigQueryClient();
   
-  // Handle both STRING and INT64 Employee_ID
+  // Convert string from URL to number (INT64)
   const employeeIdNum = parseInt(employeeId, 10);
-  const isNumeric = !isNaN(employeeIdNum);
+  if (isNaN(employeeIdNum)) {
+    return null;
+  }
   
   const query = `
     SELECT 
@@ -43,7 +45,7 @@ export async function fetchLatestSalary(employeeId: string): Promise<SalaryRecor
   `;
   const [rows] = await bigquery.query({
     query,
-    params: { employeeId: isNumeric ? employeeIdNum : employeeId },
+    params: { employeeId: employeeIdNum },
   });
   return (rows[0] as SalaryRecord) ?? null;
 }
@@ -51,9 +53,11 @@ export async function fetchLatestSalary(employeeId: string): Promise<SalaryRecor
 export async function fetchLatestEOBI(employeeId: string): Promise<EOBIRecord | null> {
   const bigquery = getBigQueryClient();
   
-  // Handle both STRING and INT64 Employee_ID
+  // Convert string from URL to number (INT64)
   const employeeIdNum = parseInt(employeeId, 10);
-  const isNumeric = !isNaN(employeeIdNum);
+  if (isNaN(employeeIdNum)) {
+    return null;
+  }
   
   const query = `
     SELECT *
@@ -64,7 +68,7 @@ export async function fetchLatestEOBI(employeeId: string): Promise<EOBIRecord | 
   `;
   const [rows] = await bigquery.query({
     query,
-    params: { employeeId: isNumeric ? employeeIdNum : employeeId },
+    params: { employeeId: employeeIdNum },
   });
   return (rows[0] as EOBIRecord) ?? null;
 }
@@ -387,7 +391,8 @@ const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryReco
     return row;
   }
   
-  const idKey = normaliseId(String(row.Employee_ID));
+  // Employee_ID is now always a number (INT64)
+  const idKey = row.Employee_ID ? normaliseId(String(row.Employee_ID)) : null;
   const officialKey = normaliseEmail(row.Official_Email);
   const personalKey = normaliseEmail(row.Personal_Email);
   const keyKey = normaliseKey(
@@ -407,7 +412,8 @@ const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryReco
     return row;
   }
 
-  const employeeId = preferValue(String(row.Employee_ID)) ?? directoryRecord.Employee_ID ?? String(row.Employee_ID);
+  // Employee_ID is number, keep it as number
+  const employeeId = row.Employee_ID ?? (directoryRecord.Employee_ID ? parseInt(directoryRecord.Employee_ID, 10) : null);
   const employeeName =
     preferValue(row.Employee_Name) ?? directoryRecord.Full_Name ?? row.Employee_Name;
   const department =

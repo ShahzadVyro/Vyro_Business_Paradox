@@ -32,6 +32,13 @@ const ensureOffboardingTable = async () => {
 export const fetchOffboardingRecord = async (employeeId: string): Promise<EmployeeOffboardingRecord | null> => {
   await ensureOffboardingTable();
   const bigquery = getBigQueryClient();
+  
+  // Convert string from URL to number for type, but query table with string (table uses STRING)
+  const employeeIdNum = parseInt(employeeId, 10);
+  if (isNaN(employeeIdNum)) {
+    return null;
+  }
+  
   const query = `
     SELECT *
     FROM ${offboardingTableRef}
@@ -40,9 +47,16 @@ export const fetchOffboardingRecord = async (employeeId: string): Promise<Employ
   `;
   const [rows] = await bigquery.query({
     query,
-    params: { employeeId },
+    params: { employeeId: String(employeeIdNum) }, // Table uses STRING
   });
-  return (rows[0] as EmployeeOffboardingRecord) ?? null;
+  const record = rows[0] as EmployeeOffboardingRecord | undefined;
+  if (!record) return null;
+  
+  // Convert Employee_ID to number for type consistency
+  return {
+    ...record,
+    Employee_ID: employeeIdNum,
+  };
 };
 
 export const upsertOffboardingRecord = async ({
@@ -60,6 +74,14 @@ export const upsertOffboardingRecord = async ({
 }) => {
   await ensureOffboardingTable();
   const bigquery = getBigQueryClient();
+  
+  // Convert string from URL to number, but store as string in table (table uses STRING)
+  const employeeIdNum = parseInt(employeeId, 10);
+  if (isNaN(employeeIdNum)) {
+    throw new Error(`Invalid Employee_ID: ${employeeId}`);
+  }
+  const employeeIdStr = String(employeeIdNum);
+  
   const query = `
     MERGE ${offboardingTableRef} T
     USING (SELECT @employeeId AS Employee_ID) S
@@ -79,7 +101,7 @@ export const upsertOffboardingRecord = async ({
   await bigquery.query({
     query,
     params: {
-      employeeId,
+      employeeId: employeeIdStr, // Table uses STRING
       employmentEndDate,
       note: note ?? null,
       user: user ?? 'dashboard@vyro.ai',
@@ -99,13 +121,20 @@ export const upsertOffboardingRecord = async ({
 export const clearOffboardingRecord = async (employeeId: string) => {
   await ensureOffboardingTable();
   const bigquery = getBigQueryClient();
+  
+  // Convert string from URL to number, but query table with string (table uses STRING)
+  const employeeIdNum = parseInt(employeeId, 10);
+  if (isNaN(employeeIdNum)) {
+    throw new Error(`Invalid Employee_ID: ${employeeId}`);
+  }
+  
   const query = `
     DELETE FROM ${offboardingTableRef}
     WHERE Employee_ID = @employeeId
   `;
   await bigquery.query({
     query,
-    params: { employeeId },
+    params: { employeeId: String(employeeIdNum) }, // Table uses STRING
   });
 };
 

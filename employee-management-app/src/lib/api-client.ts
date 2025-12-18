@@ -16,30 +16,30 @@ export const fetchEmployeesClient = async (filters: EmployeeFilters) => {
   return data;
 };
 
-export const fetchEmployeeClient = async (employeeId: string) => {
+export const fetchEmployeeClient = async (employeeId: number) => {
   const { data } = await client.get<EmployeeRecord>(`/employees/${employeeId}`);
   return data;
 };
 
-export const fetchEmployeeFullClient = async (employeeId: string) => {
+export const fetchEmployeeFullClient = async (employeeId: number) => {
   const { data } = await client.get(`/employees/${employeeId}/full`);
   return data;
 };
 
 export const updateEmploymentStatusClient = async (
-  employeeId: string,
+  employeeId: number,
   payload: { Employment_Status: EmploymentStatus; Employment_End_Date?: string | null; Reason?: string },
 ) => {
   const { data } = await client.patch<EmployeeRecord>(`/employees/${employeeId}/status`, payload);
   return data;
 };
 
-export const fetchLatestSalaryClient = async (employeeId: string) => {
+export const fetchLatestSalaryClient = async (employeeId: number) => {
   const { data } = await client.get(`/salaries/${employeeId}`);
   return data;
 };
 
-export const fetchLatestEOBIClient = async (employeeId: string) => {
+export const fetchLatestEOBIClient = async (employeeId: number) => {
   const { data } = await client.get(`/eobi/${employeeId}`);
   return data;
 };
@@ -60,14 +60,14 @@ export const fetchDashboardSummaryClient = async (month?: string) => {
 };
 
 export const scheduleOffboardingClient = async (
-  employeeId: string,
+  employeeId: number,
   payload: { Employment_End_Date: string; Note?: string; Scheduled_By?: string },
 ) => {
   const { data } = await client.post<EmployeeOffboardingRecord>(`/employees/${employeeId}/offboarding`, payload);
   return data;
 };
 
-export const cancelOffboardingClient = async (employeeId: string) => {
+export const cancelOffboardingClient = async (employeeId: number) => {
   await client.delete(`/employees/${employeeId}/offboarding`);
 };
 

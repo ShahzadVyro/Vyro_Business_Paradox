@@ -120,9 +120,11 @@ export async function fetchEmployees(filters: EmployeeFilters): Promise<Employee
 export async function fetchEmployeeById(employeeId: string): Promise<EmployeeRecord | null> {
   const bigquery = getBigQueryClient();
   
-  // Handle both STRING and INT64 Employee_ID
+  // Convert string from URL to number (INT64)
   const employeeIdNum = parseInt(employeeId, 10);
-  const isNumeric = !isNaN(employeeIdNum);
+  if (isNaN(employeeIdNum)) {
+    return null;
+  }
 
   const query = `
     SELECT *
@@ -133,7 +135,7 @@ export async function fetchEmployeeById(employeeId: string): Promise<EmployeeRec
 
   const [rows] = await bigquery.query({
     query,
-    params: { employeeId: isNumeric ? employeeIdNum : employeeId },
+    params: { employeeId: employeeIdNum },
   });
 
   return (rows[0] as EmployeeRecord) ?? null;
@@ -143,9 +145,11 @@ export async function fetchLatestSalaryByEmployee(employeeId: string): Promise<S
   if (!salaryTableRef) return null;
   const bigquery = getBigQueryClient();
   
-  // Handle both STRING and INT64 Employee_ID
+  // Convert string from URL to number (INT64)
   const employeeIdNum = parseInt(employeeId, 10);
-  const isNumeric = !isNaN(employeeIdNum);
+  if (isNaN(employeeIdNum)) {
+    return null;
+  }
   
   const query = `
     SELECT 
@@ -163,7 +167,7 @@ export async function fetchLatestSalaryByEmployee(employeeId: string): Promise<S
   `;
   const [rows] = await bigquery.query({
     query,
-    params: { employeeId: isNumeric ? employeeIdNum : employeeId },
+    params: { employeeId: employeeIdNum },
   });
   return (rows[0] as SalaryRecord) ?? null;
 }
@@ -172,9 +176,11 @@ export async function fetchLatestEobiByEmployee(employeeId: string): Promise<EOB
   if (!eobiTableRef) return null;
   const bigquery = getBigQueryClient();
   
-  // Handle both STRING and INT64 Employee_ID
+  // Convert string from URL to number (INT64)
   const employeeIdNum = parseInt(employeeId, 10);
-  const isNumeric = !isNaN(employeeIdNum);
+  if (isNaN(employeeIdNum)) {
+    return null;
+  }
   
   const query = `
     SELECT *
@@ -185,7 +191,7 @@ export async function fetchLatestEobiByEmployee(employeeId: string): Promise<EOB
   `;
   const [rows] = await bigquery.query({
     query,
-    params: { employeeId: isNumeric ? employeeIdNum : employeeId },
+    params: { employeeId: employeeIdNum },
   });
   return (rows[0] as EOBIRecord) ?? null;
 }
@@ -193,6 +199,13 @@ export async function fetchLatestEobiByEmployee(employeeId: string): Promise<EOB
 export async function fetchEmployeeHistory(employeeId: string): Promise<EmployeeHistoryRecord[]> {
   if (!historyTableRef) return [];
   const bigquery = getBigQueryClient();
+  
+  // Convert string from URL to number (INT64)
+  const employeeIdNum = parseInt(employeeId, 10);
+  if (isNaN(employeeIdNum)) {
+    return [];
+  }
+  
   const query = `
     SELECT *
     FROM ${historyTableRef}
@@ -201,7 +214,7 @@ export async function fetchEmployeeHistory(employeeId: string): Promise<Employee
   `;
   const [rows] = await bigquery.query({
     query,
-    params: { employeeId },
+    params: { employeeId: employeeIdNum },
   });
   return rows as EmployeeHistoryRecord[];
 }
@@ -217,9 +230,11 @@ export async function updateEmploymentStatus(
 ) {
   const bigquery = getBigQueryClient();
   
-  // Handle both STRING and INT64 Employee_ID
+  // Convert string from URL to number (INT64)
   const employeeIdNum = parseInt(employeeId, 10);
-  const isNumeric = !isNaN(employeeIdNum);
+  if (isNaN(employeeIdNum)) {
+    throw new Error(`Invalid Employee_ID: ${employeeId}`);
+  }
   
   const query = `
     UPDATE ${tableRef}
@@ -232,7 +247,7 @@ export async function updateEmploymentStatus(
   await bigquery.query({
     query,
     params: {
-      employeeId: isNumeric ? employeeIdNum : employeeId,
+      employeeId: employeeIdNum,
       status,
       endDate: endDate ?? null,
     },
@@ -249,7 +264,7 @@ export async function updateEmploymentStatus(
       await bigquery.query({
         query: auditQuery,
         params: {
-          employeeId: isNumeric ? employeeIdNum : employeeId,
+          employeeId: employeeIdNum,
           oldValue: null,
           newValue: status,
           updatedBy: updatedBy ?? 'dashboard@vyro.ai',
@@ -265,10 +280,11 @@ export async function updateEmploymentStatus(
 }
 
 export async function fetchEmployeeFull(employeeId: string) {
-  // Handle both STRING and INT64 Employee_ID
+  // Convert string from URL to number (INT64)
   const employeeIdNum = parseInt(employeeId, 10);
-  const isNumeric = !isNaN(employeeIdNum);
-  const idForQuery = isNumeric ? employeeIdNum : employeeId;
+  if (isNaN(employeeIdNum)) {
+    return { profile: null, salary: null, eobi: null, history: [], offboarding: null, opd: null, tax: null };
+  }
   
   const [profile, salary, eobi, history, offboarding, opd, tax] = await Promise.all([
     fetchEmployeeById(employeeId),
@@ -278,7 +294,6 @@ export async function fetchEmployeeFull(employeeId: string) {
     offboardingTableRef ? fetchOffboardingRecord(employeeId) : Promise.resolve(null),
     // Fetch OPD benefits
     (async () => {
-      if (!isNumeric) return null;
       const bigquery = getBigQueryClient();
       try {
         const query = `
@@ -288,7 +303,7 @@ export async function fetchEmployeeFull(employeeId: string) {
           ORDER BY Benefit_Month DESC
           LIMIT 12
         `;
-        const [rows] = await bigquery.query({ query, params: { employeeId: idForQuery } });
+        const [rows] = await bigquery.query({ query, params: { employeeId: employeeIdNum } });
         return rows;
       } catch (e) {
         console.warn("[FETCH_OPD_ERROR]", e);
@@ -297,7 +312,6 @@ export async function fetchEmployeeFull(employeeId: string) {
     })(),
     // Fetch Tax calculations
     (async () => {
-      if (!isNumeric) return null;
       const bigquery = getBigQueryClient();
       try {
         const query = `
@@ -307,7 +321,7 @@ export async function fetchEmployeeFull(employeeId: string) {
           ORDER BY Payroll_Month DESC
           LIMIT 12
         `;
-        const [rows] = await bigquery.query({ query, params: { employeeId: idForQuery } });
+        const [rows] = await bigquery.query({ query, params: { employeeId: employeeIdNum } });
         return rows;
       } catch (e) {
         console.warn("[FETCH_TAX_ERROR]", e);
@@ -342,9 +356,11 @@ export async function fetchEmployeeFull(employeeId: string) {
 export async function updateEmploymentEndDate(employeeId: string, endDate?: string | null) {
   const bigquery = getBigQueryClient();
   
-  // Handle both STRING and INT64 Employee_ID
+  // Convert string from URL to number (INT64)
   const employeeIdNum = parseInt(employeeId, 10);
-  const isNumeric = !isNaN(employeeIdNum);
+  if (isNaN(employeeIdNum)) {
+    throw new Error(`Invalid Employee_ID: ${employeeId}`);
+  }
   
   const query = `
     UPDATE ${tableRef}
@@ -355,7 +371,7 @@ export async function updateEmploymentEndDate(employeeId: string, endDate?: stri
   await bigquery.query({
     query,
     params: {
-      employeeId: isNumeric ? employeeIdNum : employeeId,
+      employeeId: employeeIdNum,
       endDate: endDate ?? null,
     },
   });

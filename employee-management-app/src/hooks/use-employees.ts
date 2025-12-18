@@ -10,7 +10,7 @@ export const useEmployees = (filters: EmployeeFilters) =>
     queryFn: () => fetchEmployeesClient(filters),
   });
 
-export const useEmployeeDetail = (employeeId?: string | null) =>
+export const useEmployeeDetail = (employeeId?: number | null) =>
   useQuery({
     queryKey: ["employee", employeeId],
     queryFn: () => fetchEmployeeFullClient(employeeId!),

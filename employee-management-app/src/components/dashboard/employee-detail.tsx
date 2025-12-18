@@ -51,7 +51,7 @@ const EmployeeDetail = ({ data, isLoading, view, onViewChange }: Props) => {
 
   return (
     <DetailBody
-      key={String(profile.Employee_ID)}
+      key={profile.Employee_ID}
       profile={profile}
       salary={salary}
       eobi={eobi}
@@ -91,21 +91,21 @@ const DetailBody = ({
 
   const mutation = useMutation({
     mutationFn: (payload: { Employment_Status: EmploymentStatus }) =>
-      updateEmploymentStatusClient(String(profile.Employee_ID), {
+      updateEmploymentStatusClient(profile.Employee_ID, {
         Employment_Status: payload.Employment_Status,
         Employment_End_Date: payload.Employment_Status === "Resigned/Terminated" ? new Date().toISOString() : null,
         Reason: "Updated via Next.js dashboard",
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees"] });
-      queryClient.invalidateQueries({ queryKey: ["employee", String(profile.Employee_ID)] });
+      queryClient.invalidateQueries({ queryKey: ["employee", profile.Employee_ID] });
     },
   });
 
   const headliner = (
     <div className="flex flex-wrap items-start justify-between gap-4">
       <div>
-        <p className="text-xs uppercase tracking-wide text-slate-400">Employee #{String(profile.Employee_ID)}</p>
+        <p className="text-xs uppercase tracking-wide text-slate-400">Employee #{profile.Employee_ID}</p>
         <h2 className="text-3xl font-semibold text-slate-900">{profile.Full_Name}</h2>
         <p className="text-sm text-slate-500">{profile.Designation ?? "—"}</p>
         <p className="text-sm text-slate-400">{profile.Department ?? "—"}</p>
@@ -150,7 +150,7 @@ const DetailBody = ({
       case "eobi":
         return <EobiView eobi={eobi} />;
       case "opd":
-        return <OPDView opd={opd} employeeId={String(profile.Employee_ID)} />;
+        return <OPDView opd={opd} employeeId={profile.Employee_ID} />;
       case "tax":
         return <TaxView tax={tax} />;
       case "all":
@@ -165,7 +165,7 @@ const DetailBody = ({
       {statusControl}
       <OffboardingPanel
         key={`${offboarding?.Employment_End_Date_ISO ?? offboarding?.Employment_End_Date ?? "none"}-${offboarding?.Note ?? ""}`}
-        employeeId={String(profile.Employee_ID)}
+        employeeId={profile.Employee_ID}
         offboarding={offboarding}
       />
       {history && history.length > 0 && <HistoryTimeline entries={history} />}
@@ -317,10 +317,9 @@ const OPDView = ({
   employeeId 
 }: { 
   opd: EmployeeFullDetail["opd"];
-  employeeId: string;
+  employeeId: number;
 }) => {
-  const employeeIdNum = parseInt(employeeId, 10);
-  const { data: opdData } = useOPDByEmployee(isNaN(employeeIdNum) ? 0 : employeeIdNum);
+  const { data: opdData } = useOPDByEmployee(employeeId);
   
   const benefits = opdData?.benefits ?? opd ?? [];
   const balance = opdData?.balance;
@@ -552,7 +551,7 @@ const OffboardingPanel = ({
   employeeId,
   offboarding,
 }: {
-  employeeId: string;
+  employeeId: number;
   offboarding: EmployeeFullDetail["offboarding"];
 }) => {
   const initialDate = offboarding?.Employment_End_Date_ISO ?? offboarding?.Employment_End_Date ?? "";

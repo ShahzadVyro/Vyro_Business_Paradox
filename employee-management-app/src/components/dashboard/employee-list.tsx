@@ -10,8 +10,8 @@ import DownloadButton from "../ui/download-button";
 interface Props {
   filters: EmployeeFilters;
   onFiltersChange: (updater: (prev: EmployeeFilters) => EmployeeFilters) => void;
-  onSelect: (employeeId: string) => void;
-  selectedId?: string | null;
+  onSelect: (employeeId: number) => void;
+  selectedId?: number | null;
 }
 
 const statusOptions: EmploymentStatus[] = ["Active", "Resigned/Terminated"];
@@ -85,9 +85,9 @@ const EmployeeList = ({ filters, onFiltersChange, onSelect, selectedId }: Props)
         <div className="mt-6 grid gap-3">
           {data.map((employee) => (
             <EmployeeCard
-              key={String(employee.Employee_ID)}
+              key={employee.Employee_ID}
               employee={employee}
-              selected={selectedId === String(employee.Employee_ID)}
+              selected={selectedId === employee.Employee_ID}
               onSelect={onSelect}
             />
           ))}

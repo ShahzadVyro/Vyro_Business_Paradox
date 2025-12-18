@@ -2,7 +2,7 @@ export interface SalaryRecord {
   // Core fields
   Payroll_Month: string;
   Currency: string;
-  Employee_ID: string | number | null; // Support both STRING (old) and INT64 (new)
+  Employee_ID: number | null; // INT64 - standardized numeric ID
   Employee_Name?: string | null; // From Employees join
   
   // Salary Components (new schema)
@@ -103,7 +103,7 @@ export interface SalaryRecord {
 
 export interface EOBIRecord {
   Payroll_Month: string;
-  Employee_ID: string | null;
+  Employee_ID: number | null; // INT64 - standardized numeric ID
   EMP_AREA_CODE: string;
   EMP_REG_SERIAL_NO: string;
   EMP_SUB_AREA_CODE: string;

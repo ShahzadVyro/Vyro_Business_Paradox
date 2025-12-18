@@ -10,7 +10,7 @@ import type { DashboardView } from "@/types/dashboard";
 
 const EmployeeDashboard = () => {
   const [filters, setFilters] = useState<EmployeeFilters>({ limit: 50 });
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [view, setView] = useState<DashboardView>("all");
   const { data: employeeDetail, isLoading: detailLoading } = useEmployeeDetail(selectedId ?? undefined);
   const hasSelection = Boolean(employeeDetail?.profile);

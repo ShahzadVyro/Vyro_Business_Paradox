@@ -3,7 +3,7 @@ import type { SalaryRecord, EOBIRecord } from "@/types/api/payroll";
 export type EmploymentStatus = 'Active' | 'Resigned/Terminated';
 
 export interface EmployeeRecord {
-  Employee_ID: string | number; // Support both STRING (old) and INT64 (new)
+  Employee_ID: number; // INT64 - standardized numeric ID
   Full_Name: string;
   Official_Email: string | null;
   Personal_Email: string | null;
@@ -56,7 +56,7 @@ export interface EmployeeFullDetail {
 }
 
 export interface EmployeeHistoryRecord {
-  Employee_ID: string;
+  Employee_ID: number;
   Full_Name?: string | null;
   Employment_Status: EmploymentStatus | string;
   Joining_Date: string | null;
@@ -70,7 +70,7 @@ export interface EmployeeHistoryRecord {
 }
 
 export interface EmployeeOffboardingRecord {
-  Employee_ID: string;
+  Employee_ID: number;
   Offboarding_Status: "scheduled" | "completed" | "cancelled" | "active" | null;
   Employment_End_Date: string | null;
   Employment_End_Date_ISO?: string | null;
