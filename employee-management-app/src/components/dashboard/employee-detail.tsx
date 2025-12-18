@@ -9,6 +9,8 @@ import { updateEmploymentStatusClient } from "@/lib/api-client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCancelOffboarding, useScheduleOffboarding } from "@/hooks/use-offboarding";
 import { useOPDByEmployee } from "@/hooks/use-opd";
+import EmployeeEditModal from "./employee-edit-modal";
+import axios from "axios";
 
 interface Props {
   view: DashboardView;
@@ -88,6 +90,7 @@ const DetailBody = ({
 }) => {
   const queryClient = useQueryClient();
   const [nextStatus, setNextStatus] = useState<EmploymentStatus>(profile.Employment_Status ?? "Active");
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const mutation = useMutation({
     mutationFn: (payload: { Employment_Status: EmploymentStatus }) =>
@@ -102,10 +105,37 @@ const DetailBody = ({
     },
   });
 
+  const updateFieldMutation = useMutation({
+    mutationFn: async ({ field, value, reason }: { field: string; value: string | number | null; reason?: string }) => {
+      const response = await axios.patch(`/api/employees/${profile.Employee_ID}/update`, {
+        field,
+        value,
+        reason,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
+      queryClient.invalidateQueries({ queryKey: ["employee", profile.Employee_ID] });
+    },
+  });
+
+  const handleSaveField = async (field: string, value: string | number | null, reason?: string) => {
+    await updateFieldMutation.mutateAsync({ field, value, reason });
+  };
+
   const headliner = (
     <div className="flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <p className="text-xs uppercase tracking-wide text-slate-400">Employee #{profile.Employee_ID}</p>
+      <div className="flex-1">
+        <div className="flex items-center gap-3">
+          <p className="text-xs uppercase tracking-wide text-slate-400">Employee #{profile.Employee_ID}</p>
+          <button
+            onClick={() => setIsEditModalOpen(true)}
+            className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 transition hover:bg-slate-200"
+          >
+            Edit
+          </button>
+        </div>
         <h2 className="text-3xl font-semibold text-slate-900">{profile.Full_Name}</h2>
         <p className="text-sm text-slate-500">{profile.Designation ?? "—"}</p>
         <p className="text-sm text-slate-400">{profile.Department ?? "—"}</p>
@@ -160,31 +190,39 @@ const DetailBody = ({
   })();
 
   return (
-    <section className="rounded-4xl bg-white p-8 shadow-2xl shadow-slate-200/60 ring-1 ring-slate-100">
-      {headliner}
-      {statusControl}
-      <OffboardingPanel
-        key={`${offboarding?.Employment_End_Date_ISO ?? offboarding?.Employment_End_Date ?? "none"}-${offboarding?.Note ?? ""}`}
-        employeeId={profile.Employee_ID}
-        offboarding={offboarding}
+    <>
+      <section className="rounded-4xl bg-white p-8 shadow-2xl shadow-slate-200/60 ring-1 ring-slate-100">
+        {headliner}
+        {statusControl}
+        <OffboardingPanel
+          key={`${offboarding?.Employment_End_Date_ISO ?? offboarding?.Employment_End_Date ?? "none"}-${offboarding?.Note ?? ""}`}
+          employeeId={profile.Employee_ID}
+          offboarding={offboarding}
+        />
+        {history && history.length > 0 && <HistoryTimeline entries={history} />}
+        <div className="mt-6 flex flex-wrap gap-2">
+          {VIEW_OPTIONS.map(({ value, label }) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => onViewChange(value)}
+              className={`rounded-full px-4 py-1.5 text-xs font-semibold transition ${
+                view === value ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <div className="mt-8">{viewContent}</div>
+      </section>
+      <EmployeeEditModal
+        employee={profile}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSave={handleSaveField}
       />
-      {history && history.length > 0 && <HistoryTimeline entries={history} />}
-      <div className="mt-6 flex flex-wrap gap-2">
-        {VIEW_OPTIONS.map(({ value, label }) => (
-          <button
-            key={value}
-            type="button"
-            onClick={() => onViewChange(value)}
-            className={`rounded-full px-4 py-1.5 text-xs font-semibold transition ${
-              view === value ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      <div className="mt-8">{viewContent}</div>
-    </section>
+    </>
   );
 };
 
