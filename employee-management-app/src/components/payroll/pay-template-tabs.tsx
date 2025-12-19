@@ -64,7 +64,7 @@ const PayTemplateTabs = () => {
 
   // Filter confirmations based on toggle
   const filteredConfirmations = showUnapprovedOnly
-    ? confirmations?.filter((c) => !c.Approved) || []
+    ? confirmations?.filter((c: PayTemplateConfirmation) => !c.Approved) || []
     : confirmations || [];
 
   const tabs = [
