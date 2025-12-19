@@ -148,8 +148,8 @@ export async function fetchNewHires(month: string): Promise<PayTemplateNewHire[]
         e.Designation,
         e.Official_Email,
         e.Joining_Date as Date_of_Joining,
-        COALESCE(s.Gross_Income, 0) as Salary,
-        e.Employment_Location,
+        COALESCE(s.Gross_Income, e.Gross_Salary, 0) as Salary,
+        COALESCE(e.Employment_Location, e.Job_Location) as Employment_Location,
         e.Bank_Name,
         e.Bank_Account_Title,
         e.Bank_Account_Number_IBAN as Bank_Account_Number_IBAN,
@@ -208,8 +208,9 @@ export async function fetchNewHires(month: string): Promise<PayTemplateNewHire[]
         }
       }
       
-      // Handle salary - return null if no salary record exists (COALESCE returns 0 when no match)
-      // Distinguish between "no record" (0 from COALESCE) and actual 0 salary
+      // Handle salary - return null if no salary record exists
+      // COALESCE tries: Salaries.Gross_Income -> Employees.Gross_Salary -> 0
+      // If result is 0, it means no salary data exists, so return null
       const salary = row.Salary != null && row.Salary !== 0 ? Number(row.Salary) : null;
       
       return {
