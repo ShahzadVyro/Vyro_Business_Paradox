@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { label: "Pay Template", href: "/pay-template" },
   { label: "Notifications", href: "/notifications" },
   { label: "Submissions", href: "/submissions" },
+  { label: "Onboarding", href: "/onboarding" },
 ];
 
 const SideNav = () => {

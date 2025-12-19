@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import SubmissionsTable from "./submissions-table";
+import SubmissionsCards from "./submissions-cards";
 import SearchBar from "../dashboard/search-bar";
 import type { OnboardingSubmission } from "@/types/onboarding";
 
@@ -115,8 +115,10 @@ export default function SubmissionsPageClient({ initialSubmissions }: { initialS
         </div>
       </div>
 
-      {/* Submissions Table */}
-      <SubmissionsTable submissions={filteredSubmissions} />
+      {/* Submissions Cards */}
+      <div className="rounded-4xl bg-white p-6 shadow-2xl shadow-slate-200/60 ring-1 ring-slate-100">
+        <SubmissionsCards submissions={filteredSubmissions} />
+      </div>
     </div>
   );
 }
