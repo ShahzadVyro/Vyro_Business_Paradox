@@ -11,6 +11,7 @@ interface EditFormProps {
 
 export const PersonalDetailsForm = ({ employee, onSave, onCancel }: EditFormProps) => {
   const [formData, setFormData] = useState({
+    Full_Name: employee.Full_Name ?? "",
     Official_Email: employee.Official_Email ?? "",
     Personal_Email: employee.Personal_Email ?? "",
     Contact_Number: employee.Contact_Number ?? "",
@@ -40,6 +41,18 @@ export const PersonalDetailsForm = ({ employee, onSave, onCancel }: EditFormProp
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-semibold text-slate-900 mb-1">Full Name <span className="text-red-500">*</span></label>
+        <input
+          type="text"
+          value={formData.Full_Name}
+          onChange={(e) => setFormData({ ...formData, Full_Name: e.target.value })}
+          className="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm"
+          required
+          minLength={2}
+          maxLength={100}
+        />
+      </div>
       <div>
         <label className="block text-sm font-semibold text-slate-900 mb-1">Official Email</label>
         <input

@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 
 // Valid field names that can be updated
 const VALID_FIELDS = [
+  "Full_Name",
   "Official_Email",
   "Personal_Email",
   "Contact_Number",
@@ -135,8 +136,7 @@ export async function PATCH(
       updateQuery = `
         UPDATE ${EMPLOYEES_TABLE}
         SET ${field} = CAST(@value AS DATE),
-            Updated_At = CURRENT_TIMESTAMP(),
-            Updated_By = 'API Update'
+            Updated_At = CURRENT_DATETIME()
         WHERE Employee_ID = @employeeId
       `;
       queryParams = {
@@ -147,8 +147,7 @@ export async function PATCH(
       updateQuery = `
         UPDATE ${EMPLOYEES_TABLE}
         SET ${field} = @value,
-            Updated_At = CURRENT_TIMESTAMP(),
-            Updated_By = 'API Update'
+            Updated_At = CURRENT_DATETIME()
         WHERE Employee_ID = @employeeId
       `;
       queryParams = {
@@ -301,8 +300,7 @@ async function handleBulkUpdate(employeeId: string, body: BulkUpdateRequest) {
   const updateQuery = `
     UPDATE ${EMPLOYEES_TABLE}
     SET ${setClauses.join(", ")},
-        Updated_At = CURRENT_TIMESTAMP(),
-        Updated_By = 'API Update'
+        Updated_At = CURRENT_DATETIME()
     WHERE Employee_ID = @employeeId
   `;
 
@@ -331,8 +329,7 @@ async function handleBulkUpdate(employeeId: string, body: BulkUpdateRequest) {
         SET Probation_End_Date = DATE_ADD(CAST(@joiningDate AS DATE), INTERVAL 3 MONTH),
             Probation_Period_Months = 3,
             Probation_Start_Date = CAST(@joiningDate AS DATE),
-            Updated_At = CURRENT_TIMESTAMP(),
-            Updated_By = 'API Update - Auto-calculated from Joining_Date'
+            Updated_At = CURRENT_DATETIME()
         WHERE Employee_ID = @employeeId
           AND (Probation_End_Date IS NULL OR Probation_Period_Months IS NULL)
       `;
