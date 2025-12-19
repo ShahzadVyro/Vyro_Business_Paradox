@@ -149,7 +149,7 @@ export async function fetchNewHires(month: string): Promise<PayTemplateNewHire[]
         e.Official_Email,
         e.Joining_Date as Date_of_Joining,
         COALESCE(s.Gross_Income, 0) as Salary,
-        COALESCE(e.Employment_Location, e.Job_Location) as Employment_Location,
+        e.Employment_Location,
         e.Bank_Name,
         e.Bank_Account_Title,
         e.Bank_Account_Number_IBAN as Bank_Account_Number_IBAN,
