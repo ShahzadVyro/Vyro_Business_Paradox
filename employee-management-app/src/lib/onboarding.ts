@@ -55,7 +55,7 @@ export const createOnboardingSubmission = async (input: OnboardingFormInput) => 
     Emergency_Contact_Number: sanitizePhone(input.Emergency_Contact_Number),
   };
 
-  // Insert into intake table
+  // Insert into intake table only - employee will be created when confirmed via Slack
   const intakeQuery = `
     INSERT INTO ${intakeTableRef} (Submission_ID, Status, Payload)
     VALUES (@submissionId, "pending", TO_JSON(@payload))
@@ -67,165 +67,6 @@ export const createOnboardingSubmission = async (input: OnboardingFormInput) => 
       payload,
     },
   });
-
-  // Also insert into Employees table with Lifecycle_Status = "Form_Submitted"
-  // Note: Employee_ID will be NULL initially, assigned later by People team
-  try {
-    // Auto-calculate probation end date if joining date exists
-    const probationEndDateCalc = input.Joining_Date 
-      ? "DATE_ADD(CAST(@joiningDate AS DATE), INTERVAL 3 MONTH)"
-      : "NULL";
-    
-    const employeeInsertQuery = `
-      INSERT INTO ${employeeTableRef} (
-        Employee_ID, Full_Name, CNIC_ID, Personal_Email, Official_Email,
-        Contact_Number, Date_of_Birth, Gender, Temporary_Address, Permanent_Address,
-        Nationality, LinkedIn_URL, Marital_Status, Age, Number_of_Children,
-        Spouse_Name, Spouse_DOB, Joining_Date, Department, Designation,
-        Reporting_Manager, Job_Type, Job_Location, Recruiter_Name, Preferred_Device,
-        Employment_Location, Father_Name, Emergency_Contact_Number,
-        Emergency_Contact_Relationship, Blood_Group, Degree_Transcript_URL,
-        Last_Salary_Slip_URL, Experience_Letter_URL, Resume_URL, Passport_Photo_URL,
-        CNIC_Front_URL, CNIC_Back_URL, Bank_Name, Bank_Account_Title,
-        National_Tax_Number, Swift_Code_BIC, Bank_Account_Number_IBAN,
-        Vehicle_Number, Introduction, Fun_Fact, Shirt_Size,
-        Probation_Period_Months, Probation_Start_Date, Probation_End_Date,
-        Lifecycle_Status, Timestamp, Email_Address,
-        Created_At, Updated_At, Created_By, Is_Deleted
-      )
-      VALUES (
-        NULL, @fullName, @cnicId, @personalEmail, @officialEmail,
-        @contactNumber, @dateOfBirth, @gender, @currentAddress, @permanentAddress,
-        @nationality, @linkedInUrl, @maritalStatus, @age, @numberOfChildren,
-        @spouseName, @spouseDob, @joiningDate, @department, @designation,
-        @reportingManager, @jobType, @jobLocation, @recruiterName, @preferredDevice,
-        @employmentLocation, @fatherName, @emergencyContactNumber,
-        @emergencyContactRelationship, @bloodGroup, @degreeTranscriptUrl,
-        @lastSalarySlipUrl, @experienceLetterUrl, @resumeUrl, @passportPhotoUrl,
-        @cnicFrontUrl, @cnicBackUrl, @bankName, @bankAccountTitle,
-        @nationalTaxNumber, @swiftCodeBic, @bankAccountNumberIban,
-        @vehicleNumber, @introduction, @funFact, @shirtSize,
-        @probationPeriodMonths, @probationStartDate, ${probationEndDateCalc},
-        'Form_Submitted', CURRENT_TIMESTAMP(), @emailAddress,
-        CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'Onboarding Form', FALSE
-      )
-    `;
-    
-    // Build params for BigQuery query
-    const queryParams: Record<string, unknown> = {
-      fullName: input.Full_Name,
-      cnicId: input.CNIC_ID,
-      personalEmail: input.Personal_Email,
-      officialEmail: input.Official_Email || null,
-      contactNumber: payload.Contact_Number,
-      dateOfBirth: input.Date_of_Birth || null,
-      gender: input.Gender,
-      currentAddress: input.Current_Address,
-      permanentAddress: input.Permanent_Address,
-      nationality: input.Nationality,
-      linkedInUrl: input.LinkedIn_URL || null,
-      maritalStatus: input.Marital_Status,
-      age: input.Age ? parseInt(input.Age) : null,
-      numberOfChildren: input.Number_of_Children ? parseInt(input.Number_of_Children) : null,
-      spouseName: input.Spouse_Name || null,
-      spouseDob: input.Spouse_DOB || null,
-      joiningDate: input.Joining_Date || null,
-      department: input.Department,
-      designation: input.Designation,
-      reportingManager: input.Reporting_Manager,
-      jobType: input.Job_Type,
-      jobLocation: input.Job_Location,
-      recruiterName: input.Recruiter_Name,
-      preferredDevice: input.Preferred_Device,
-      employmentLocation: input.Employment_Location || null,
-      fatherName: input.Father_Name,
-      emergencyContactNumber: payload.Emergency_Contact_Number,
-      emergencyContactRelationship: input.Emergency_Contact_Relationship,
-      bloodGroup: input.Blood_Group,
-      degreeTranscriptUrl: input.Degree_Transcript_URL || null,
-      lastSalarySlipUrl: input.Last_Salary_Slip_URL || null,
-      experienceLetterUrl: input.Experience_Letter_URL || null,
-      resumeUrl: input.Resume_URL || null,
-      passportPhotoUrl: input.Passport_Photo_URL || null,
-      cnicFrontUrl: input.CNIC_Front_URL || null,
-      cnicBackUrl: input.CNIC_Back_URL || null,
-      bankName: input.Bank_Name,
-      bankAccountTitle: input.Bank_Account_Title,
-      nationalTaxNumber: input.National_Tax_Number || null,
-      swiftCodeBic: input.Swift_Code_BIC,
-      bankAccountNumberIban: input.Bank_Account_Number_IBAN,
-      vehicleNumber: input.Vehicle_Number || null,
-      introduction: input.Introduction || null,
-      funFact: input.Fun_Fact || null,
-      shirtSize: input.Shirt_Size || null,
-      probationPeriodMonths: input.Joining_Date ? 3 : null,
-      probationStartDate: input.Joining_Date || null,
-      emailAddress: input.Personal_Email || input.Official_Email || null,
-    };
-
-    // Specify types for parameters that can be null (required by BigQuery)
-    const queryTypes: Record<string, string> = {
-      officialEmail: "STRING",
-      dateOfBirth: "DATE",
-      linkedInUrl: "STRING",
-      age: "INT64",
-      numberOfChildren: "INT64",
-      spouseName: "STRING",
-      spouseDob: "DATE",
-      joiningDate: "DATE",
-      employmentLocation: "STRING",
-      degreeTranscriptUrl: "STRING",
-      lastSalarySlipUrl: "STRING",
-      experienceLetterUrl: "STRING",
-      resumeUrl: "STRING",
-      passportPhotoUrl: "STRING",
-      cnicFrontUrl: "STRING",
-      cnicBackUrl: "STRING",
-      nationalTaxNumber: "STRING",
-      vehicleNumber: "STRING",
-      introduction: "STRING",
-      funFact: "STRING",
-      shirtSize: "STRING",
-      probationPeriodMonths: "INT64",
-      probationStartDate: "DATE",
-      emailAddress: "STRING",
-    };
-
-    await bigquery.query({
-      query: employeeInsertQuery,
-      params: queryParams,
-      types: queryTypes,
-    });
-
-    // Create lifecycle event
-    try {
-      const lifecycleEventQuery = `
-        INSERT INTO ${lifecycleEventsTableRef} 
-          (Employee_ID, Lifecycle_Status, Event_Date, Event_By, Notes)
-        SELECT Employee_ID, 'Form_Submitted', CURRENT_TIMESTAMP(), 'Onboarding Form', 'Form submitted via onboarding form'
-        FROM ${employeeTableRef}
-        WHERE Full_Name = @fullName
-          AND CNIC_ID = @cnicId
-          AND Lifecycle_Status = 'Form_Submitted'
-        ORDER BY Created_At DESC
-        LIMIT 1
-      `;
-      await bigquery.query({
-        query: lifecycleEventQuery,
-        params: {
-          fullName: input.Full_Name,
-          cnicId: input.CNIC_ID,
-        },
-      });
-    } catch (e) {
-      // Lifecycle events table might not exist yet - that's OK
-      console.warn("[ONBOARDING_LIFECYCLE_EVENT] Could not create lifecycle event:", e);
-    }
-  } catch (e) {
-    // Employees table might not exist yet - log warning but don't fail
-    console.warn("[ONBOARDING_EMPLOYEE_INSERT] Could not insert into Employees table:", e);
-    console.warn("  This is OK if Employees table doesn't exist yet. Form submission was still saved to intake table.");
-  }
 
   return { submissionId, payload };
 };
@@ -379,34 +220,6 @@ export const updateSubmissionPayload = async (submissionId: string, payload: Par
   return await getSubmissionById(submissionId);
 };
 
-const columnMap: Record<string, keyof OnboardingFormInput> = {
-  Full_Name: "Full_Name",
-  Personal_Email: "Personal_Email",
-  Official_Email: "Official_Email",
-  Joining_Date: "Joining_Date",
-  Designation: "Designation",
-  Department: "Department",
-  Reporting_Manager: "Reporting_Manager",
-  Job_Type: "Job_Type",
-  Contact_Number: "Contact_Number",
-  "CNIC / ID": "CNIC_ID",
-  Gender: "Gender",
-  Bank_Name: "Bank_Name",
-  Bank_Account_Title: "Bank_Account_Title",
-  "Bank Account Number-IBAN (24 digits)": "Bank_Account_Number_IBAN",
-  "Swift Code/ BIC Code": "Swift_Code_BIC",
-  "Father's Name": "Father_Name",
-  "Emergency Contact's Relationship": "Emergency_Contact_Relationship",
-  "Emergency Contact Number": "Emergency_Contact_Number",
-  Blood_Group: "Blood_Group",
-  "LinkedIn URL": "LinkedIn_URL",
-  "Recruiter Name": "Recruiter_Name",
-  "Date of Birth": "Date_of_Birth",
-  Address: "Current_Address",
-  Nationality: "Nationality",
-  "Marital Status": "Marital_Status",
-};
-
 export const getNextEmployeeId = async () => {
   const bigquery = getBigQueryClient();
   const query = `
@@ -421,29 +234,154 @@ export const getNextEmployeeId = async () => {
 
 export const insertEmployeeFromSubmission = async (submission: OnboardingSubmission, employeeId: string) => {
   const bigquery = getBigQueryClient();
-  const payload = submission as unknown as Record<string, unknown>;
-  const columns = ["Employee_ID", ...Object.keys(columnMap)];
-  const payloadRow = columns.map((col) => {
-    if (col === "Employee_ID") return employeeId;
-    const key = columnMap[col as keyof typeof columnMap];
-    return key ? payload[key] ?? null : null;
-  });
-
-  const placeholders = columns.map((_, idx) => `@col${idx}`);
-  const insertQuery = `
-    INSERT INTO ${employeeTableRef} (${columns.join(", ")})
-    VALUES (${placeholders.join(", ")})
+  const input = submission as unknown as OnboardingFormInput;
+  
+  // Sanitize phone numbers
+  const contactNumber = input.Contact_Number ? input.Contact_Number.replace(/[^\d+]/g, "") : null;
+  const emergencyContactNumber = input.Emergency_Contact_Number ? input.Emergency_Contact_Number.replace(/[^\d+]/g, "") : null;
+  
+  // Auto-calculate probation end date if joining date exists
+  const probationEndDateCalc = input.Joining_Date 
+    ? "DATE_ADD(CAST(@joiningDate AS DATE), INTERVAL 3 MONTH)"
+    : "NULL";
+  
+  const employeeInsertQuery = `
+    INSERT INTO ${employeeTableRef} (
+      Employee_ID, Full_Name, CNIC_ID, Personal_Email, Official_Email,
+      Contact_Number, Date_of_Birth, Gender, Temporary_Address, Permanent_Address,
+      Nationality, LinkedIn_URL, Marital_Status, Age, Number_of_Children,
+      Spouse_Name, Spouse_DOB, Joining_Date, Department, Designation,
+      Reporting_Manager, Job_Type, Job_Location, Recruiter_Name, Preferred_Device,
+      Employment_Location, Father_Name, Emergency_Contact_Number,
+      Emergency_Contact_Relationship, Blood_Group, Degree_Transcript_URL,
+      Last_Salary_Slip_URL, Experience_Letter_URL, Resume_URL, Passport_Photo_URL,
+      CNIC_Front_URL, CNIC_Back_URL, Bank_Name, Bank_Account_Title,
+      National_Tax_Number, Swift_Code_BIC, Bank_Account_Number_IBAN,
+      Vehicle_Number, Introduction, Fun_Fact, Shirt_Size,
+      Probation_Period_Months, Probation_Start_Date, Probation_End_Date,
+      Lifecycle_Status, Timestamp, Email_Address,
+      Created_At, Updated_At, Created_By, Is_Deleted
+    )
+    VALUES (
+      @employeeId, @fullName, @cnicId, @personalEmail, @officialEmail,
+      @contactNumber, @dateOfBirth, @gender, @currentAddress, @permanentAddress,
+      @nationality, @linkedInUrl, @maritalStatus, @age, @numberOfChildren,
+      @spouseName, @spouseDob, @joiningDate, @department, @designation,
+      @reportingManager, @jobType, @jobLocation, @recruiterName, @preferredDevice,
+      @employmentLocation, @fatherName, @emergencyContactNumber,
+      @emergencyContactRelationship, @bloodGroup, @degreeTranscriptUrl,
+      @lastSalarySlipUrl, @experienceLetterUrl, @resumeUrl, @passportPhotoUrl,
+      @cnicFrontUrl, @cnicBackUrl, @bankName, @bankAccountTitle,
+      @nationalTaxNumber, @swiftCodeBic, @bankAccountNumberIban,
+      @vehicleNumber, @introduction, @funFact, @shirtSize,
+      @probationPeriodMonths, @probationStartDate, ${probationEndDateCalc},
+      'Active', CURRENT_TIMESTAMP(), @emailAddress,
+      CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'Slack Confirmation', FALSE
+    )
   `;
+  
+  // Build params for BigQuery query
+  const queryParams: Record<string, unknown> = {
+    employeeId,
+    fullName: input.Full_Name,
+    cnicId: input.CNIC_ID,
+    personalEmail: input.Personal_Email,
+    officialEmail: input.Official_Email || null,
+    contactNumber,
+    dateOfBirth: input.Date_of_Birth || null,
+    gender: input.Gender,
+    currentAddress: input.Current_Address,
+    permanentAddress: input.Permanent_Address,
+    nationality: input.Nationality,
+    linkedInUrl: input.LinkedIn_URL || null,
+    maritalStatus: input.Marital_Status,
+    age: input.Age ? parseInt(input.Age) : null,
+    numberOfChildren: input.Number_of_Children ? parseInt(input.Number_of_Children) : null,
+    spouseName: input.Spouse_Name || null,
+    spouseDob: input.Spouse_DOB || null,
+    joiningDate: input.Joining_Date || null,
+    department: input.Department,
+    designation: input.Designation,
+    reportingManager: input.Reporting_Manager,
+    jobType: input.Job_Type,
+    jobLocation: input.Job_Location,
+    recruiterName: input.Recruiter_Name,
+    preferredDevice: input.Preferred_Device,
+    employmentLocation: input.Employment_Location || null,
+    fatherName: input.Father_Name,
+    emergencyContactNumber,
+    emergencyContactRelationship: input.Emergency_Contact_Relationship,
+    bloodGroup: input.Blood_Group,
+    degreeTranscriptUrl: input.Degree_Transcript_URL || null,
+    lastSalarySlipUrl: input.Last_Salary_Slip_URL || null,
+    experienceLetterUrl: input.Experience_Letter_URL || null,
+    resumeUrl: input.Resume_URL || null,
+    passportPhotoUrl: input.Passport_Photo_URL || null,
+    cnicFrontUrl: input.CNIC_Front_URL || null,
+    cnicBackUrl: input.CNIC_Back_URL || null,
+    bankName: input.Bank_Name,
+    bankAccountTitle: input.Bank_Account_Title,
+    nationalTaxNumber: input.National_Tax_Number || null,
+    swiftCodeBic: input.Swift_Code_BIC,
+    bankAccountNumberIban: input.Bank_Account_Number_IBAN,
+    vehicleNumber: input.Vehicle_Number || null,
+    introduction: input.Introduction || null,
+    funFact: input.Fun_Fact || null,
+    shirtSize: input.Shirt_Size || null,
+    probationPeriodMonths: input.Joining_Date ? 3 : null,
+    probationStartDate: input.Joining_Date || null,
+    emailAddress: input.Personal_Email || input.Official_Email || null,
+  };
 
-  const params: Record<string, unknown> = {};
-  columns.forEach((_, idx) => {
-    params[`col${idx}`] = payloadRow[idx];
-  });
+  // Specify types for parameters that can be null (required by BigQuery)
+  const queryTypes: Record<string, string> = {
+    officialEmail: "STRING",
+    dateOfBirth: "DATE",
+    linkedInUrl: "STRING",
+    age: "INT64",
+    numberOfChildren: "INT64",
+    spouseName: "STRING",
+    spouseDob: "DATE",
+    joiningDate: "DATE",
+    employmentLocation: "STRING",
+    degreeTranscriptUrl: "STRING",
+    lastSalarySlipUrl: "STRING",
+    experienceLetterUrl: "STRING",
+    resumeUrl: "STRING",
+    passportPhotoUrl: "STRING",
+    cnicFrontUrl: "STRING",
+    cnicBackUrl: "STRING",
+    nationalTaxNumber: "STRING",
+    vehicleNumber: "STRING",
+    introduction: "STRING",
+    funFact: "STRING",
+    shirtSize: "STRING",
+    probationPeriodMonths: "INT64",
+    probationStartDate: "DATE",
+    emailAddress: "STRING",
+  };
 
   await bigquery.query({
-    query: insertQuery,
-    params,
+    query: employeeInsertQuery,
+    params: queryParams,
+    types: queryTypes,
   });
+
+  // Create lifecycle event
+  try {
+    const lifecycleEventQuery = `
+      INSERT INTO ${lifecycleEventsTableRef} 
+        (Employee_ID, Lifecycle_Status, Event_Date, Event_By, Notes)
+      VALUES (@employeeId, 'Active', CURRENT_TIMESTAMP(), 'Slack Confirmation', 'Employee onboarded via Slack confirmation')
+    `;
+    await bigquery.query({
+      query: lifecycleEventQuery,
+      params: { employeeId },
+    });
+  } catch (e) {
+    // Lifecycle events table might not exist yet - that's OK
+    console.warn("[ONBOARDING_LIFECYCLE_EVENT] Could not create lifecycle event:", e);
+  }
 };
 
 export const notifySlackForSubmission = async ({
