@@ -22,7 +22,7 @@ interface Props {
 
 const statusOptions: EmploymentStatus[] = ["Active", "Resigned/Terminated"];
 
-const VIEW_OPTIONS: { value: DashboardView | "history"; label: string }[] = [
+const VIEW_OPTIONS: { value: DashboardView; label: string }[] = [
   { value: "all", label: "All Fields" },
   { value: "directory", label: "Directory" },
   { value: "payroll", label: "Salaries" },
@@ -87,8 +87,8 @@ const DetailBody = ({
   offboarding: EmployeeFullDetail["offboarding"];
   opd: EmployeeFullDetail["opd"];
   tax: EmployeeFullDetail["tax"];
-  view: DashboardView | "history";
-  onViewChange: (view: DashboardView | "history") => void;
+  view: DashboardView;
+  onViewChange: (view: DashboardView) => void;
 }) => {
   const queryClient = useQueryClient();
   const [nextStatus, setNextStatus] = useState<EmploymentStatus>(profile.Employment_Status ?? "Active");
