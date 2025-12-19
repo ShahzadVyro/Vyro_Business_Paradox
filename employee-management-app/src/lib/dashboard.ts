@@ -303,7 +303,8 @@ const fetchAttritionMetrics = async () => {
 
 const fetchPendingRequests = async () => {
   const bigquery = getBigQueryClient();
-  const onboardingTable = process.env.BQ_ONBOARDING_TABLE ?? 'Employee_Onboarding_Intake';
+  // Use same table as onboarding system (BQ_INTAKE_TABLE)
+  const onboardingTable = process.env.BQ_INTAKE_TABLE ?? 'EmployeeIntake_v1';
   const onboardingTableRef = `\`${projectId}.${dataset}.${onboardingTable}\``;
   
   try {

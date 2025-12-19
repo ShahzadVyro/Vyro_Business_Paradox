@@ -10,9 +10,16 @@ if (!projectId || !dataset) {
 }
 
 const employeesTableRef = `\`${projectId}.${dataset}.${process.env.BQ_TABLE ?? "Employees"}\``;
-const salariesTableRef = `\`${projectId}.${dataset}.Salaries\``;
+const salaryTable = process.env.BQ_SALARY_TABLE ?? "Employee_Salaries";
+const salariesTableRef = `\`${projectId}.${dataset}.${salaryTable}\``;
 const payTemplateIncrementsTableRef = `\`${projectId}.${dataset}.Pay_Template_Increments\``;
 const payTemplateConfirmationsTableRef = `\`${projectId}.${dataset}.Pay_Template_Confirmations\``;
+
+// Validation and logging for salary table name
+if (salaryTable === "Salaries") {
+  console.warn('[PAY_TEMPLATE] WARNING: BQ_SALARY_TABLE is set to "Salaries" but should be "Employee_Salaries"');
+}
+console.log(`[PAY_TEMPLATE] Using salary table: ${salaryTable}`);
 
 // Lookup Employee ID by name or email
 export async function lookupEmployeeId(name: string, email?: string): Promise<string | null> {
@@ -192,7 +199,7 @@ export async function fetchNewHires(month: string): Promise<PayTemplateNewHire[]
       };
     });
   } catch (error) {
-    console.error('[PAY_TEMPLATE] Error fetching new hires:', error);
+    console.error(`[PAY_TEMPLATE_NEW_HIRES_ERROR] Error fetching new hires (table: ${salaryTable}):`, error);
     throw error;
   }
 }
@@ -334,7 +341,7 @@ export async function fetchConfirmations(month: string): Promise<PayTemplateConf
       Updated_At: row.Updated_At ? String(row.Updated_At) : null,
     }));
   } catch (error) {
-    console.error('[PAY_TEMPLATE] Error fetching confirmations:', error);
+    console.error(`[PAY_TEMPLATE_CONFIRMATIONS_ERROR] Error fetching confirmations (table: ${salaryTable}):`, error);
     throw error;
   }
 }
@@ -392,11 +399,10 @@ export async function addIncrement(
       },
     });
     
-    // Update Employees table
-    const updateFields: string[] = ['Gross_Salary = @updatedSalary'];
+    // Update Employees table (only Designation and Department, salary is managed in Salaries table)
+    const updateFields: string[] = [];
     const updateParams: Record<string, unknown> = {
       employeeId: employeeIdNum,
-      updatedSalary,
     };
     
     if (designation !== undefined && designation !== null) {
@@ -409,18 +415,21 @@ export async function addIncrement(
       updateParams.department = department;
     }
     
-    const updateEmployeeQuery = `
-      UPDATE ${employeesTableRef}
-      SET ${updateFields.join(', ')},
-          Updated_At = CURRENT_TIMESTAMP(),
-          Updated_By = 'Increment System'
-      WHERE Employee_ID = @employeeId
-    `;
-    
-    await bigquery.query({
-      query: updateEmployeeQuery,
-      params: updateParams,
-    });
+    // Only update if there are fields to update
+    if (updateFields.length > 0) {
+      const updateEmployeeQuery = `
+        UPDATE ${employeesTableRef}
+        SET ${updateFields.join(', ')},
+            Updated_At = CURRENT_TIMESTAMP(),
+            Updated_By = 'Increment System'
+        WHERE Employee_ID = @employeeId
+      `;
+      
+      await bigquery.query({
+        query: updateEmployeeQuery,
+        params: updateParams,
+      });
+    }
   } catch (error) {
     console.error('[PAY_TEMPLATE] Error adding increment:', error);
     throw error;
@@ -438,18 +447,26 @@ export async function approveConfirmation(
     const employeeIdNum = Number(employeeId);
     
     // Insert or update Pay_Template_Confirmations
+    // Get salary from Salaries table (latest Gross_Income)
     const upsertConfirmationQuery = `
       MERGE ${payTemplateConfirmationsTableRef} c
       USING (
         SELECT 
-          @employeeId as Employee_ID,
-          Full_Name as Employee_Name,
-          Probation_End_Date,
-          Gross_Salary as Updated_Salary
-        FROM ${employeesTableRef}
-        WHERE Employee_ID = @employeeId
+          e.Employee_ID,
+          e.Full_Name as Employee_Name,
+          e.Probation_End_Date,
+          COALESCE(s.Gross_Income, 0) as Updated_Salary
+        FROM ${employeesTableRef} e
+        LEFT JOIN (
+          SELECT 
+            Employee_ID,
+            Gross_Income,
+            ROW_NUMBER() OVER (PARTITION BY Employee_ID ORDER BY Payroll_Month DESC) as rn
+          FROM ${salariesTableRef}
+        ) s ON SAFE_CAST(e.Employee_ID AS INT64) = SAFE_CAST(s.Employee_ID AS INT64) AND s.rn = 1
+        WHERE e.Employee_ID = @employeeId
       ) e
-      ON c.Employee_ID = e.Employee_ID AND c.Month = @month
+      ON SAFE_CAST(c.Employee_ID AS STRING) = SAFE_CAST(e.Employee_ID AS STRING) AND c.Month = @month
       WHEN MATCHED THEN
         UPDATE SET
           Approved = TRUE,
@@ -463,7 +480,7 @@ export async function approveConfirmation(
           Created_At, Updated_At
         )
         VALUES (
-          e.Employee_ID, e.Employee_Name, e.Probation_End_Date, CURRENT_DATE(),
+          CAST(e.Employee_ID AS STRING), e.Employee_Name, e.Probation_End_Date, CURRENT_DATE(),
           'PKR', e.Updated_Salary, @month, TRUE, CURRENT_TIMESTAMP(), @approvedBy,
           CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
         )
