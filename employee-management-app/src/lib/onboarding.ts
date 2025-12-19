@@ -70,6 +70,11 @@ export const createOnboardingSubmission = async (input: OnboardingFormInput) => 
   // Also insert into Employees table with Lifecycle_Status = "Form_Submitted"
   // Note: Employee_ID will be NULL initially, assigned later by People team
   try {
+    // Auto-calculate probation end date if joining date exists
+    const probationEndDateCalc = input.Joining_Date 
+      ? "DATE_ADD(CAST(@joiningDate AS DATE), INTERVAL 3 MONTH)"
+      : "NULL";
+    
     const employeeInsertQuery = `
       INSERT INTO ${employeeTableRef} (
         Employee_ID, Full_Name, CNIC_ID, Personal_Email, Official_Email,
@@ -83,6 +88,7 @@ export const createOnboardingSubmission = async (input: OnboardingFormInput) => 
         CNIC_Front_URL, CNIC_Back_URL, Bank_Name, Bank_Account_Title,
         National_Tax_Number, Swift_Code_BIC, Bank_Account_Number_IBAN,
         Vehicle_Number, Introduction, Fun_Fact, Shirt_Size,
+        Probation_Period_Months, Probation_Start_Date, Probation_End_Date,
         Lifecycle_Status, Timestamp, Email_Address,
         Created_At, Updated_At, Created_By, Is_Deleted
       )
@@ -98,6 +104,7 @@ export const createOnboardingSubmission = async (input: OnboardingFormInput) => 
         @cnicFrontUrl, @cnicBackUrl, @bankName, @bankAccountTitle,
         @nationalTaxNumber, @swiftCodeBic, @bankAccountNumberIban,
         @vehicleNumber, @introduction, @funFact, @shirtSize,
+        @probationPeriodMonths, @probationStartDate, ${probationEndDateCalc},
         'Form_Submitted', CURRENT_TIMESTAMP(), @emailAddress,
         CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'Onboarding Form', FALSE
       )
@@ -151,6 +158,9 @@ export const createOnboardingSubmission = async (input: OnboardingFormInput) => 
         introduction: input.Introduction || null,
         funFact: input.Fun_Fact || null,
         shirtSize: input.Shirt_Size || null,
+        // Auto-calculate probation period: 3 months from joining date
+        probationPeriodMonths: input.Joining_Date ? 3 : null,
+        probationStartDate: input.Joining_Date || null,
         emailAddress: input.Personal_Email || input.Official_Email || null,
       },
     });

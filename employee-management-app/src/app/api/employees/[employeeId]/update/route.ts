@@ -20,6 +20,10 @@ const VALID_FIELDS = [
   "Designation",
   "Reporting_Manager",
   "Employment_End_Date",
+  "Joining_Date",
+  "Probation_Period_Months",
+  "Probation_Start_Date",
+  "Probation_End_Date",
   "Gross_Salary",
   "Bank_Name",
   "Bank_Account_Title",
@@ -39,7 +43,6 @@ const VALID_FIELDS = [
   "Emergency_Contact_Name",
   "Emergency_Contact_Relationship",
   "Emergency_Contact_Number",
-  "EOBI_Number",
   "EMP_AREA_CODE",
   "EMP_REG_SERIAL_NO",
   "EMP_SUB_AREA_CODE",
@@ -120,19 +123,77 @@ export async function PATCH(
     }
 
     // Update the field
-    const updateQuery = `
-      UPDATE ${EMPLOYEES_TABLE}
-      SET ${field} = @value,
-          Updated_At = CURRENT_TIMESTAMP(),
-          Updated_By = 'API Update'
-      WHERE Employee_ID = @employeeId
-    `;
-    await bigquery.query({
-      query: updateQuery,
-      params: {
+    // For DATE fields, ensure proper casting
+    const dateFields = ['Employment_End_Date', 'Joining_Date', 'Probation_End_Date', 'Probation_Start_Date', 'Date_of_Birth', 'Spouse_DOB'];
+    const isDateField = dateFields.includes(field);
+    
+    let updateQuery: string;
+    let queryParams: Record<string, unknown>;
+    
+    if (isDateField && value !== null && value !== '') {
+      // Cast to DATE type for date fields
+      updateQuery = `
+        UPDATE ${EMPLOYEES_TABLE}
+        SET ${field} = CAST(@value AS DATE),
+            Updated_At = CURRENT_TIMESTAMP(),
+            Updated_By = 'API Update'
+        WHERE Employee_ID = @employeeId
+      `;
+      queryParams = {
+        employeeId: employeeIdNum,
+        value: String(value), // Ensure it's a string in YYYY-MM-DD format
+      };
+    } else {
+      updateQuery = `
+        UPDATE ${EMPLOYEES_TABLE}
+        SET ${field} = @value,
+            Updated_At = CURRENT_TIMESTAMP(),
+            Updated_By = 'API Update'
+        WHERE Employee_ID = @employeeId
+      `;
+      queryParams = {
         employeeId: employeeIdNum,
         value: value === null ? null : value,
-      },
+      };
+    }
+    
+    await bigquery.query({
+      query: updateQuery,
+      params: queryParams,
+    });
+    
+    // If Joining_Date was updated, automatically recalculate Probation_End_Date
+    if (field === 'Joining_Date' && value !== null && value !== '') {
+      try {
+        const probationUpdateQuery = `
+          UPDATE ${EMPLOYEES_TABLE}
+          SET Probation_End_Date = DATE_ADD(CAST(@joiningDate AS DATE), INTERVAL 3 MONTH),
+              Probation_Period_Months = 3,
+              Probation_Start_Date = CAST(@joiningDate AS DATE),
+              Updated_At = CURRENT_TIMESTAMP(),
+              Updated_By = 'API Update - Auto-calculated from Joining_Date'
+          WHERE Employee_ID = @employeeId
+            AND (Probation_End_Date IS NULL OR Probation_Period_Months IS NULL)
+        `;
+        await bigquery.query({
+          query: probationUpdateQuery,
+          params: {
+            employeeId: employeeIdNum,
+            joiningDate: String(value),
+          },
+        });
+        console.log(`[EMPLOYEE_UPDATE] Auto-calculated Probation_End_Date for Employee_ID ${employeeIdNum} based on new Joining_Date`);
+      } catch (probationError) {
+        console.warn(`[EMPLOYEE_UPDATE] Failed to auto-calculate probation dates:`, probationError);
+        // Don't fail the main update if probation calculation fails
+      }
+    }
+    
+    // Log successful update
+    console.log(`[EMPLOYEE_UPDATE] Updated ${field} for Employee_ID ${employeeIdNum}:`, {
+      oldValue,
+      newValue: value,
+      isDateField,
     });
 
     // Log the change to Employee_Field_Updates table
@@ -211,11 +272,17 @@ async function handleBulkUpdate(employeeId: string, body: BulkUpdateRequest) {
   const updates: Array<{ field: string; oldValue: unknown; newValue: unknown }> = [];
 
   // Build SET clause for UPDATE
+  const dateFields = ['Employment_End_Date', 'Joining_Date', 'Probation_End_Date', 'Probation_Start_Date', 'Date_of_Birth', 'Spouse_DOB'];
+  
   const setClauses = body.updates
     .map((u) => {
       const oldValue = currentValues[u.field];
       if (oldValue !== u.value && !(oldValue === null && u.value === null)) {
         updates.push({ field: u.field, oldValue, newValue: u.value });
+        // Cast to DATE for date fields
+        if (dateFields.includes(u.field) && u.value !== null && u.value !== '') {
+          return `${u.field} = CAST(@${u.field} AS DATE)`;
+        }
         return `${u.field} = @${u.field}`;
       }
       return null;
@@ -241,14 +308,48 @@ async function handleBulkUpdate(employeeId: string, body: BulkUpdateRequest) {
 
   const params: Record<string, unknown> = { employeeId: employeeIdNum };
   body.updates.forEach((u) => {
-    params[u.field] = u.value === null ? null : u.value;
+    if (dateFields.includes(u.field) && u.value !== null && u.value !== '') {
+      params[u.field] = String(u.value); // Ensure string format for DATE casting
+    } else {
+      params[u.field] = u.value === null ? null : u.value;
+    }
   });
+  
+  console.log(`[EMPLOYEE_BULK_UPDATE] Updating ${updates.length} field(s) for Employee_ID ${employeeIdNum}`);
 
   await bigquery.query({
     query: updateQuery,
     params,
   });
-
+  
+  // If Joining_Date was updated in bulk update, automatically recalculate Probation_End_Date
+  const joiningDateUpdate = body.updates.find(u => u.field === 'Joining_Date' && u.value !== null && u.value !== '');
+  if (joiningDateUpdate) {
+    try {
+      const probationUpdateQuery = `
+        UPDATE ${EMPLOYEES_TABLE}
+        SET Probation_End_Date = DATE_ADD(CAST(@joiningDate AS DATE), INTERVAL 3 MONTH),
+            Probation_Period_Months = 3,
+            Probation_Start_Date = CAST(@joiningDate AS DATE),
+            Updated_At = CURRENT_TIMESTAMP(),
+            Updated_By = 'API Update - Auto-calculated from Joining_Date'
+        WHERE Employee_ID = @employeeId
+          AND (Probation_End_Date IS NULL OR Probation_Period_Months IS NULL)
+      `;
+      await bigquery.query({
+        query: probationUpdateQuery,
+        params: {
+          employeeId: employeeIdNum,
+          joiningDate: String(joiningDateUpdate.value),
+        },
+      });
+      console.log(`[EMPLOYEE_BULK_UPDATE] Auto-calculated Probation_End_Date for Employee_ID ${employeeIdNum} based on new Joining_Date`);
+    } catch (probationError) {
+      console.warn(`[EMPLOYEE_BULK_UPDATE] Failed to auto-calculate probation dates:`, probationError);
+      // Don't fail the main update if probation calculation fails
+    }
+  }
+  
   // Log all changes
   for (const update of updates) {
     try {

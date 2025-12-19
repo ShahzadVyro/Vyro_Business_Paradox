@@ -62,12 +62,19 @@ function normalizeEmployeeDates(employee: EmployeeRecord): EmployeeRecord {
   // Normalize all date fields to strings (YYYY-MM-DD format)
   // Note: Created_At and Updated_At are returned from BigQuery but not in EmployeeRecord type
   const employeeAny = employee as any;
+  
+  // Prioritize Employment_End_Date from Employees table, fallback to Offboarding_Date if NULL
+  let employmentEndDate = employee.Employment_End_Date;
+  if (!employmentEndDate && employeeAny.Offboarding_Date) {
+    employmentEndDate = employeeAny.Offboarding_Date;
+  }
+  
   return {
     ...employee,
     Joining_Date: convertDateToString(employee.Joining_Date) ?? null,
     Date_of_Birth: employee.Date_of_Birth ? convertDateToString(employee.Date_of_Birth) ?? null : null,
     Probation_End_Date: employee.Probation_End_Date ? convertDateToString(employee.Probation_End_Date) ?? null : null,
-    Employment_End_Date: employee.Employment_End_Date ? convertDateToString(employee.Employment_End_Date) ?? null : null,
+    Employment_End_Date: employmentEndDate ? convertDateToString(employmentEndDate) ?? null : null,
     Spouse_DOB: employee.Spouse_DOB ? convertDateToString(employee.Spouse_DOB) ?? null : null,
     // Normalize timestamp fields that may be present in BigQuery results
     Created_At: employeeAny.Created_At ? convertDateToString(employeeAny.Created_At) ?? null : null,
