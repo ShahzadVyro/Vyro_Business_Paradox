@@ -152,7 +152,7 @@ export async function fetchNewHires(month: string): Promise<PayTemplateNewHire[]
         e.Employment_Location,
         e.Bank_Name,
         e.Bank_Account_Title,
-        e.Account_Number_IBAN as Bank_Account_Number_IBAN,
+        e.Bank_Account_Number_IBAN as Bank_Account_Number_IBAN,
         e.Swift_Code_BIC,
         e.Created_At,
         e.Updated_At
@@ -299,11 +299,11 @@ export async function fetchConfirmations(month: string): Promise<PayTemplateConf
         e.Full_Name as Employee_Name,
         e.Probation_End_Date,
         COALESCE(s.Gross_Income, 0) as Updated_Salary,
+        COALESCE(s.Currency, 'PKR') as Currency,
         COALESCE(c.Approved, FALSE) as Approved,
         c.Approved_At,
         c.Approved_By,
         c.Confirmation_Date,
-        c.Currency,
         c.Created_At,
         c.Updated_At
       FROM ${employeesTableRef} e
@@ -311,6 +311,7 @@ export async function fetchConfirmations(month: string): Promise<PayTemplateConf
         SELECT 
           Employee_ID,
           Gross_Income,
+          Currency,
           ROW_NUMBER() OVER (PARTITION BY Employee_ID ORDER BY Payroll_Month DESC) as rn
         FROM ${salariesTableRef}
       ) s ON SAFE_CAST(e.Employee_ID AS INT64) = SAFE_CAST(s.Employee_ID AS INT64) AND s.rn = 1
@@ -326,12 +327,12 @@ export async function fetchConfirmations(month: string): Promise<PayTemplateConf
       params: { month },
     });
     
-    return (rows as any[]).map((row) => ({
+    return (rows as any[]).map((row): PayTemplateConfirmation => ({
       Employee_ID: row.Employee_ID ? String(row.Employee_ID) : null,
       Employee_Name: String(row.Employee_Name ?? ''),
-      Probation_End_Date: row.Probation_End_Date ? String(row.Probation_End_Date).split('T')[0] : '',
+      Probation_End_Date: row.Probation_End_Date ? String(row.Probation_End_Date).split('T')[0] : null,
       Confirmation_Date: row.Confirmation_Date ? String(row.Confirmation_Date).split('T')[0] : new Date().toISOString().split('T')[0],
-      Currency: row.Currency ? String(row.Currency) : null,
+      Currency: row.Currency ? String(row.Currency) : 'PKR',
       Updated_Salary: row.Updated_Salary != null ? Number(row.Updated_Salary) : null,
       Month: month,
       Approved: row.Approved === true || row.Approved === 1,

@@ -143,9 +143,9 @@ export interface PayTemplateIncrement {
 export interface PayTemplateConfirmation {
   Employee_ID?: string | null;
   Employee_Name: string;
-  Probation_End_Date: string;
+  Probation_End_Date: string | null;
   Confirmation_Date: string;
-  Currency?: string | null;
+  Currency: string; // Always defaults to 'PKR' if not available
   Updated_Salary?: number | null;
   Month: string; // YYYY-MM format
   Approved?: boolean;
