@@ -55,6 +55,29 @@ export interface DashboardSummary {
     active: number;
     resigned: number;
   };
+  newJoiners?: number;
+  probationsEnding?: Array<{
+    Employee_ID: number;
+    Full_Name: string;
+    Department: string | null;
+    Probation_End_Date: string;
+    daysRemaining: number;
+  }>;
+  departmentBreakdown?: Array<{
+    Department: string;
+    activeCount: number;
+    totalCount: number;
+  }>;
+  attrition?: {
+    currentMonthRate: number;
+    previousMonthRate: number;
+    trend: 'up' | 'down' | 'stable';
+    averageTenure: number;
+  };
+  pendingRequests?: {
+    onboarding: number;
+    changeRequests: number;
+  };
   payroll: {
     month?: string;
     monthLabel?: string;
