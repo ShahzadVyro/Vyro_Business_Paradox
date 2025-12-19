@@ -136,23 +136,30 @@ export async function fetchNewHires(month: string): Promise<PayTemplateNewHire[]
     
     const query = `
       SELECT 
-        Employee_ID,
-        Full_Name as Employee_Name,
-        Designation,
-        Official_Email,
-        Joining_Date as Date_of_Joining,
-        Gross_Salary as Salary,
-        Employment_Location,
-        Bank_Name,
-        Bank_Account_Title,
-        Account_Number_IBAN as Bank_Account_Number_IBAN,
-        Swift_Code_BIC,
-        Created_At,
-        Updated_At
-      FROM ${employeesTableRef}
-      WHERE FORMAT_DATE('%Y-%m', Joining_Date) = @month
-        AND Employment_Status = 'Active'
-      ORDER BY Joining_Date ASC
+        e.Employee_ID,
+        e.Full_Name as Employee_Name,
+        e.Designation,
+        e.Official_Email,
+        e.Joining_Date as Date_of_Joining,
+        COALESCE(s.Gross_Income, 0) as Salary,
+        e.Employment_Location,
+        e.Bank_Name,
+        e.Bank_Account_Title,
+        e.Account_Number_IBAN as Bank_Account_Number_IBAN,
+        e.Swift_Code_BIC,
+        e.Created_At,
+        e.Updated_At
+      FROM ${employeesTableRef} e
+      LEFT JOIN (
+        SELECT 
+          Employee_ID,
+          Gross_Income,
+          ROW_NUMBER() OVER (PARTITION BY Employee_ID ORDER BY Payroll_Month DESC) as rn
+        FROM ${salariesTableRef}
+      ) s ON SAFE_CAST(e.Employee_ID AS INT64) = SAFE_CAST(s.Employee_ID AS INT64) AND s.rn = 1
+      WHERE FORMAT_DATE('%Y-%m', e.Joining_Date) = @month
+        AND e.Employment_Status = 'Active'
+      ORDER BY e.Joining_Date ASC
     `;
     
     const [rows] = await bigquery.query({
@@ -284,7 +291,7 @@ export async function fetchConfirmations(month: string): Promise<PayTemplateConf
         e.Employee_ID,
         e.Full_Name as Employee_Name,
         e.Probation_End_Date,
-        e.Gross_Salary as Updated_Salary,
+        COALESCE(s.Gross_Income, 0) as Updated_Salary,
         COALESCE(c.Approved, FALSE) as Approved,
         c.Approved_At,
         c.Approved_By,
@@ -293,8 +300,15 @@ export async function fetchConfirmations(month: string): Promise<PayTemplateConf
         c.Created_At,
         c.Updated_At
       FROM ${employeesTableRef} e
+      LEFT JOIN (
+        SELECT 
+          Employee_ID,
+          Gross_Income,
+          ROW_NUMBER() OVER (PARTITION BY Employee_ID ORDER BY Payroll_Month DESC) as rn
+        FROM ${salariesTableRef}
+      ) s ON SAFE_CAST(e.Employee_ID AS INT64) = SAFE_CAST(s.Employee_ID AS INT64) AND s.rn = 1
       LEFT JOIN ${payTemplateConfirmationsTableRef} c
-        ON e.Employee_ID = c.Employee_ID AND c.Month = @month
+        ON SAFE_CAST(e.Employee_ID AS STRING) = SAFE_CAST(c.Employee_ID AS STRING) AND c.Month = @month
       WHERE FORMAT_DATE('%Y-%m', e.Probation_End_Date) = @month
         AND e.Employment_Status = 'Active'
       ORDER BY e.Probation_End_Date ASC
