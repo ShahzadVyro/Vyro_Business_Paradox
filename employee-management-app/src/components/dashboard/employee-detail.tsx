@@ -14,8 +14,8 @@ import ChangeHistory from "./change-history";
 import axios from "axios";
 
 interface Props {
-  view: DashboardView | "history";
-  onViewChange: (view: DashboardView | "history") => void;
+  view: DashboardView;
+  onViewChange: (view: DashboardView) => void;
   data?: EmployeeFullDetail | null;
   isLoading: boolean;
 }
