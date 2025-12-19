@@ -35,6 +35,7 @@ export interface EmployeeRecord {
   Number_of_Children?: number | null;
   Spouse_Name?: string | null;
   Employment_Location?: string | null;
+  EOBI_Number?: string | null; // Employees Old-Age Benefits Institution registration number
 }
 
 export interface EmployeeFilters {
@@ -48,11 +49,12 @@ export interface EmployeeFilters {
 export interface EmployeeFullDetail {
   profile: EmployeeRecord | null;
   salary: SalaryRecord | null;
-  eobi: EOBIRecord | null;
+  eobi: EOBIRecord[] | null;
   history: EmployeeHistoryRecord[];
   offboarding: EmployeeOffboardingRecord | null;
   opd?: import("./opd").OPDBenefitRecord[] | null;
   tax?: import("./tax").TaxCalculationRecord[] | null;
+  changeHistory?: ChangeHistoryRecord[] | null;
 }
 
 export interface EmployeeHistoryRecord {
@@ -77,6 +79,15 @@ export interface EmployeeOffboardingRecord {
   Note?: string | null;
   Scheduled_By?: string | null;
   Updated_At?: string | null;
+}
+
+export interface ChangeHistoryRecord {
+  Field_Name: string;
+  Old_Value: string | null;
+  New_Value: string | null;
+  Updated_Date: string | null;
+  Updated_By: string | null;
+  Reason: string | null;
 }
 
 export type { SalaryRecord, EOBIRecord };
