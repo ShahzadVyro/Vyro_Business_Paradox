@@ -94,9 +94,9 @@ export interface PayTemplateNewHire {
   Employee_Name: string;
   Designation?: string | null;
   Official_Email?: string | null;
-  Date_of_Joining: string;
+  Date_of_Joining: string | null;
   Currency: string;
-  Salary: number;
+  Salary: number | null;
   Employment_Location?: string | null;
   Bank_Name?: string | null;
   Bank_Account_Title?: string | null;

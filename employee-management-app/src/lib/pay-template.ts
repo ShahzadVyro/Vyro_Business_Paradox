@@ -178,6 +178,40 @@ export async function fetchNewHires(month: string): Promise<PayTemplateNewHire[]
       // Try to get currency from latest salary, default to PKR
       const currency = 'PKR'; // Default, can be enhanced later if needed
       
+      // Format date properly - handle BigQuery date objects, Date objects, and null values
+      let dateOfJoining: string | null = null;
+      if (row.Date_of_Joining != null && row.Date_of_Joining !== '') {
+        try {
+          if (typeof row.Date_of_Joining === 'object' && row.Date_of_Joining !== null) {
+            // BigQuery Date object with .value property
+            if ('value' in row.Date_of_Joining) {
+              dateOfJoining = String(row.Date_of_Joining.value).split('T')[0];
+            } 
+            // Date object
+            else if (row.Date_of_Joining instanceof Date || 'getTime' in row.Date_of_Joining) {
+              const date = row.Date_of_Joining instanceof Date 
+                ? row.Date_of_Joining 
+                : new Date((row.Date_of_Joining as any).getTime());
+              if (!isNaN(date.getTime())) {
+                dateOfJoining = date.toISOString().split('T')[0];
+              }
+            }
+          } else if (typeof row.Date_of_Joining === 'string') {
+            // String date - extract YYYY-MM-DD part
+            const dateStr = row.Date_of_Joining.trim();
+            if (dateStr) {
+              dateOfJoining = dateStr.split('T')[0];
+            }
+          }
+        } catch (error) {
+          console.warn('[PAY_TEMPLATE] Error parsing Date_of_Joining:', error, row.Date_of_Joining);
+        }
+      }
+      
+      // Handle salary - return null if no salary record exists (COALESCE returns 0 when no match)
+      // Distinguish between "no record" (0 from COALESCE) and actual 0 salary
+      const salary = row.Salary != null && row.Salary !== 0 ? Number(row.Salary) : null;
+      
       return {
         Type: 'New Hire',
         Month: month,
@@ -185,9 +219,9 @@ export async function fetchNewHires(month: string): Promise<PayTemplateNewHire[]
         Employee_Name: String(row.Employee_Name ?? ''),
         Designation: row.Designation ? String(row.Designation) : null,
         Official_Email: row.Official_Email ? String(row.Official_Email) : null,
-        Date_of_Joining: row.Date_of_Joining ? String(row.Date_of_Joining).split('T')[0] : '',
+        Date_of_Joining: dateOfJoining || null,
         Currency: currency,
-        Salary: Number(row.Salary ?? 0),
+        Salary: salary,
         Employment_Location: row.Employment_Location ? String(row.Employment_Location) : null,
         Bank_Name: row.Bank_Name ? String(row.Bank_Name) : null,
         Bank_Account_Title: row.Bank_Account_Title ? String(row.Bank_Account_Title) : null,
