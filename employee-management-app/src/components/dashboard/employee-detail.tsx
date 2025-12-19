@@ -10,24 +10,26 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCancelOffboarding, useScheduleOffboarding } from "@/hooks/use-offboarding";
 import { useOPDByEmployee } from "@/hooks/use-opd";
 import EmployeeEditModal from "./employee-edit-modal";
+import ChangeHistory from "./change-history";
 import axios from "axios";
 
 interface Props {
-  view: DashboardView;
-  onViewChange: (view: DashboardView) => void;
+  view: DashboardView | "history";
+  onViewChange: (view: DashboardView | "history") => void;
   data?: EmployeeFullDetail | null;
   isLoading: boolean;
 }
 
 const statusOptions: EmploymentStatus[] = ["Active", "Resigned/Terminated"];
 
-const VIEW_OPTIONS: { value: DashboardView; label: string }[] = [
+const VIEW_OPTIONS: { value: DashboardView | "history"; label: string }[] = [
   { value: "all", label: "All Fields" },
   { value: "directory", label: "Directory" },
   { value: "payroll", label: "Salaries" },
   { value: "eobi", label: "EOBI" },
   { value: "opd", label: "OPD" },
   { value: "tax", label: "Tax" },
+  { value: "history", label: "Change History" },
 ];
 
 const EmployeeDetail = ({ data, isLoading, view, onViewChange }: Props) => {
@@ -85,8 +87,8 @@ const DetailBody = ({
   offboarding: EmployeeFullDetail["offboarding"];
   opd: EmployeeFullDetail["opd"];
   tax: EmployeeFullDetail["tax"];
-  view: DashboardView;
-  onViewChange: (view: DashboardView) => void;
+  view: DashboardView | "history";
+  onViewChange: (view: DashboardView | "history") => void;
 }) => {
   const queryClient = useQueryClient();
   const [nextStatus, setNextStatus] = useState<EmploymentStatus>(profile.Employment_Status ?? "Active");
@@ -127,13 +129,16 @@ const DetailBody = ({
   const headliner = (
     <div className="flex flex-wrap items-start justify-between gap-4">
       <div className="flex-1">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between gap-3 mb-2">
           <p className="text-xs uppercase tracking-wide text-slate-400">Employee #{profile.Employee_ID}</p>
           <button
             onClick={() => setIsEditModalOpen(true)}
-            className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 transition hover:bg-slate-200"
+            className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 shadow-sm"
           >
-            Edit
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Edit Details
           </button>
         </div>
         <h2 className="text-3xl font-semibold text-slate-900">{profile.Full_Name}</h2>
@@ -178,11 +183,13 @@ const DetailBody = ({
       case "payroll":
         return <SalaryView salary={salary} opd={opd} tax={tax} />;
       case "eobi":
-        return <EobiView eobi={eobi} />;
+        return <EobiView eobi={eobi} profile={profile} />;
       case "opd":
         return <OPDView opd={opd} employeeId={profile.Employee_ID} />;
       case "tax":
         return <TaxView tax={tax} />;
+      case "history":
+        return <ChangeHistory employeeId={profile.Employee_ID} />;
       case "all":
       default:
         return <AllFieldsView profile={profile} salary={salary} eobi={eobi} opd={opd} tax={tax} />;
@@ -231,6 +238,7 @@ const DirectoryView = ({ profile }: { profile: NonNullable<EmployeeFullDetail["p
     <Detail label="Official Email" value={profile.Official_Email} />
     <Detail label="Personal Email" value={profile.Personal_Email} />
     <Detail label="Joining Date" value={formatDate(profile.Joining_Date)} />
+    <Detail label="Employment End Date" value={formatDate(profile.Employment_End_Date)} />
     <Detail label="Probation End" value={formatDate(profile.Probation_End_Date)} />
     <Detail label="Gross Salary" value={formatCurrency(profile.Gross_Salary)} />
     <Detail label="Reporting Manager" value={profile.Reporting_Manager} />
@@ -317,35 +325,75 @@ const SalaryView = ({
   );
 };
 
-const EobiView = ({ eobi }: { eobi: EmployeeFullDetail["eobi"] }) => {
-  if (!eobi) {
-    return <Placeholder message="No EOBI record found for this teammate." />;
+const EobiView = ({ eobi, profile }: { eobi: EmployeeFullDetail["eobi"]; profile: NonNullable<EmployeeFullDetail["profile"]> }) => {
+  // Get EOBI_Number from Employees table (profile)
+  const eobiNumber = profile.EOBI_Number ?? null;
+  
+  if (!eobi || eobi.length === 0) {
+    return (
+      <div className="space-y-4">
+        {eobiNumber && (
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <Detail label="EOBI Number" value={eobiNumber} />
+            <p className="mt-2 text-xs text-slate-500">Registration number assigned by EOBI portal</p>
+          </div>
+        )}
+        <Placeholder message="No EOBI monthly records found for this teammate." />
+      </div>
+    );
   }
-
-  const codes = [
-    { label: "Area Code", value: eobi.EMP_AREA_CODE },
-    { label: "Reg Serial", value: eobi.EMP_REG_SERIAL_NO },
-    { label: "Sub Area", value: eobi.EMP_SUB_AREA_CODE },
-    { label: "Sub Serial", value: eobi.EMP_SUB_SERIAL_NO },
-  ];
-
-  const timeline = [
-    { label: "From", value: formatDate(eobi.From_Date ?? null) },
-    { label: "To", value: formatDate(eobi.To_Date ?? null) },
-    { label: "Days Worked", value: eobi.NO_OF_DAYS_WORKED ?? "—" },
-  ];
-
-  const contributions = [
-    { label: "Employee Contribution", value: formatCurrency(eobi.Employee_Contribution ?? null) },
-    { label: "Employer Contribution", value: formatCurrency(eobi.Employer_Contribution ?? null) },
-    { label: "Total", value: formatCurrency(eobi.Total_EOBI ?? null) },
-  ];
-
+  
+  // Group by month and show latest first
+  const monthlyRecords = eobi.map((record) => ({
+    month: formatDate(record.Payroll_Month),
+    monthValue: record.Payroll_Month,
+    data: record,
+  })).sort((a, b) => {
+    // Sort by month descending (newest first)
+    if (!a.monthValue || !b.monthValue) return 0;
+    return b.monthValue.localeCompare(a.monthValue);
+  });
+  
   return (
-    <div className="space-y-8">
-      <DetailSection title="Registration Codes" items={codes} />
-      <DetailSection title="Coverage Period" items={timeline} />
-      <DetailSection title="Contributions" items={contributions} />
+    <div className="space-y-6">
+      {/* Show EOBI Number from Employees table */}
+      {eobiNumber && (
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <Detail label="EOBI Number" value={eobiNumber} />
+          <p className="mt-2 text-xs text-slate-500">Registration number assigned by EOBI portal</p>
+        </div>
+      )}
+      
+      {/* Show monthly records */}
+      <div>
+        <p className="text-xs uppercase tracking-wide text-slate-400 mb-3">Monthly EOBI Records</p>
+        <div className="space-y-4">
+          {monthlyRecords.map((record, idx) => (
+            <div key={idx} className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="mb-3 flex items-center justify-between border-b border-slate-100 pb-2">
+                <span className="font-semibold text-slate-900">{record.month}</span>
+                <span className="text-sm text-slate-600">{record.data.NO_OF_DAYS_WORKED ?? 0} days worked</span>
+              </div>
+              <div className="grid gap-3 md:grid-cols-2">
+                <Detail label="EMP AREA CODE" value={record.data.EMP_AREA_CODE ?? "FAA"} />
+                <Detail label="EMP REG SERIAL NO" value={record.data.EMP_REG_SERIAL_NO ?? "4320"} />
+                <Detail label="EMP SUB AREA CODE" value={record.data.EMP_SUB_AREA_CODE ?? " "} />
+                <Detail label="EMP SUB SERIAL NO" value={record.data.EMP_SUB_SERIAL_NO ?? "0"} />
+                <Detail label="EOBI NO" value={record.data.EOBI_NO ?? "—"} />
+                <Detail label="CNIC" value={record.data.CNIC ?? "—"} />
+                <Detail label="DOB" value={formatDate(record.data.DOB)} />
+                <Detail label="DOJ" value={formatDate(record.data.DOJ)} />
+                <Detail label="DOE" value={formatDate(record.data.DOE)} />
+                <Detail label="From Date" value={formatDate(record.data.From_Date)} />
+                <Detail label="To Date" value={formatDate(record.data.To_Date)} />
+                <Detail label="Employee Contribution" value={formatCurrency(record.data.Employee_Contribution)} />
+                <Detail label="Employer Contribution" value={formatCurrency(record.data.Employer_Contribution)} />
+                <Detail label="Total EOBI" value={formatCurrency(record.data.Total_EOBI)} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

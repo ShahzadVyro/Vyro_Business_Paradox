@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useEobi } from "@/hooks/use-eobi";
 import type { EobiFilters } from "@/types/payroll";
 import DownloadButton from "@/components/ui/download-button";
@@ -10,10 +10,14 @@ const PAGE_SIZE = 50;
 
 const EobiExplorer = () => {
   const [filters, setFilters] = useState<EobiFilters>({ limit: PAGE_SIZE, offset: 0 });
-  const [portalMonth, setPortalMonth] = useState<string | undefined>(undefined);
+  const [bulkUploadMonth, setBulkUploadMonth] = useState<string>(() => {
+    // Default to previous month (e.g., if current is Jan 2026, default to Dec 2025)
+    const now = new Date();
+    const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    return `${prevMonth.getFullYear()}-${String(prevMonth.getMonth() + 1).padStart(2, '0')}`;
+  });
   const { data, isLoading, isFetching } = useEobi(filters);
   const activeMonth = filters.month ?? data?.activeMonth;
-  const selectedPortalMonth = portalMonth ?? activeMonth ?? data?.months?.[0]?.value;
 
   const currentPage = Math.floor((filters.offset ?? 0) / PAGE_SIZE) + 1;
   const totalPages = data?.total ? Math.ceil(data.total / PAGE_SIZE) : 1;
@@ -26,19 +30,6 @@ const EobiExplorer = () => {
     }));
   };
 
-  const downloadHref = useMemo(() => {
-    const params = new URLSearchParams({ format: "csv" });
-    if (activeMonth) params.append("month", activeMonth);
-    if (filters.search) params.append("search", filters.search);
-    return `/api/eobi?${params.toString()}`;
-  }, [activeMonth, filters.search]);
-
-  const portalHref = useMemo(() => {
-    const params = new URLSearchParams({ format: "csv", view: "portal" });
-    if (selectedPortalMonth) params.append("month", selectedPortalMonth);
-    return `/api/eobi?${params.toString()}`;
-  }, [selectedPortalMonth]);
-
   return (
     <section className="space-y-6">
       <header className="rounded-4xl border border-slate-200 bg-white/80 p-6 shadow-sm">
@@ -47,28 +38,32 @@ const EobiExplorer = () => {
             <p className="text-xs uppercase tracking-wide text-slate-400">EOBI Filing</p>
             <h1 className="text-2xl font-semibold text-slate-900">Government submissions per month</h1>
             <p className="text-sm text-slate-500">
-              Filter by the workbook month to see the exact records. Use the portal sheet download for uploading to EOBI.
+              Download registration CSV for new employees, then generate monthly upload CSV for previous month submission.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <DownloadButton label="Download full dataset" href={downloadHref} variant="secondary" />
+            <DownloadButton
+              label="Download Registration CSV (New Employees)"
+              href="/api/eobi/registration"
+              variant="primary"
+            />
             <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2">
-              <select
-                value={selectedPortalMonth ?? ""}
-                onChange={(event) => setPortalMonth(event.target.value || undefined)}
+              <label htmlFor="bulk-upload-month" className="text-xs font-semibold text-slate-600 whitespace-nowrap">
+                Month:
+              </label>
+              <input
+                id="bulk-upload-month"
+                type="month"
+                value={bulkUploadMonth}
+                onChange={(e) => setBulkUploadMonth(e.target.value)}
                 className="rounded-xl border border-slate-200 px-3 py-1 text-sm text-slate-700"
-              >
-                {!selectedPortalMonth && <option value="">Select month</option>}
-                {data?.months?.map((month) => (
-                  <option key={month.value} value={month.value}>
-                    {month.label}
-                  </option>
-                ))}
-              </select>
+                min="2020-01"
+                max={`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`}
+              />
               <DownloadButton
-                label={`Create portal sheet${selectedPortalMonth ? "" : ""}`}
-                href={portalHref}
-                variant="primary"
+                label="Generate Monthly Upload CSV"
+                href={`/api/eobi/bulk-upload?month=${bulkUploadMonth || new Date().toISOString().slice(0, 7)}`}
+                variant="secondary"
               />
             </div>
           </div>

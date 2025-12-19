@@ -28,6 +28,7 @@ if (!BQ_DATASET || !BQ_TABLE) {
 
 const datasetId = BQ_DATASET;
 const tableId = BQ_TABLE ?? "Employees"; // Default to new unified table
+const employeeRef = `\`${process.env.GCP_PROJECT_ID}.${datasetId}.${tableId}\``;
 const auditTable = BQ_AUDIT_TABLE ?? "Employee_Field_Updates";
 const salaryTable = BQ_SALARY_TABLE ?? "Employee_Salaries";
 const eobiTable = BQ_EOBI_TABLE ?? "Employee_EOBI";
@@ -175,12 +176,32 @@ export async function fetchEmployeeById(employeeId: string): Promise<EmployeeRec
   const row = rows[0] as EmployeeRecord | undefined;
   if (!row) return null;
 
+  // Diagnostic logging for Employment_End_Date
+  if (employeeIdNum === 5473 || (row as any).Employment_End_Date) {
+    console.log(`[EMPLOYEE_5473_DEBUG] Raw Employment_End_Date from BigQuery:`, {
+      value: (row as any).Employment_End_Date,
+      type: typeof (row as any).Employment_End_Date,
+      constructor: (row as any).Employment_End_Date?.constructor?.name,
+      keys: typeof (row as any).Employment_End_Date === 'object' ? Object.keys((row as any).Employment_End_Date || {}) : null,
+    });
+  }
+
   // Convert Employee_ID from string to number and normalize dates
   const normalized = {
     ...row,
     Employee_ID: typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID,
   };
-  return normalizeEmployeeDates(normalized);
+  const result = normalizeEmployeeDates(normalized);
+  
+  // Diagnostic logging after normalization
+  if (employeeIdNum === 5473 || result.Employment_End_Date) {
+    console.log(`[EMPLOYEE_5473_DEBUG] Normalized Employment_End_Date:`, {
+      value: result.Employment_End_Date,
+      type: typeof result.Employment_End_Date,
+    });
+  }
+  
+  return result;
 }
 
 export async function fetchLatestSalaryByEmployee(employeeId: string): Promise<SalaryRecord | null> {
@@ -192,8 +213,9 @@ export async function fetchLatestSalaryByEmployee(employeeId: string): Promise<S
   if (isNaN(employeeIdNum)) {
     return null;
   }
-  
-  const query = `
+
+  // Try querying with INT64 cast first (most common case)
+  let query = `
     SELECT 
       s.*,
       e.Full_Name AS Employee_Name,
@@ -207,13 +229,58 @@ export async function fetchLatestSalaryByEmployee(employeeId: string): Promise<S
     ORDER BY s.Payroll_Month DESC
     LIMIT 1
   `;
-  const [rows] = await bigquery.query({
+  
+  let [rows] = await bigquery.query({
     query,
     params: { employeeId: employeeIdNum },
   });
-  
+
+  // If no results, try querying with Employee_ID as string (fallback for type mismatches)
+  if (rows.length === 0) {
+    query = `
+      SELECT 
+        s.*,
+        e.Full_Name AS Employee_Name,
+        e.Official_Email,
+        e.Personal_Email,
+        e.Designation,
+        e.Department
+      FROM ${salaryTableRef} s
+      LEFT JOIN ${tableRef} e ON CAST(s.Employee_ID AS STRING) = CAST(e.Employee_ID AS STRING)
+      WHERE CAST(s.Employee_ID AS STRING) = @employeeIdStr
+      ORDER BY s.Payroll_Month DESC
+      LIMIT 1
+    `;
+    [rows] = await bigquery.query({
+      query,
+      params: { employeeIdStr: String(employeeIdNum) },
+    });
+  }
+
+  // Diagnostic logging for employee 5473
+  if (employeeIdNum === 5473) {
+    console.log(`[EMPLOYEE_5473_DEBUG] Salary query results:`, {
+      rowCount: rows.length,
+      hasData: rows.length > 0,
+      firstRow: rows[0] ? {
+        keys: Object.keys(rows[0] as object),
+        employeeId: (rows[0] as any)?.Employee_ID,
+        employeeIdType: typeof (rows[0] as any)?.Employee_ID,
+      } : null,
+      employeeId: employeeIdNum,
+      salaryTableRef,
+      queryUsed: rows.length > 0 ? 'found' : 'none',
+    });
+  }
+
   const row = rows[0] as SalaryRecord | undefined;
-  if (!row) return null;
+  if (!row) {
+    // Diagnostic logging when no salary found
+    if (employeeIdNum === 5473) {
+      console.log(`[EMPLOYEE_5473_DEBUG] No salary record found for employee ${employeeIdNum} after trying both INT64 and STRING queries`);
+    }
+    return null;
+  }
   
   // Convert Employee_ID from string to number and normalize ALL date fields
   const normalized = {
@@ -238,46 +305,57 @@ export async function fetchLatestSalaryByEmployee(employeeId: string): Promise<S
   return normalized;
 }
 
-export async function fetchLatestEobiByEmployee(employeeId: string): Promise<EOBIRecord | null> {
-  if (!eobiTableRef) return null;
+export async function fetchEobiByEmployee(employeeId: string): Promise<EOBIRecord[]> {
+  if (!eobiTableRef) return [];
   const bigquery = getBigQueryClient();
   
   // Convert string from URL to number (INT64)
   const employeeIdNum = parseInt(employeeId, 10);
   if (isNaN(employeeIdNum)) {
-    return null;
+    return [];
   }
-  
-  const query = `
-    SELECT *
-    FROM ${eobiTableRef}
-    WHERE SAFE_CAST(Employee_ID AS INT64) = @employeeId
-    ORDER BY Payroll_Month DESC
-    LIMIT 1
+
+  // Fetch all EOBI records for this employee, ordered by month
+  let query = `
+    SELECT 
+      eobi.*,
+      e.Full_Name AS NAME,
+      e.CNIC_ID AS CNIC,
+      e.EOBI_Number
+    FROM ${eobiTableRef} eobi
+    LEFT JOIN ${employeeRef} e ON SAFE_CAST(eobi.Employee_ID AS INT64) = SAFE_CAST(e.Employee_ID AS INT64)
+    WHERE SAFE_CAST(eobi.Employee_ID AS INT64) = @employeeId
+    ORDER BY eobi.Payroll_Month DESC
   `;
-  const [rows] = await bigquery.query({
+  
+  let [rows] = await bigquery.query({
     query,
     params: { employeeId: employeeIdNum },
   });
   
-  const row = rows[0] as EOBIRecord | undefined;
-  if (!row) return null;
+  if (!rows || rows.length === 0) {
+    return [];
+  }
+
+  // Normalize dates
+  const normalizedRows = (rows as EOBIRecord[]).map((row) => {
+    return {
+      ...row,
+      Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
+      From_Date: convertDateToString(row.From_Date) ?? null,
+      To_Date: convertDateToString(row.To_Date) ?? null,
+      DOJ: row.DOJ ? convertDateToString(row.DOJ) ?? null : null,
+      DOB: row.DOB ? convertDateToString(row.DOB) ?? null : null,
+      Loaded_At: row.Loaded_At ? convertDateToString(row.Loaded_At) ?? null : null,
+    };
+  });
   
-  // Convert Employee_ID from string to number and normalize dates
-  const normalized = {
-    ...row,
-    Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
-      ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
-      : null,
-    Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
-    From_Date: convertDateToString(row.From_Date) ?? null,
-    To_Date: convertDateToString(row.To_Date) ?? null,
-    DOJ: row.DOJ ? convertDateToString(row.DOJ) ?? null : null,
-    DOB: row.DOB ? convertDateToString(row.DOB) ?? null : null,
-    Loaded_At: row.Loaded_At ? convertDateToString(row.Loaded_At) ?? null : null,
-  };
-  
-  return normalized;
+  return normalizedRows;
+}
+
+export async function fetchLatestEobiByEmployee(employeeId: string): Promise<EOBIRecord | null> {
+  const records = await fetchEobiByEmployee(employeeId);
+  return records.length > 0 ? records[0] : null;
 }
 
 export async function fetchEmployeeHistory(employeeId: string): Promise<EmployeeHistoryRecord[]> {
@@ -381,24 +459,37 @@ export async function fetchEmployeeFull(employeeId: string) {
     return { profile: null, salary: null, eobi: null, history: [], offboarding: null, opd: null, tax: null };
   }
   
-  const [profile, salary, eobi, history, offboarding, opd, tax] = await Promise.all([
+  const [profile, salary, eobiRecords, history, offboarding, opd, tax] = await Promise.all([
     fetchEmployeeById(employeeId),
     fetchLatestSalaryByEmployee(employeeId),
-    fetchLatestEobiByEmployee(employeeId),
+    fetchEobiByEmployee(employeeId),
     fetchEmployeeHistory(employeeId),
     offboardingTableRef ? fetchOffboardingRecord(employeeId) : Promise.resolve(null),
     // Fetch OPD benefits
     (async () => {
       const bigquery = getBigQueryClient();
       try {
-        const query = `
+        // Try INT64 first
+        let query = `
           SELECT *
           FROM ${opdTableRef}
           WHERE SAFE_CAST(Employee_ID AS INT64) = @employeeId
           ORDER BY Benefit_Month DESC
           LIMIT 12
         `;
-        const [rows] = await bigquery.query({ query, params: { employeeId: employeeIdNum } });
+        let [rows] = await bigquery.query({ query, params: { employeeId: employeeIdNum } });
+        
+        // Fallback to STRING if no results
+        if (rows.length === 0) {
+          query = `
+            SELECT *
+            FROM ${opdTableRef}
+            WHERE CAST(Employee_ID AS STRING) = @employeeIdStr
+            ORDER BY Benefit_Month DESC
+            LIMIT 12
+          `;
+          [rows] = await bigquery.query({ query, params: { employeeIdStr: String(employeeIdNum) } });
+        }
         // Convert Employee_ID from string to number and normalize dates
         return (rows as any[]).map((row) => {
           const normalized = {
@@ -424,14 +515,27 @@ export async function fetchEmployeeFull(employeeId: string) {
     (async () => {
       const bigquery = getBigQueryClient();
       try {
-        const query = `
+        // Try INT64 first
+        let query = `
           SELECT *
           FROM ${taxTableRef}
           WHERE SAFE_CAST(Employee_ID AS INT64) = @employeeId
           ORDER BY Payroll_Month DESC
           LIMIT 12
         `;
-        const [rows] = await bigquery.query({ query, params: { employeeId: employeeIdNum } });
+        let [rows] = await bigquery.query({ query, params: { employeeId: employeeIdNum } });
+        
+        // Fallback to STRING if no results
+        if (rows.length === 0) {
+          query = `
+            SELECT *
+            FROM ${taxTableRef}
+            WHERE CAST(Employee_ID AS STRING) = @employeeIdStr
+            ORDER BY Payroll_Month DESC
+            LIMIT 12
+          `;
+          [rows] = await bigquery.query({ query, params: { employeeIdStr: String(employeeIdNum) } });
+        }
         // Convert Employee_ID from string to number and normalize dates
         return (rows as any[]).map((row) => {
           const normalized = {
@@ -457,7 +561,7 @@ export async function fetchEmployeeFull(employeeId: string) {
     return { 
       profile: null, 
       salary, 
-      eobi, 
+      eobi: eobiRecords, 
       history, 
       offboarding: offboarding as EmployeeOffboardingRecord | null,
       opd: opd as any,
@@ -468,7 +572,7 @@ export async function fetchEmployeeFull(employeeId: string) {
   return { 
     profile, 
     salary, 
-    eobi, 
+    eobi: eobiRecords, 
     history, 
     offboarding: offboarding as EmployeeOffboardingRecord | null,
     opd: opd as any,

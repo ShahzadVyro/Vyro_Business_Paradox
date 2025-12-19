@@ -129,7 +129,9 @@ export async function fetchSalaryMonths(): Promise<MonthOption[]> {
 
 export async function fetchEobiMonths(): Promise<MonthOption[]> {
   const bigquery = getBigQueryClient();
-  const query = `
+  
+  // Get months from existing data
+  const dataQuery = `
     SELECT DISTINCT
       FORMAT_DATE('%Y-%m', Payroll_Month) AS value,
       FORMAT_DATE('%b %Y', Payroll_Month) AS label
@@ -137,8 +139,38 @@ export async function fetchEobiMonths(): Promise<MonthOption[]> {
     WHERE Payroll_Month IS NOT NULL
     ORDER BY value DESC
   `;
-  const [rows] = await bigquery.query({ query });
-  return rows as MonthOption[];
+  const [dataRows] = await bigquery.query({ query: dataQuery });
+  const dataMonths = new Set((dataRows as MonthOption[]).map(m => m.value));
+  
+  // Generate months from January 2020 to current month
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth(); // 0-indexed (0 = January, 11 = December)
+  const months: MonthOption[] = [];
+  
+  // Start from January 2020
+  for (let year = 2020; year <= currentYear; year++) {
+    const startMonth = year === 2020 ? 0 : 0; // January
+    const endMonth = year === currentYear ? currentMonth : 11; // December or current month
+    
+    for (let month = startMonth; month <= endMonth; month++) {
+      const value = `${year}-${String(month + 1).padStart(2, '0')}`;
+      const date = new Date(year, month, 1);
+      const label = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      
+      // Use label from data if available, otherwise generate it
+      const existingMonth = (dataRows as MonthOption[]).find(m => m.value === value);
+      months.push({
+        value,
+        label: existingMonth?.label || label
+      });
+    }
+  }
+  
+  // Sort descending (newest first)
+  months.sort((a, b) => b.value.localeCompare(a.value));
+  
+  return months;
 }
 
 export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: SalaryRecord[]; total: number }> {
@@ -246,15 +278,17 @@ export async function fetchEobiRecords(filters: EobiFilters): Promise<{ rows: EO
   const params: Record<string, unknown> = {};
 
   if (filters.month) {
-    conditions.push(`FORMAT_DATE('%Y-%m', Payroll_Month) = @month`);
+    // Use FORMAT_DATE to match the month format "YYYY-MM"
+    // The parameter should be a string like "2025-11"
+    conditions.push(`FORMAT_DATE('%Y-%m', eobi.Payroll_Month) = @month`);
     params.month = filters.month;
   }
   if (filters.search) {
     conditions.push(`(
-      LOWER(Employee_ID) LIKE @search OR
-      LOWER(NAME) LIKE @search OR
-      LOWER(EOBI_NO) LIKE @search OR
-      REPLACE(CNIC, '-', '') LIKE REPLACE(@search, '-', '')
+      LOWER(CAST(eobi.Employee_ID AS STRING)) LIKE @search OR
+      LOWER(e.Full_Name) LIKE @search OR
+      LOWER(eobi.EOBI_NO) LIKE @search OR
+      LOWER(COALESCE(e.CNIC_ID, '')) LIKE @search
     )`);
     params.search = normalizeSearch(filters.search);
   }
@@ -264,16 +298,22 @@ export async function fetchEobiRecords(filters: EobiFilters): Promise<{ rows: EO
   const offset = filters.offset ?? 0;
 
   const dataQuery = `
-    SELECT *
-    FROM ${eobiRef}
+    SELECT 
+      eobi.*,
+      e.Full_Name AS NAME,
+      e.CNIC_ID AS CNIC,
+      e.EOBI_Number
+    FROM ${eobiRef} eobi
+    LEFT JOIN ${employeeRef} e ON SAFE_CAST(eobi.Employee_ID AS INT64) = SAFE_CAST(e.Employee_ID AS INT64)
     ${whereClause}
-    ORDER BY Payroll_Month DESC, NAME ASC
+    ORDER BY eobi.Payroll_Month DESC, e.Full_Name ASC
     LIMIT @limit OFFSET @offset
   `;
 
   const countQuery = `
     SELECT COUNT(1) as total
-    FROM ${eobiRef}
+    FROM ${eobiRef} eobi
+    LEFT JOIN ${employeeRef} e ON SAFE_CAST(eobi.Employee_ID AS INT64) = SAFE_CAST(e.Employee_ID AS INT64)
     ${whereClause}
   `;
 
