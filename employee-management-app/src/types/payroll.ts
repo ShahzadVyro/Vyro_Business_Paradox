@@ -148,6 +148,9 @@ export interface PayTemplateConfirmation {
   Currency?: string | null;
   Updated_Salary?: number | null;
   Month: string; // YYYY-MM format
+  Approved?: boolean;
+  Approved_At?: string | null;
+  Approved_By?: string | null;
   Created_At?: string | null;
   Updated_At?: string | null;
   Employee_ID_Lookup?: boolean;

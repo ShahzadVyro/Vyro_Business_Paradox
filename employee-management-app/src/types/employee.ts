@@ -36,6 +36,7 @@ export interface EmployeeRecord {
   Spouse_Name?: string | null;
   Employment_Location?: string | null;
   EOBI_Number?: string | null; // Employees Old-Age Benefits Institution registration number
+  Probation_Status?: string | null; // Probation status: "Probation", "Permanent", or NULL
 }
 
 export interface EmployeeFilters {

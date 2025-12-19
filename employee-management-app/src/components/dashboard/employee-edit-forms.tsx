@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { EmployeeRecord } from "@/types/employee";
 
 interface EditFormProps {
@@ -417,6 +417,219 @@ export const EOBIDetailsForm = ({ employee, onSave, onCancel }: EditFormProps) =
           className="flex-1 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-60"
         >
           {saving ? "Saving..." : "Save Changes"}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
+};
+
+export const IncrementForm = ({ employee, onSave, onCancel }: EditFormProps) => {
+  const [formData, setFormData] = useState({
+    Effective_Date: "",
+    Updated_Salary: "",
+    Currency: "PKR",
+    Previous_Salary: "",
+    Designation: employee.Designation ?? "",
+    Department: employee.Department ?? "",
+    Comments: "",
+    Remarks: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [fetchingPreviousSalary, setFetchingPreviousSalary] = useState(false);
+
+  // Fetch previous salary and currency when component mounts or currency changes
+  useEffect(() => {
+    const fetchPreviousSalary = async () => {
+      if (!employee.Employee_ID) return;
+      
+      setFetchingPreviousSalary(true);
+      try {
+        const response = await fetch(
+          `/api/pay-template/increments?employeeId=${employee.Employee_ID}&currency=${formData.Currency}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          if (data.previousSalary != null) {
+            setFormData((prev) => ({
+              ...prev,
+              Previous_Salary: String(data.previousSalary),
+            }));
+          }
+          if (data.currency) {
+            setFormData((prev) => ({
+              ...prev,
+              Currency: data.currency,
+            }));
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching previous salary:", error);
+      } finally {
+        setFetchingPreviousSalary(false);
+      }
+    };
+
+    fetchPreviousSalary();
+  }, [employee.Employee_ID, formData.Currency]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/pay-template/increments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          employeeId: String(employee.Employee_ID),
+          effectiveDate: formData.Effective_Date,
+          updatedSalary: Number(formData.Updated_Salary),
+          currency: formData.Currency,
+          previousSalary: formData.Previous_Salary ? Number(formData.Previous_Salary) : null,
+          designation: formData.Designation || null,
+          department: formData.Department || null,
+          comments: formData.Comments || null,
+          remarks: formData.Remarks || null,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to save increment");
+      }
+
+      // Update employee record with new salary, designation, and department
+      const updates: Array<{ field: string; value: string | number | null }> = [
+        { field: "Gross_Salary", value: Number(formData.Updated_Salary) },
+      ];
+
+      if (formData.Designation) {
+        updates.push({ field: "Designation", value: formData.Designation });
+      }
+
+      if (formData.Department) {
+        updates.push({ field: "Department", value: formData.Department });
+      }
+
+      // Save updates to employee
+      for (const update of updates) {
+        await onSave(update.field, update.value, `Increment effective ${formData.Effective_Date}`);
+      }
+
+      onCancel();
+    } catch (error) {
+      console.error("Error saving increment:", error);
+      alert(error instanceof Error ? error.message : "Failed to save increment");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-semibold text-slate-900 mb-1">
+          Effective Date <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="date"
+          value={formData.Effective_Date}
+          onChange={(e) => setFormData({ ...formData, Effective_Date: e.target.value })}
+          className="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm"
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-semibold text-slate-900 mb-1">
+          Currency <span className="text-red-500">*</span>
+        </label>
+        <select
+          value={formData.Currency}
+          onChange={(e) => setFormData({ ...formData, Currency: e.target.value })}
+          className="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm"
+          required
+        >
+          <option value="PKR">PKR</option>
+          <option value="USD">USD</option>
+        </select>
+      </div>
+      <div>
+        <label className="block text-sm font-semibold text-slate-900 mb-1">
+          Previous Salary
+        </label>
+        <input
+          type="number"
+          value={formData.Previous_Salary}
+          readOnly
+          className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm"
+          placeholder={fetchingPreviousSalary ? "Loading..." : "Auto-filled from latest salary"}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-semibold text-slate-900 mb-1">
+          Updated Salary <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="number"
+          value={formData.Updated_Salary}
+          onChange={(e) => setFormData({ ...formData, Updated_Salary: e.target.value })}
+          className="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm"
+          required
+          min="0"
+          step="0.01"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-semibold text-slate-900 mb-1">Designation (Optional)</label>
+        <input
+          type="text"
+          value={formData.Designation}
+          onChange={(e) => setFormData({ ...formData, Designation: e.target.value })}
+          className="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm"
+          placeholder="Keep same or change"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-semibold text-slate-900 mb-1">Department (Optional)</label>
+        <input
+          type="text"
+          value={formData.Department}
+          onChange={(e) => setFormData({ ...formData, Department: e.target.value })}
+          className="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm"
+          placeholder="Keep same or change"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-semibold text-slate-900 mb-1">Comments (Optional)</label>
+        <textarea
+          value={formData.Comments}
+          onChange={(e) => setFormData({ ...formData, Comments: e.target.value })}
+          className="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm"
+          rows={2}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-semibold text-slate-900 mb-1">Remarks (Optional)</label>
+        <textarea
+          value={formData.Remarks}
+          onChange={(e) => setFormData({ ...formData, Remarks: e.target.value })}
+          className="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm"
+          rows={2}
+        />
+      </div>
+      <div className="flex gap-2 pt-2">
+        <button
+          type="submit"
+          disabled={loading || fetchingPreviousSalary}
+          className="flex-1 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-60"
+        >
+          {loading ? "Saving..." : "Save Increment"}
         </button>
         <button
           type="button"

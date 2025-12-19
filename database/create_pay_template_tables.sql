@@ -83,6 +83,30 @@ OPTIONS(
 );
 
 -- ============================================================================
+-- PAY_TEMPLATE_CONFIRMATIONS TABLE
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS `test-imagine-web.Vyro_Business_Paradox.Pay_Template_Confirmations` (
+  Employee_ID STRING OPTIONS(description="Employee ID from Employees table"),
+  Employee_Name STRING NOT NULL OPTIONS(description="Full name of employee"),
+  Probation_End_Date DATE OPTIONS(description="Date probation period ends"),
+  Confirmation_Date DATE OPTIONS(description="Date employee was confirmed"),
+  Currency STRING OPTIONS(description="PKR or USD"),
+  Updated_Salary FLOAT64 OPTIONS(description="Salary after confirmation (if changed)"),
+  Month STRING NOT NULL OPTIONS(description="YYYY-MM format, extracted from Probation_End_Date"),
+  Approved BOOL DEFAULT FALSE OPTIONS(description="Whether confirmation has been approved"),
+  Approved_At TIMESTAMP OPTIONS(description="Timestamp when confirmation was approved"),
+  Approved_By STRING OPTIONS(description="User who approved the confirmation"),
+  Created_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+  Updated_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP()
+)
+CLUSTER BY Month, Employee_ID
+OPTIONS(
+  description="Pay template data for employee confirmations",
+  labels=[("version", "1"), ("environment", "production"), ("managed_by", "people_team")]
+);
+
+-- ============================================================================
 -- CREATE INDEXES/CLUSTERING NOTES
 -- ============================================================================
 -- Tables are clustered by Month and Employee_ID for efficient filtering

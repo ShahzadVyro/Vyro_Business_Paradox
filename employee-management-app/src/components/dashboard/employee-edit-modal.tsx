@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PersonalDetailsForm, EmploymentDetailsForm, AccountDetailsForm, EOBIDetailsForm } from "./employee-edit-forms";
+import { PersonalDetailsForm, EmploymentDetailsForm, AccountDetailsForm, EOBIDetailsForm, IncrementForm } from "./employee-edit-forms";
 import type { EmployeeRecord } from "@/types/employee";
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
   onSave: (field: string, value: string | number | null, reason?: string) => Promise<void>;
 }
 
-type TabType = "personal" | "employment" | "account" | "salary" | "eobi";
+type TabType = "personal" | "employment" | "account" | "salary" | "eobi" | "increment";
 
 const TABS: { id: TabType; label: string }[] = [
   { id: "personal", label: "Personal Details" },
@@ -19,6 +19,7 @@ const TABS: { id: TabType; label: string }[] = [
   { id: "account", label: "Account" },
   { id: "salary", label: "Salary" },
   { id: "eobi", label: "EOBI" },
+  { id: "increment", label: "Increment" },
 ];
 
 export default function EmployeeEditModal({ employee, isOpen, onClose, onSave }: Props) {
@@ -84,6 +85,9 @@ export default function EmployeeEditModal({ employee, isOpen, onClose, onSave }:
           )}
           {activeTab === "eobi" && (
             <EOBIDetailsForm employee={employee} onSave={handleSave} onCancel={onClose} />
+          )}
+          {activeTab === "increment" && (
+            <IncrementForm employee={employee} onSave={handleSave} onCancel={onClose} />
           )}
         </div>
       </div>

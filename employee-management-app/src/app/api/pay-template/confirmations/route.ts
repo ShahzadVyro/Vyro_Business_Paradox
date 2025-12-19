@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchConfirmations, lookupEmployeeId } from "@/lib/pay-template";
+import { fetchConfirmations, lookupEmployeeId, approveConfirmation } from "@/lib/pay-template";
 
 export const dynamic = "force-dynamic";
 
@@ -35,5 +35,33 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("[PAY_TEMPLATE_CONFIRMATIONS_ERROR]", error);
     return NextResponse.json({ message: "Failed to fetch confirmations" }, { status: 500 });
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+    const { employeeId, month, approvedBy } = body;
+    
+    if (!employeeId || !month) {
+      return NextResponse.json(
+        { message: "Missing required fields: employeeId, month" },
+        { status: 400 }
+      );
+    }
+    
+    await approveConfirmation(
+      String(employeeId),
+      month,
+      approvedBy || "System"
+    );
+    
+    return NextResponse.json({ success: true, message: "Confirmation approved successfully" });
+  } catch (error) {
+    console.error("[PAY_TEMPLATE_CONFIRMATIONS_APPROVE_ERROR]", error);
+    return NextResponse.json(
+      { message: error instanceof Error ? error.message : "Failed to approve confirmation" },
+      { status: 500 }
+    );
   }
 }

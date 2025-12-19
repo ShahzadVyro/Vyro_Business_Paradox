@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useNewHires, useLeavers, useIncrements, useConfirmations } from "@/hooks/use-pay-template";
+import { useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "@/lib/formatters";
 import type { PayTemplateNewHire, PayTemplateLeaver, PayTemplateIncrement, PayTemplateConfirmation } from "@/types/payroll";
 
@@ -14,13 +16,56 @@ const PayTemplateTabs = () => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   });
+  const [showUnapprovedOnly, setShowUnapprovedOnly] = useState(false);
+  const [approvingIds, setApprovingIds] = useState<Set<string>>(new Set());
 
+  const queryClient = useQueryClient();
+  const router = useRouter();
   const { data: newHires, isLoading: newHiresLoading } = useNewHires(month);
   const { data: leavers, isLoading: leaversLoading } = useLeavers(month);
   const { data: increments, isLoading: incrementsLoading } = useIncrements(month);
   const { data: confirmations, isLoading: confirmationsLoading } = useConfirmations(month);
 
   const isLoading = newHiresLoading || leaversLoading || incrementsLoading || confirmationsLoading;
+
+  const handleApproveConfirmation = async (employeeId: string) => {
+    if (!employeeId) return;
+    
+    setApprovingIds((prev) => new Set(prev).add(employeeId));
+    try {
+      const response = await fetch("/api/pay-template/confirmations", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          employeeId,
+          month,
+          approvedBy: "User", // TODO: Get from auth context
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to approve confirmation");
+      }
+
+      // Invalidate and refetch confirmations
+      await queryClient.invalidateQueries({ queryKey: ["pay-template", "confirmations", month] });
+    } catch (error) {
+      console.error("Error approving confirmation:", error);
+      alert(error instanceof Error ? error.message : "Failed to approve confirmation");
+    } finally {
+      setApprovingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(employeeId);
+        return next;
+      });
+    }
+  };
+
+  // Filter confirmations based on toggle
+  const filteredConfirmations = showUnapprovedOnly
+    ? confirmations?.filter((c) => !c.Approved) || []
+    : confirmations || [];
 
   const tabs = [
     { id: "new-hires" as TabType, label: "New Hires" },
@@ -176,8 +221,20 @@ const PayTemplateTabs = () => {
 
             {/* Increments Tab */}
             {activeTab === "increments" && (
-              <div className="overflow-x-auto">
-                {increments && increments.length > 0 ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-slate-600">
+                    To add a new increment, go to the Employee Directory and edit the employee record.
+                  </p>
+                  <button
+                    onClick={() => router.push("/directory")}
+                    className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+                  >
+                    Go to Employee Directory
+                  </button>
+                </div>
+                <div className="overflow-x-auto">
+                  {increments && increments.length > 0 ? (
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-slate-200">
@@ -216,48 +273,91 @@ const PayTemplateTabs = () => {
                       ))}
                     </tbody>
                   </table>
-                ) : (
-                  <p className="p-6 text-center text-sm text-slate-400">No increments found for {month}.</p>
-                )}
+                  ) : (
+                    <p className="p-6 text-center text-sm text-slate-400">No increments found for {month}.</p>
+                  )}
+                </div>
               </div>
             )}
 
             {/* Confirmations Tab */}
             {activeTab === "confirmations" && (
-              <div className="overflow-x-auto">
-                {confirmations && confirmations.length > 0 ? (
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-slate-200">
-                        <th className="px-3 py-2 text-left">Employee ID</th>
-                        <th className="px-3 py-2 text-left">Employee Name</th>
-                        <th className="px-3 py-2 text-left">Probation End Date</th>
-                        <th className="px-3 py-2 text-left">Confirmation Date</th>
-                        <th className="px-3 py-2 text-left">Currency</th>
-                        <th className="px-3 py-2 text-left">Updated Salary</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {confirmations.map((confirmation: PayTemplateConfirmation, idx: number) => (
-                        <tr key={idx} className="border-b border-slate-100">
-                          <td className="px-3 py-2 text-slate-900">
-                            {confirmation.Employee_ID || "—"}
-                            {confirmation.Employee_ID_Lookup && <span className="text-xs text-blue-500 ml-1">(lookup)</span>}
-                          </td>
-                          <td className="px-3 py-2 text-slate-900">{confirmation.Employee_Name}</td>
-                          <td className="px-3 py-2 text-slate-600">{formatDate(confirmation.Probation_End_Date) || "—"}</td>
-                          <td className="px-3 py-2 text-slate-600">{formatDate(confirmation.Confirmation_Date) || "—"}</td>
-                          <td className="px-3 py-2 text-slate-600">{confirmation.Currency || "—"}</td>
-                          <td className="px-3 py-2 text-slate-900">
-                            {confirmation.Updated_Salary != null ? formatByCurrency(confirmation.Updated_Salary, confirmation.Currency || "PKR") : "—"}
-                          </td>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-2 text-sm text-slate-600">
+                    <input
+                      type="checkbox"
+                      checked={showUnapprovedOnly}
+                      onChange={(e) => setShowUnapprovedOnly(e.target.checked)}
+                      className="rounded border-slate-300"
+                    />
+                    <span>Show unapproved only</span>
+                  </label>
+                </div>
+                <div className="overflow-x-auto">
+                  {filteredConfirmations.length > 0 ? (
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-slate-200">
+                          <th className="px-3 py-2 text-left">Employee ID</th>
+                          <th className="px-3 py-2 text-left">Employee Name</th>
+                          <th className="px-3 py-2 text-left">Probation End Date</th>
+                          <th className="px-3 py-2 text-left">Confirmation Date</th>
+                          <th className="px-3 py-2 text-left">Currency</th>
+                          <th className="px-3 py-2 text-left">Updated Salary</th>
+                          <th className="px-3 py-2 text-left">Approved</th>
+                          <th className="px-3 py-2 text-left">Action</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <p className="p-6 text-center text-sm text-slate-400">No confirmations found for {month}.</p>
-                )}
+                      </thead>
+                      <tbody>
+                        {filteredConfirmations.map((confirmation: PayTemplateConfirmation, idx: number) => (
+                          <tr key={idx} className="border-b border-slate-100">
+                            <td className="px-3 py-2 text-slate-900">
+                              {confirmation.Employee_ID || "—"}
+                              {confirmation.Employee_ID_Lookup && <span className="text-xs text-blue-500 ml-1">(lookup)</span>}
+                            </td>
+                            <td className="px-3 py-2 text-slate-900">{confirmation.Employee_Name}</td>
+                            <td className="px-3 py-2 text-slate-600">{formatDate(confirmation.Probation_End_Date) || "—"}</td>
+                            <td className="px-3 py-2 text-slate-600">{formatDate(confirmation.Confirmation_Date) || "—"}</td>
+                            <td className="px-3 py-2 text-slate-600">{confirmation.Currency || "—"}</td>
+                            <td className="px-3 py-2 text-slate-900">
+                              {confirmation.Updated_Salary != null ? formatByCurrency(confirmation.Updated_Salary, confirmation.Currency || "PKR") : "—"}
+                            </td>
+                            <td className="px-3 py-2 text-slate-600">
+                              {confirmation.Approved ? (
+                                <span className="inline-flex items-center gap-1 text-green-600">
+                                  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                  </svg>
+                                  Approved
+                                </span>
+                              ) : (
+                                <span className="text-slate-400">Pending</span>
+                              )}
+                            </td>
+                            <td className="px-3 py-2">
+                              {!confirmation.Approved && confirmation.Employee_ID && (
+                                <button
+                                  onClick={() => handleApproveConfirmation(confirmation.Employee_ID!)}
+                                  disabled={approvingIds.has(confirmation.Employee_ID!)}
+                                  className="rounded-full bg-green-600 px-3 py-1 text-xs font-semibold text-white transition hover:bg-green-700 disabled:opacity-50"
+                                >
+                                  {approvingIds.has(confirmation.Employee_ID!) ? "Approving..." : "Approve"}
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <p className="p-6 text-center text-sm text-slate-400">
+                      {showUnapprovedOnly 
+                        ? `No unapproved confirmations found for ${month}.`
+                        : `No confirmations found for ${month}.`}
+                    </p>
+                  )}
+                </div>
               </div>
             )}
           </>

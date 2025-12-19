@@ -11,6 +11,8 @@ if (!projectId || !dataset) {
 
 const employeesTableRef = `\`${projectId}.${dataset}.${process.env.BQ_TABLE ?? "Employees"}\``;
 const salariesTableRef = `\`${projectId}.${dataset}.Salaries\``;
+const payTemplateIncrementsTableRef = `\`${projectId}.${dataset}.Pay_Template_Increments\``;
+const payTemplateConfirmationsTableRef = `\`${projectId}.${dataset}.Pay_Template_Confirmations\``;
 
 // Lookup Employee ID by name or email
 export async function lookupEmployeeId(name: string, email?: string): Promise<string | null> {
@@ -100,17 +102,57 @@ export async function lookupPreviousSalary(employeeId: string, currency: string)
   }
 }
 
-// Fetch New Hires for a given month
+// Get latest currency from Salaries table for an employee
+export async function getLatestCurrency(employeeId: string): Promise<string | null> {
+  try {
+    const bigquery = getBigQueryClient();
+    const query = `
+      SELECT Currency
+      FROM ${salariesTableRef}
+      WHERE Employee_ID = @employeeId
+      ORDER BY Payroll_Month DESC
+      LIMIT 1
+    `;
+    
+    const [rows] = await bigquery.query({
+      query,
+      params: { employeeId: Number(employeeId) },
+    });
+    
+    if (rows.length > 0) {
+      return String((rows[0] as { Currency: string }).Currency);
+    }
+    return null;
+  } catch (error) {
+    console.error('[PAY_TEMPLATE] Error looking up currency:', error);
+    return null;
+  }
+}
+
+// Fetch New Hires for a given month - now queries Employees table directly
 export async function fetchNewHires(month: string): Promise<PayTemplateNewHire[]> {
   try {
     const bigquery = getBigQueryClient();
-    const tableRef = `\`${projectId}.${dataset}.Pay_Template_New_Hires\``;
     
     const query = `
-      SELECT *
-      FROM ${tableRef}
-      WHERE Month = @month
-      ORDER BY Date_of_Joining ASC
+      SELECT 
+        Employee_ID,
+        Full_Name as Employee_Name,
+        Designation,
+        Official_Email,
+        Joining_Date as Date_of_Joining,
+        Gross_Salary as Salary,
+        Employment_Location,
+        Bank_Name,
+        Bank_Account_Title,
+        Account_Number_IBAN as Bank_Account_Number_IBAN,
+        Swift_Code_BIC,
+        Created_At,
+        Updated_At
+      FROM ${employeesTableRef}
+      WHERE FORMAT_DATE('%Y-%m', Joining_Date) = @month
+        AND Employment_Status = 'Active'
+      ORDER BY Joining_Date ASC
     `;
     
     const [rows] = await bigquery.query({
@@ -118,45 +160,51 @@ export async function fetchNewHires(month: string): Promise<PayTemplateNewHire[]
       params: { month },
     });
     
-    return (rows as any[]).map((row) => ({
-      Type: String(row.Type ?? 'New Hire'),
-      Month: String(row.Month ?? month),
-      Employee_ID: row.Employee_ID ? String(row.Employee_ID) : null,
-      Employee_Name: String(row.Employee_Name ?? ''),
-      Designation: row.Designation ? String(row.Designation) : null,
-      Official_Email: row.Official_Email ? String(row.Official_Email) : null,
-      Date_of_Joining: row.Date_of_Joining ? String(row.Date_of_Joining).split('T')[0] : '',
-      Currency: String(row.Currency ?? 'PKR'),
-      Salary: Number(row.Salary ?? 0),
-      Employment_Location: row.Employment_Location ? String(row.Employment_Location) : null,
-      Bank_Name: row.Bank_Name ? String(row.Bank_Name) : null,
-      Bank_Account_Title: row.Bank_Account_Title ? String(row.Bank_Account_Title) : null,
-      Bank_Account_Number_IBAN: row.Bank_Account_Number_IBAN ? String(row.Bank_Account_Number_IBAN) : null,
-      Swift_Code_BIC: row.Swift_Code_BIC ? String(row.Swift_Code_BIC) : null,
-      Comments_by_Aun: row.Comments_by_Aun ? String(row.Comments_by_Aun) : null,
-      Created_At: row.Created_At ? String(row.Created_At) : null,
-      Updated_At: row.Updated_At ? String(row.Updated_At) : null,
-    }));
+    return (rows as any[]).map((row) => {
+      // Try to get currency from latest salary, default to PKR
+      const currency = 'PKR'; // Default, can be enhanced later if needed
+      
+      return {
+        Type: 'New Hire',
+        Month: month,
+        Employee_ID: row.Employee_ID ? String(row.Employee_ID) : null,
+        Employee_Name: String(row.Employee_Name ?? ''),
+        Designation: row.Designation ? String(row.Designation) : null,
+        Official_Email: row.Official_Email ? String(row.Official_Email) : null,
+        Date_of_Joining: row.Date_of_Joining ? String(row.Date_of_Joining).split('T')[0] : '',
+        Currency: currency,
+        Salary: Number(row.Salary ?? 0),
+        Employment_Location: row.Employment_Location ? String(row.Employment_Location) : null,
+        Bank_Name: row.Bank_Name ? String(row.Bank_Name) : null,
+        Bank_Account_Title: row.Bank_Account_Title ? String(row.Bank_Account_Title) : null,
+        Bank_Account_Number_IBAN: row.Bank_Account_Number_IBAN ? String(row.Bank_Account_Number_IBAN) : null,
+        Swift_Code_BIC: row.Swift_Code_BIC ? String(row.Swift_Code_BIC) : null,
+        Comments_by_Aun: null,
+        Created_At: row.Created_At ? String(row.Created_At) : null,
+        Updated_At: row.Updated_At ? String(row.Updated_At) : null,
+      };
+    });
   } catch (error) {
     console.error('[PAY_TEMPLATE] Error fetching new hires:', error);
-    // If table doesn't exist, return empty array
-    if ((error as any)?.code === 404) {
-      return [];
-    }
     throw error;
   }
 }
 
-// Fetch Leavers for a given month
+// Fetch Leavers for a given month - now queries Employees table directly
 export async function fetchLeavers(month: string): Promise<PayTemplateLeaver[]> {
   try {
     const bigquery = getBigQueryClient();
-    const tableRef = `\`${projectId}.${dataset}.Pay_Template_Leavers\``;
     
     const query = `
-      SELECT *
-      FROM ${tableRef}
-      WHERE Month = @month
+      SELECT 
+        Employee_ID,
+        Full_Name as Employee_Name,
+        Employment_End_Date,
+        Created_At,
+        Updated_At
+      FROM ${employeesTableRef}
+      WHERE FORMAT_DATE('%Y-%m', Employment_End_Date) = @month
+        AND Employment_Status = 'Resigned/Terminated'
       ORDER BY Employment_End_Date ASC
     `;
     
@@ -166,24 +214,20 @@ export async function fetchLeavers(month: string): Promise<PayTemplateLeaver[]> 
     });
     
     return (rows as any[]).map((row) => ({
-      Type: String(row.Type ?? 'Leaver'),
-      Month: String(row.Month ?? month),
+      Type: 'Leaver',
+      Month: month,
       Employee_ID: row.Employee_ID ? String(row.Employee_ID) : null,
       Employee_Name: String(row.Employee_Name ?? ''),
       Employment_End_Date: row.Employment_End_Date ? String(row.Employment_End_Date).split('T')[0] : '',
-      Payroll_Type: String(row.Payroll_Type ?? 'PKR'),
-      Comments: row.Comments ? String(row.Comments) : null,
-      Devices_Returned: row.Devices_Returned ? String(row.Devices_Returned) : null,
-      Comments_by_Aun: row.Comments_by_Aun ? String(row.Comments_by_Aun) : null,
+      Payroll_Type: 'PKR', // Default, can be enhanced later if needed
+      Comments: null,
+      Devices_Returned: null,
+      Comments_by_Aun: null,
       Created_At: row.Created_At ? String(row.Created_At) : null,
       Updated_At: row.Updated_At ? String(row.Updated_At) : null,
     }));
   } catch (error) {
     console.error('[PAY_TEMPLATE] Error fetching leavers:', error);
-    // If table doesn't exist, return empty array
-    if ((error as any)?.code === 404) {
-      return [];
-    }
     throw error;
   }
 }
@@ -230,17 +274,30 @@ export async function fetchIncrements(month: string): Promise<PayTemplateIncreme
   }
 }
 
-// Fetch Confirmations for a given month
+// Fetch Confirmations for a given month - now queries Employees table with approval join
 export async function fetchConfirmations(month: string): Promise<PayTemplateConfirmation[]> {
   try {
     const bigquery = getBigQueryClient();
-    const tableRef = `\`${projectId}.${dataset}.Pay_Template_Confirmations\``;
     
     const query = `
-      SELECT *
-      FROM ${tableRef}
-      WHERE Month = @month
-      ORDER BY Confirmation_Date ASC
+      SELECT 
+        e.Employee_ID,
+        e.Full_Name as Employee_Name,
+        e.Probation_End_Date,
+        e.Gross_Salary as Updated_Salary,
+        COALESCE(c.Approved, FALSE) as Approved,
+        c.Approved_At,
+        c.Approved_By,
+        c.Confirmation_Date,
+        c.Currency,
+        c.Created_At,
+        c.Updated_At
+      FROM ${employeesTableRef} e
+      LEFT JOIN ${payTemplateConfirmationsTableRef} c
+        ON e.Employee_ID = c.Employee_ID AND c.Month = @month
+      WHERE FORMAT_DATE('%Y-%m', e.Probation_End_Date) = @month
+        AND e.Employment_Status = 'Active'
+      ORDER BY e.Probation_End_Date ASC
     `;
     
     const [rows] = await bigquery.query({
@@ -252,19 +309,179 @@ export async function fetchConfirmations(month: string): Promise<PayTemplateConf
       Employee_ID: row.Employee_ID ? String(row.Employee_ID) : null,
       Employee_Name: String(row.Employee_Name ?? ''),
       Probation_End_Date: row.Probation_End_Date ? String(row.Probation_End_Date).split('T')[0] : '',
-      Confirmation_Date: row.Confirmation_Date ? String(row.Confirmation_Date).split('T')[0] : '',
+      Confirmation_Date: row.Confirmation_Date ? String(row.Confirmation_Date).split('T')[0] : new Date().toISOString().split('T')[0],
       Currency: row.Currency ? String(row.Currency) : null,
       Updated_Salary: row.Updated_Salary != null ? Number(row.Updated_Salary) : null,
-      Month: String(row.Month ?? month),
+      Month: month,
+      Approved: row.Approved === true || row.Approved === 1,
+      Approved_At: row.Approved_At ? String(row.Approved_At) : null,
+      Approved_By: row.Approved_By ? String(row.Approved_By) : null,
       Created_At: row.Created_At ? String(row.Created_At) : null,
       Updated_At: row.Updated_At ? String(row.Updated_At) : null,
     }));
   } catch (error) {
     console.error('[PAY_TEMPLATE] Error fetching confirmations:', error);
-    // If table doesn't exist, return empty array
-    if ((error as any)?.code === 404) {
-      return [];
+    throw error;
+  }
+}
+
+// Add increment record and update employee
+export async function addIncrement(
+  employeeId: string,
+  effectiveDate: string,
+  updatedSalary: number,
+  currency: string,
+  previousSalary: number | null,
+  designation?: string | null,
+  department?: string | null,
+  comments?: string | null,
+  remarks?: string | null
+): Promise<void> {
+  try {
+    const bigquery = getBigQueryClient();
+    const employeeIdNum = Number(employeeId);
+    const month = effectiveDate.substring(0, 7); // Extract YYYY-MM from date
+    
+    // Insert into Pay_Template_Increments
+    const insertIncrementQuery = `
+      INSERT INTO ${payTemplateIncrementsTableRef} 
+        (Type, Month, Employee_ID, Employee_Name, Currency, Previous_Salary, Updated_Salary, 
+         Effective_Date, Comments, Remarks, Created_At, Updated_At)
+      SELECT 
+        'Increment',
+        @month,
+        @employeeId,
+        Full_Name,
+        @currency,
+        @previousSalary,
+        @updatedSalary,
+        @effectiveDate,
+        @comments,
+        @remarks,
+        CURRENT_TIMESTAMP(),
+        CURRENT_TIMESTAMP()
+      FROM ${employeesTableRef}
+      WHERE Employee_ID = @employeeId
+    `;
+    
+    await bigquery.query({
+      query: insertIncrementQuery,
+      params: {
+        month,
+        employeeId: employeeIdNum,
+        currency,
+        previousSalary: previousSalary ?? null,
+        updatedSalary,
+        effectiveDate,
+        comments: comments ?? null,
+        remarks: remarks ?? null,
+      },
+    });
+    
+    // Update Employees table
+    const updateFields: string[] = ['Gross_Salary = @updatedSalary'];
+    const updateParams: Record<string, unknown> = {
+      employeeId: employeeIdNum,
+      updatedSalary,
+    };
+    
+    if (designation !== undefined && designation !== null) {
+      updateFields.push('Designation = @designation');
+      updateParams.designation = designation;
     }
+    
+    if (department !== undefined && department !== null) {
+      updateFields.push('Department = @department');
+      updateParams.department = department;
+    }
+    
+    const updateEmployeeQuery = `
+      UPDATE ${employeesTableRef}
+      SET ${updateFields.join(', ')},
+          Updated_At = CURRENT_TIMESTAMP(),
+          Updated_By = 'Increment System'
+      WHERE Employee_ID = @employeeId
+    `;
+    
+    await bigquery.query({
+      query: updateEmployeeQuery,
+      params: updateParams,
+    });
+  } catch (error) {
+    console.error('[PAY_TEMPLATE] Error adding increment:', error);
+    throw error;
+  }
+}
+
+// Approve confirmation and update employee probation status
+export async function approveConfirmation(
+  employeeId: string,
+  month: string,
+  approvedBy: string
+): Promise<void> {
+  try {
+    const bigquery = getBigQueryClient();
+    const employeeIdNum = Number(employeeId);
+    
+    // Insert or update Pay_Template_Confirmations
+    const upsertConfirmationQuery = `
+      MERGE ${payTemplateConfirmationsTableRef} c
+      USING (
+        SELECT 
+          @employeeId as Employee_ID,
+          Full_Name as Employee_Name,
+          Probation_End_Date,
+          Gross_Salary as Updated_Salary
+        FROM ${employeesTableRef}
+        WHERE Employee_ID = @employeeId
+      ) e
+      ON c.Employee_ID = e.Employee_ID AND c.Month = @month
+      WHEN MATCHED THEN
+        UPDATE SET
+          Approved = TRUE,
+          Approved_At = CURRENT_TIMESTAMP(),
+          Approved_By = @approvedBy,
+          Updated_At = CURRENT_TIMESTAMP()
+      WHEN NOT MATCHED THEN
+        INSERT (
+          Employee_ID, Employee_Name, Probation_End_Date, Confirmation_Date,
+          Currency, Updated_Salary, Month, Approved, Approved_At, Approved_By,
+          Created_At, Updated_At
+        )
+        VALUES (
+          e.Employee_ID, e.Employee_Name, e.Probation_End_Date, CURRENT_DATE(),
+          'PKR', e.Updated_Salary, @month, TRUE, CURRENT_TIMESTAMP(), @approvedBy,
+          CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
+        )
+    `;
+    
+    await bigquery.query({
+      query: upsertConfirmationQuery,
+      params: {
+        employeeId: employeeIdNum,
+        month,
+        approvedBy,
+      },
+    });
+    
+    // Update Employees.Probation_Status to 'Permanent'
+    const updateEmployeeQuery = `
+      UPDATE ${employeesTableRef}
+      SET Probation_Status = 'Permanent',
+          Updated_At = CURRENT_TIMESTAMP(),
+          Updated_By = @approvedBy
+      WHERE Employee_ID = @employeeId
+    `;
+    
+    await bigquery.query({
+      query: updateEmployeeQuery,
+      params: {
+        employeeId: employeeIdNum,
+        approvedBy,
+      },
+    });
+  } catch (error) {
+    console.error('[PAY_TEMPLATE] Error approving confirmation:', error);
     throw error;
   }
 }
