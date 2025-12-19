@@ -286,7 +286,7 @@ export const updateSubmissionMeta = async (
       Slack_Channel = COALESCE(@slackChannel, Slack_Channel),
       Approved_By = COALESCE(@approvedBy, Approved_By),
       Employee_ID = COALESCE(@employeeId, Employee_ID),
-      Updated_At = CURRENT_TIMESTAMP()
+      Updated_At = CURRENT_DATETIME()
     WHERE Submission_ID = @submissionId
   `;
   await bigquery.query({
@@ -300,6 +300,51 @@ export const updateSubmissionMeta = async (
       employeeId: updates.employeeId ?? null,
     },
   });
+};
+
+export const updateSubmissionPayload = async (submissionId: string, payload: Partial<OnboardingFormInput>) => {
+  await ensureIntakeTable();
+  const bigquery = getBigQueryClient();
+  
+  // Get current submission to merge with new payload
+  const current = await getSubmissionById(submissionId);
+  if (!current) {
+    throw new Error("Submission not found");
+  }
+
+  // Build updated payload - extract only form fields from current submission
+  // Exclude metadata fields: Submission_ID, Status, Slack_TS, Slack_Channel, Approved_By, Employee_ID, Created_At, Updated_At
+  const metadataFields = ["Submission_ID", "Status", "Slack_TS", "Slack_Channel", "Approved_By", "Employee_ID", "Created_At", "Updated_At"];
+  const currentAny = current as unknown as Record<string, unknown>;
+  
+  // Start with current submission, remove metadata, then apply updates
+  const updatedPayload: Record<string, unknown> = {};
+  Object.keys(currentAny).forEach((key) => {
+    if (!metadataFields.includes(key)) {
+      updatedPayload[key] = currentAny[key];
+    }
+  });
+  
+  // Apply updates
+  Object.assign(updatedPayload, payload);
+
+  const query = `
+    UPDATE ${intakeTableRef}
+    SET
+      Payload = TO_JSON(@payload),
+      Updated_At = CURRENT_DATETIME()
+    WHERE Submission_ID = @submissionId
+  `;
+  
+  await bigquery.query({
+    query,
+    params: {
+      submissionId,
+      payload: updatedPayload,
+    },
+  });
+
+  return await getSubmissionById(submissionId);
 };
 
 const columnMap: Record<string, keyof OnboardingFormInput> = {
