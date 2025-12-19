@@ -88,6 +88,8 @@ export interface DashboardSummary {
 }
 
 export interface PayTemplateNewHire {
+  Type: string; // Always "New Hire"
+  Month: string; // YYYY-MM format, extracted from Date_of_Joining
   Employee_ID?: string | null;
   Employee_Name: string;
   Designation?: string | null;
@@ -100,24 +102,30 @@ export interface PayTemplateNewHire {
   Bank_Account_Title?: string | null;
   Bank_Account_Number_IBAN?: string | null;
   Swift_Code_BIC?: string | null;
-  Payroll_Month: string;
+  Comments_by_Aun?: string | null;
   Created_At?: string | null;
   Updated_At?: string | null;
   Employee_ID_Lookup?: boolean;
 }
 
 export interface PayTemplateLeaver {
+  Type: string; // Always "Leaver"
+  Month: string; // YYYY-MM format, extracted from Employment_End_Date
   Employee_ID?: string | null;
   Employee_Name: string;
   Employment_End_Date: string;
   Payroll_Type: string;
-  Payroll_Month: string;
+  Comments?: string | null;
+  Devices_Returned?: string | null;
+  Comments_by_Aun?: string | null;
   Created_At?: string | null;
   Updated_At?: string | null;
   Employee_ID_Lookup?: boolean;
 }
 
 export interface PayTemplateIncrement {
+  Type: string; // Always "Increment"
+  Month: string; // YYYY-MM format, extracted from Effective_Date
   Employee_ID?: string | null;
   Employee_Name: string;
   Currency: string;
@@ -125,7 +133,7 @@ export interface PayTemplateIncrement {
   Updated_Salary: number;
   Effective_Date: string;
   Comments?: string | null;
-  Payroll_Month: string;
+  Remarks?: string | null;
   Created_At?: string | null;
   Updated_At?: string | null;
   Employee_ID_Lookup?: boolean;
@@ -139,7 +147,7 @@ export interface PayTemplateConfirmation {
   Confirmation_Date: string;
   Currency?: string | null;
   Updated_Salary?: number | null;
-  Payroll_Month: string;
+  Month: string; // YYYY-MM format
   Created_At?: string | null;
   Updated_At?: string | null;
   Employee_ID_Lookup?: boolean;

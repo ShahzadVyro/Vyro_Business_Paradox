@@ -91,6 +91,8 @@ const PayTemplateTabs = () => {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-slate-200">
+                        <th className="px-3 py-2 text-left">Type</th>
+                        <th className="px-3 py-2 text-left">Month</th>
                         <th className="px-3 py-2 text-left">Employee ID</th>
                         <th className="px-3 py-2 text-left">Employee Name</th>
                         <th className="px-3 py-2 text-left">Designation</th>
@@ -99,11 +101,14 @@ const PayTemplateTabs = () => {
                         <th className="px-3 py-2 text-left">Salary</th>
                         <th className="px-3 py-2 text-left">Location</th>
                         <th className="px-3 py-2 text-left">Bank Name</th>
+                        <th className="px-3 py-2 text-left">Comments by Aun</th>
                       </tr>
                     </thead>
                     <tbody>
                       {newHires.map((hire: PayTemplateNewHire, idx: number) => (
                         <tr key={idx} className="border-b border-slate-100">
+                          <td className="px-3 py-2 text-slate-600">{hire.Type || "New Hire"}</td>
+                          <td className="px-3 py-2 text-slate-600">{hire.Month || month}</td>
                           <td className="px-3 py-2 text-slate-900">
                             {hire.Employee_ID || "—"}
                             {hire.Employee_ID_Lookup && <span className="text-xs text-blue-500 ml-1">(lookup)</span>}
@@ -115,6 +120,7 @@ const PayTemplateTabs = () => {
                           <td className="px-3 py-2 text-slate-900">{formatByCurrency(hire.Salary, hire.Currency)}</td>
                           <td className="px-3 py-2 text-slate-600">{hire.Employment_Location || "—"}</td>
                           <td className="px-3 py-2 text-slate-600">{hire.Bank_Name || "—"}</td>
+                          <td className="px-3 py-2 text-slate-600">{hire.Comments_by_Aun || "—"}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -132,15 +138,22 @@ const PayTemplateTabs = () => {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-slate-200">
+                        <th className="px-3 py-2 text-left">Type</th>
+                        <th className="px-3 py-2 text-left">Month</th>
                         <th className="px-3 py-2 text-left">Employee ID</th>
                         <th className="px-3 py-2 text-left">Employee Name</th>
                         <th className="px-3 py-2 text-left">Employment End Date</th>
                         <th className="px-3 py-2 text-left">Payroll Type</th>
+                        <th className="px-3 py-2 text-left">Comments</th>
+                        <th className="px-3 py-2 text-left">Devices Returned</th>
+                        <th className="px-3 py-2 text-left">Comments by Aun</th>
                       </tr>
                     </thead>
                     <tbody>
                       {leavers.map((leaver: PayTemplateLeaver, idx: number) => (
                         <tr key={idx} className="border-b border-slate-100">
+                          <td className="px-3 py-2 text-slate-600">{leaver.Type || "Leaver"}</td>
+                          <td className="px-3 py-2 text-slate-600">{leaver.Month || month}</td>
                           <td className="px-3 py-2 text-slate-900">
                             {leaver.Employee_ID || "—"}
                             {leaver.Employee_ID_Lookup && <span className="text-xs text-blue-500 ml-1">(lookup)</span>}
@@ -148,6 +161,9 @@ const PayTemplateTabs = () => {
                           <td className="px-3 py-2 text-slate-900">{leaver.Employee_Name}</td>
                           <td className="px-3 py-2 text-slate-600">{formatDate(leaver.Employment_End_Date) || "—"}</td>
                           <td className="px-3 py-2 text-slate-600">{leaver.Payroll_Type}</td>
+                          <td className="px-3 py-2 text-slate-600">{leaver.Comments || "—"}</td>
+                          <td className="px-3 py-2 text-slate-600">{leaver.Devices_Returned || "—"}</td>
+                          <td className="px-3 py-2 text-slate-600">{leaver.Comments_by_Aun || "—"}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -165,6 +181,8 @@ const PayTemplateTabs = () => {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-slate-200">
+                        <th className="px-3 py-2 text-left">Type</th>
+                        <th className="px-3 py-2 text-left">Month</th>
                         <th className="px-3 py-2 text-left">Employee ID</th>
                         <th className="px-3 py-2 text-left">Employee Name</th>
                         <th className="px-3 py-2 text-left">Currency</th>
@@ -172,11 +190,14 @@ const PayTemplateTabs = () => {
                         <th className="px-3 py-2 text-left">Updated Salary</th>
                         <th className="px-3 py-2 text-left">Effective Date</th>
                         <th className="px-3 py-2 text-left">Comments</th>
+                        <th className="px-3 py-2 text-left">Remarks</th>
                       </tr>
                     </thead>
                     <tbody>
                       {increments.map((increment: PayTemplateIncrement, idx: number) => (
                         <tr key={idx} className="border-b border-slate-100">
+                          <td className="px-3 py-2 text-slate-600">{increment.Type || "Increment"}</td>
+                          <td className="px-3 py-2 text-slate-600">{increment.Month || month}</td>
                           <td className="px-3 py-2 text-slate-900">
                             {increment.Employee_ID || "—"}
                             {increment.Employee_ID_Lookup && <span className="text-xs text-blue-500 ml-1">(lookup)</span>}
@@ -190,6 +211,7 @@ const PayTemplateTabs = () => {
                           <td className="px-3 py-2 text-slate-900">{formatByCurrency(increment.Updated_Salary, increment.Currency)}</td>
                           <td className="px-3 py-2 text-slate-600">{formatDate(increment.Effective_Date) || "—"}</td>
                           <td className="px-3 py-2 text-slate-600">{increment.Comments || "—"}</td>
+                          <td className="px-3 py-2 text-slate-600">{increment.Remarks || "—"}</td>
                         </tr>
                       ))}
                     </tbody>

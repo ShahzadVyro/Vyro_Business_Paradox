@@ -109,7 +109,7 @@ export async function fetchNewHires(month: string): Promise<PayTemplateNewHire[]
     const query = `
       SELECT *
       FROM ${tableRef}
-      WHERE Payroll_Month = @month
+      WHERE Month = @month
       ORDER BY Date_of_Joining ASC
     `;
     
@@ -119,6 +119,8 @@ export async function fetchNewHires(month: string): Promise<PayTemplateNewHire[]
     });
     
     return (rows as any[]).map((row) => ({
+      Type: String(row.Type ?? 'New Hire'),
+      Month: String(row.Month ?? month),
       Employee_ID: row.Employee_ID ? String(row.Employee_ID) : null,
       Employee_Name: String(row.Employee_Name ?? ''),
       Designation: row.Designation ? String(row.Designation) : null,
@@ -131,7 +133,7 @@ export async function fetchNewHires(month: string): Promise<PayTemplateNewHire[]
       Bank_Account_Title: row.Bank_Account_Title ? String(row.Bank_Account_Title) : null,
       Bank_Account_Number_IBAN: row.Bank_Account_Number_IBAN ? String(row.Bank_Account_Number_IBAN) : null,
       Swift_Code_BIC: row.Swift_Code_BIC ? String(row.Swift_Code_BIC) : null,
-      Payroll_Month: String(row.Payroll_Month ?? month),
+      Comments_by_Aun: row.Comments_by_Aun ? String(row.Comments_by_Aun) : null,
       Created_At: row.Created_At ? String(row.Created_At) : null,
       Updated_At: row.Updated_At ? String(row.Updated_At) : null,
     }));
@@ -154,7 +156,7 @@ export async function fetchLeavers(month: string): Promise<PayTemplateLeaver[]> 
     const query = `
       SELECT *
       FROM ${tableRef}
-      WHERE Payroll_Month = @month
+      WHERE Month = @month
       ORDER BY Employment_End_Date ASC
     `;
     
@@ -164,11 +166,15 @@ export async function fetchLeavers(month: string): Promise<PayTemplateLeaver[]> 
     });
     
     return (rows as any[]).map((row) => ({
+      Type: String(row.Type ?? 'Leaver'),
+      Month: String(row.Month ?? month),
       Employee_ID: row.Employee_ID ? String(row.Employee_ID) : null,
       Employee_Name: String(row.Employee_Name ?? ''),
       Employment_End_Date: row.Employment_End_Date ? String(row.Employment_End_Date).split('T')[0] : '',
       Payroll_Type: String(row.Payroll_Type ?? 'PKR'),
-      Payroll_Month: String(row.Payroll_Month ?? month),
+      Comments: row.Comments ? String(row.Comments) : null,
+      Devices_Returned: row.Devices_Returned ? String(row.Devices_Returned) : null,
+      Comments_by_Aun: row.Comments_by_Aun ? String(row.Comments_by_Aun) : null,
       Created_At: row.Created_At ? String(row.Created_At) : null,
       Updated_At: row.Updated_At ? String(row.Updated_At) : null,
     }));
@@ -191,7 +197,7 @@ export async function fetchIncrements(month: string): Promise<PayTemplateIncreme
     const query = `
       SELECT *
       FROM ${tableRef}
-      WHERE Payroll_Month = @month
+      WHERE Month = @month
       ORDER BY Effective_Date ASC
     `;
     
@@ -201,6 +207,8 @@ export async function fetchIncrements(month: string): Promise<PayTemplateIncreme
     });
     
     return (rows as any[]).map((row) => ({
+      Type: String(row.Type ?? 'Increment'),
+      Month: String(row.Month ?? month),
       Employee_ID: row.Employee_ID ? String(row.Employee_ID) : null,
       Employee_Name: String(row.Employee_Name ?? ''),
       Currency: String(row.Currency ?? 'PKR'),
@@ -208,7 +216,7 @@ export async function fetchIncrements(month: string): Promise<PayTemplateIncreme
       Updated_Salary: Number(row.Updated_Salary ?? 0),
       Effective_Date: row.Effective_Date ? String(row.Effective_Date).split('T')[0] : '',
       Comments: row.Comments ? String(row.Comments) : null,
-      Payroll_Month: String(row.Payroll_Month ?? month),
+      Remarks: row.Remarks ? String(row.Remarks) : null,
       Created_At: row.Created_At ? String(row.Created_At) : null,
       Updated_At: row.Updated_At ? String(row.Updated_At) : null,
     }));
@@ -231,7 +239,7 @@ export async function fetchConfirmations(month: string): Promise<PayTemplateConf
     const query = `
       SELECT *
       FROM ${tableRef}
-      WHERE Payroll_Month = @month
+      WHERE Month = @month
       ORDER BY Confirmation_Date ASC
     `;
     
@@ -247,7 +255,7 @@ export async function fetchConfirmations(month: string): Promise<PayTemplateConf
       Confirmation_Date: row.Confirmation_Date ? String(row.Confirmation_Date).split('T')[0] : '',
       Currency: row.Currency ? String(row.Currency) : null,
       Updated_Salary: row.Updated_Salary != null ? Number(row.Updated_Salary) : null,
-      Payroll_Month: String(row.Payroll_Month ?? month),
+      Month: String(row.Month ?? month),
       Created_At: row.Created_At ? String(row.Created_At) : null,
       Updated_At: row.Updated_At ? String(row.Updated_At) : null,
     }));
