@@ -138,6 +138,8 @@ const fetchNewJoinersThisMonth = async () => {
 };
 
 const fetchProbationsEndingSoon = async () => {
+  console.log('[DASHBOARD] fetchProbationsEndingSoon - Starting query');
+  console.log('[DASHBOARD] fetchProbationsEndingSoon - Table:', employeeTableRef);
   try {
     const bigquery = getBigQueryClient();
     
@@ -157,21 +159,33 @@ const fetchProbationsEndingSoon = async () => {
       LIMIT 20
     `;
     
+    console.log('[DASHBOARD] fetchProbationsEndingSoon - Executing query');
     const [rows] = await bigquery.query({ query });
-    return (rows as any[]).map((row) => ({
+    const results = (rows as any[]).map((row) => ({
       Employee_ID: Number(row.Employee_ID),
       Full_Name: row.Full_Name ?? '',
       Department: row.Department ?? null,
       Probation_End_Date: row.Probation_End_Date ? String(row.Probation_End_Date).split('T')[0] : '',
       daysRemaining: Number(row.days_remaining ?? 0),
     }));
+    console.log('[DASHBOARD] fetchProbationsEndingSoon - Query succeeded, results:', results.length);
+    if (results.length === 0) {
+      console.log('[DASHBOARD] fetchProbationsEndingSoon - No probations ending soon (this is normal if none match criteria)');
+    }
+    return results;
   } catch (error) {
-    console.error('[DASHBOARD] Error fetching probations ending soon:', error);
+    console.error('[DASHBOARD] fetchProbationsEndingSoon - Query failed:', {
+      error: error instanceof Error ? error.message : String(error),
+      errorCode: (error as any)?.code,
+      table: employeeTableRef,
+    });
     return [];
   }
 };
 
 const fetchDepartmentBreakdown = async () => {
+  console.log('[DASHBOARD] fetchDepartmentBreakdown - Starting query');
+  console.log('[DASHBOARD] fetchDepartmentBreakdown - Table:', employeeTableRef);
   try {
     const bigquery = getBigQueryClient();
     
@@ -187,14 +201,24 @@ const fetchDepartmentBreakdown = async () => {
       ORDER BY active_count DESC
     `;
     
+    console.log('[DASHBOARD] fetchDepartmentBreakdown - Executing query');
     const [rows] = await bigquery.query({ query });
-    return (rows as any[]).map((row) => ({
+    const results = (rows as any[]).map((row) => ({
       Department: String(row.Department ?? ''),
       activeCount: Number(row.active_count ?? 0),
       totalCount: Number(row.total_count ?? 0),
     }));
+    console.log('[DASHBOARD] fetchDepartmentBreakdown - Query succeeded, departments:', results.length);
+    if (results.length === 0) {
+      console.warn('[DASHBOARD] fetchDepartmentBreakdown - No departments found (unexpected - should have at least one)');
+    }
+    return results;
   } catch (error) {
-    console.error('[DASHBOARD] Error fetching department breakdown:', error);
+    console.error('[DASHBOARD] fetchDepartmentBreakdown - Query failed:', {
+      error: error instanceof Error ? error.message : String(error),
+      errorCode: (error as any)?.code,
+      table: employeeTableRef,
+    });
     return [];
   }
 };
@@ -338,9 +362,15 @@ export const getDashboardSummary = async (requestedMonth?: string): Promise<Dash
       newJoiners,
       probationsEnding: probationsEnding.length,
       departmentBreakdown: departmentBreakdown.length,
+      hasAlerts: (probationsEnding.length > 0 || (pendingRequests?.onboarding ?? 0) > 0),
+      hasDepartmentBreakdown: departmentBreakdown.length > 0,
       payrollMonth: activeMonth,
       payrollTotals: payroll.length,
       eobiHeadcount: eobi.headcount,
+    });
+    console.log('[DASHBOARD] Sections visibility:', {
+      alertsSection: (probationsEnding.length > 0 || (pendingRequests?.onboarding ?? 0) > 0),
+      departmentBreakdownSection: departmentBreakdown.length > 0,
     });
 
     return {
