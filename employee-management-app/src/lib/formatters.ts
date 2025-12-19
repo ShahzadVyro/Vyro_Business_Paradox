@@ -212,16 +212,32 @@ export const convertDateToString = (value: unknown): string | null => {
     }
   }
 
-  // If it's already a string in YYYY-MM-DD format, return it
+  // If it's already a string, handle various formats
   if (typeof value === "string") {
     const trimmed = value.trim();
     if (!trimmed) return null;
+    
     // Check if it's already in YYYY-MM-DD format
     const datePattern = /^\d{4}-\d{2}-\d{2}/;
     if (datePattern.test(trimmed)) {
       return trimmed.split('T')[0]; // Extract date part if it's a datetime string
     }
-    // Try to parse and convert to YYYY-MM-DD
+    
+    // Handle MM/DD/YYYY format (e.g., "12/16/2025")
+    const mmddyyyyPattern = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+    const mmddyyyyMatch = trimmed.match(mmddyyyyPattern);
+    if (mmddyyyyMatch) {
+      const [, month, day, year] = mmddyyyyMatch;
+      // Create date in YYYY-MM-DD format
+      const dateStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      // Validate the date
+      const parsed = Date.parse(dateStr);
+      if (!Number.isNaN(parsed)) {
+        return dateStr;
+      }
+    }
+    
+    // Try to parse and convert to YYYY-MM-DD (handles various formats)
     const parsed = Date.parse(trimmed);
     if (!Number.isNaN(parsed)) {
       const date = new Date(parsed);

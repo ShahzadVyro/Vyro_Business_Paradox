@@ -39,6 +39,11 @@ const VALID_FIELDS = [
   "Emergency_Contact_Name",
   "Emergency_Contact_Relationship",
   "Emergency_Contact_Number",
+  "EOBI_Number",
+  "EMP_AREA_CODE",
+  "EMP_REG_SERIAL_NO",
+  "EMP_SUB_AREA_CODE",
+  "EMP_SUB_SERIAL_NO",
 ];
 
 interface UpdateRequest {

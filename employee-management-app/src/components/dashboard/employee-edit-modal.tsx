@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PersonalDetailsForm, EmploymentDetailsForm } from "./employee-edit-forms";
+import { PersonalDetailsForm, EmploymentDetailsForm, AccountDetailsForm, EOBIDetailsForm } from "./employee-edit-forms";
 import type { EmployeeRecord } from "@/types/employee";
 
 interface Props {
@@ -75,9 +75,7 @@ export default function EmployeeEditModal({ employee, isOpen, onClose, onSave }:
             <EmploymentDetailsForm employee={employee} onSave={handleSave} onCancel={onClose} />
           )}
           {activeTab === "account" && (
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-center text-slate-400">
-              Account details editing coming soon
-            </div>
+            <AccountDetailsForm employee={employee} onSave={handleSave} onCancel={onClose} />
           )}
           {activeTab === "salary" && (
             <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-center text-slate-400">
@@ -85,13 +83,12 @@ export default function EmployeeEditModal({ employee, isOpen, onClose, onSave }:
             </div>
           )}
           {activeTab === "eobi" && (
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-center text-slate-400">
-              EOBI details editing coming soon
-            </div>
+            <EOBIDetailsForm employee={employee} onSave={handleSave} onCancel={onClose} />
           )}
         </div>
       </div>
     </div>
   );
 }
+
 

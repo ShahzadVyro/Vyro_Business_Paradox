@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { label: "EOBI", href: "/eobi" },
   { label: "OPD Benefits", href: "/opd" },
   { label: "Tax Calculations", href: "/tax" },
+  { label: "Pay Template", href: "/pay-template" },
   { label: "Notifications", href: "/notifications" },
   { label: "Submissions", href: "/submissions" },
 ];

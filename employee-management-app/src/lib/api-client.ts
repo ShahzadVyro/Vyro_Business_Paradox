@@ -59,6 +59,11 @@ export const fetchDashboardSummaryClient = async (month?: string) => {
   return data;
 };
 
+export const fetchPayTemplateClient = async (type: "new-hires" | "leavers" | "increments" | "confirmations", month: string) => {
+  const { data } = await client.get(`/pay-template/${type}`, { params: { month } });
+  return data;
+};
+
 export const scheduleOffboardingClient = async (
   employeeId: number,
   payload: { Employment_End_Date: string; Note?: string; Scheduled_By?: string },
