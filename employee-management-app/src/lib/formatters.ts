@@ -168,6 +168,25 @@ export const formatDate = (value?: string | number | Date | Record<string, unkno
 };
 
 /**
+ * Formats a date as "DD MMM YYYY DDD" (e.g., "18 Dec 2025 Thu")
+ * Uses Asia/Karachi timezone
+ */
+export const formatDateWithDay = (value?: string | number | Date | Record<string, unknown> | null): string => {
+  const date = coerceDate(value);
+  if (!date || Number.isNaN(date.getTime())) return "—";
+  
+  const dayFormatter = new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    weekday: "short",
+    timeZone: "Asia/Karachi",
+  });
+  
+  return dayFormatter.format(date);
+};
+
+/**
  * Converts a date value to an ISO date string (YYYY-MM-DD) for API responses.
  * Handles Date objects, date-like objects, strings, numbers, and BigQueryDate objects.
  * Returns null if the value cannot be converted to a valid date.

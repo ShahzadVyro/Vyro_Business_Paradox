@@ -48,6 +48,25 @@ export const postSlackMessage = async (payload: SlackMessageRequest): Promise<Sl
   return data as { ok: boolean; ts: string; channel: string };
 };
 
+export const getSlackUserInfo = async (userId: string): Promise<{ name: string; real_name?: string } | null> => {
+  if (!slackClient) {
+    return null;
+  }
+  try {
+    const { data } = await slackClient.get(`/users.info?user=${userId}`);
+    if (data.ok && data.user) {
+      return {
+        name: data.user.name || userId,
+        real_name: data.user.real_name || data.user.profile?.real_name,
+      };
+    }
+    return null;
+  } catch (error) {
+    console.warn("[SLACK_USER_INFO_ERROR]", error);
+    return null;
+  }
+};
+
 export const verifySlackSignature = async (rawBody: Buffer, headers: Headers) => {
   if (!SLACK_SIGNING_SECRET) return true; // fallback for local dev
   const timestamp = headers.get("x-slack-request-timestamp");

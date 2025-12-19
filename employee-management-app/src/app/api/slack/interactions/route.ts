@@ -6,7 +6,8 @@ import {
   getNextEmployeeId,
 } from "@/lib/onboarding";
 import { updateEmploymentEndDate } from "@/lib/employees";
-import { verifySlackSignature, ALLOWED_SLACK_USERS, postSlackMessage } from "@/lib/slack";
+import { verifySlackSignature, ALLOWED_SLACK_USERS, postSlackMessage, getSlackUserInfo } from "@/lib/slack";
+import { formatDateWithDay } from "@/lib/formatters";
 
 export const runtime = "nodejs";
 
@@ -53,18 +54,52 @@ export async function POST(request: Request) {
         employeeId: nextId,
       });
 
-      const docMessage = `📋 *Documents for ${submission.Full_Name}*\n\n🖼️ Passport Photo:\n${submission.Passport_Photo_URL ?? "Not provided"}\n\n🪪 CNIC Front:\n${submission.CNIC_Front_URL ?? "Not provided"}\n\n🪪 CNIC Back:\n${submission.CNIC_Back_URL ?? "Not provided"}`;
+      // Get user info for display name
+      const userInfo = await getSlackUserInfo(userId);
+      const userName = userInfo?.real_name || userInfo?.name || `<@${userId}>`;
+
+      // Format joining date
+      const joiningDateFormatted = formatDateWithDay(submission.Joining_Date);
+
+      // Format current time (H:MM in Asia/Karachi, 12-hour format)
+      const now = new Date();
+      const timeFormatter = new Intl.DateTimeFormat("en-GB", {
+        hour: "numeric",
+        minute: "2-digit",
+        timeZone: "Asia/Karachi",
+        hour12: true,
+      });
+      const currentTime = timeFormatter.format(now);
+
+      // Helper to convert Google Drive URLs to download format
+      const formatDriveUrl = (url: string | null | undefined): string => {
+        if (!url) return "Not provided";
+        // Check if it's a Google Drive URL
+        const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+        if (driveMatch) {
+          return `https://drive.google.com/uc?export=download&id=${driveMatch[1]}`;
+        }
+        return url;
+      };
+
+      // Format documents message
+      const docMessage = `:clipboard: Documents for ${submission.Full_Name}
+:date: Joining Date: ${joiningDateFormatted}
+:frame_with_picture: Passport Photo:
+${formatDriveUrl(submission.Passport_Photo_URL)}
+:identification_card: CNIC Front:
+${formatDriveUrl(submission.CNIC_Front_URL)}
+:identification_card: CNIC Back:
+${formatDriveUrl(submission.CNIC_Back_URL)}
+${currentTime}
+ONBOARD confirmed by ${userName}`;
+
       await postSlackMessage({
         channel: channelId,
         thread_ts: threadTs,
         text: docMessage,
       });
 
-      await postSlackMessage({
-        channel: channelId,
-        thread_ts: threadTs,
-        text: `✅ Onboarding confirmed by <@${userId}>. Assigned Employee ID: ${nextId}`,
-      });
       return NextResponse.json({ ok: true });
     }
 

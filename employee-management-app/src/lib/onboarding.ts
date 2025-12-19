@@ -3,6 +3,7 @@ import { getBigQueryClient } from "@/lib/bigquery";
 import type { OnboardingFormInput, OnboardingSubmission } from "@/types/onboarding";
 import { postSlackMessage, SLACK_CHANNEL_ID } from "@/lib/slack";
 import { getEnv } from "@/lib/env";
+import { formatDateWithDay } from "@/lib/formatters";
 
 const BQ_DATASET = getEnv("BQ_DATASET");
 const BQ_INTAKE_TABLE = getEnv("BQ_INTAKE_TABLE");
@@ -421,9 +422,21 @@ export const notifySlackForSubmission = async ({
   submissionId: string;
   submission: OnboardingFormInput;
 }) => {
-  const summary = `*New Joiner Submission*\n*Name:* ${submission.Full_Name}\n*Joining Date:* ${submission.Joining_Date}\n*Email:* ${submission.Official_Email}\n*Department:* ${submission.Department}\n*Designation:* ${submission.Designation}\n*Recruiter:* ${submission.Recruiter_Name}`;
+  const joiningDateFormatted = formatDateWithDay(submission.Joining_Date);
+  const summary = `New Employee Alert - Form Submitted
+Name: ${submission.Full_Name}
+Joining Date: ${joiningDateFormatted}
+Email: ${submission.Official_Email}
+Department: ${submission.Department}
+Designation: ${submission.Designation}
+Recruiter: ${submission.Recruiter_Name}
+CNIC: ${submission.CNIC_ID}
+Job Type: ${submission.Job_Type}
+Reporting Manager: ${submission.Reporting_Manager}
+Contact Number: ${submission.Contact_Number}`;
+  
   const blockPayload = {
-    channel: SLACK_NEW_JOINER_CHANNEL ?? SLACK_CHANNEL_ID,
+    channel: SLACK_NEW_JOINER_CHANNEL ?? "C06NPGT6EGM",
     text: summary,
     blocks: [
       { type: "section", text: { type: "mrkdwn", text: summary } },
