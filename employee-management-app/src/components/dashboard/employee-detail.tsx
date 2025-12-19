@@ -29,7 +29,7 @@ const VIEW_OPTIONS: { value: DashboardView; label: string }[] = [
   { value: "eobi", label: "EOBI" },
   { value: "opd", label: "OPD" },
   { value: "tax", label: "Tax" },
-  { value: "history", label: "Change History" },
+  { value: "history" as DashboardView, label: "Change History" },
 ];
 
 const EmployeeDetail = ({ data, isLoading, view, onViewChange }: Props) => {
