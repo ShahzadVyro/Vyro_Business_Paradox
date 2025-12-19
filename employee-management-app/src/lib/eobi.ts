@@ -169,10 +169,10 @@ export function isNewNICFormat(cnic: string | null | undefined): boolean {
  * @param employee - Employee record
  * @returns Relationship code (F, M, S, D, etc.)
  */
-export function getRelationshipCode(employee: EmployeeRecord): string {
+export function getRelationshipCode(employee: EmployeeRecord | { Father_Name?: string | null }): string {
   // Default to "F" (Father) if Father_Name exists
   // This can be extended based on Emergency_Contact_Relationship field if available
-  if (employee.Father_Name) {
+  if ((employee as any).Father_Name) {
     return "F";
   }
   // Default fallback

@@ -97,6 +97,7 @@ export async function GET(request: Request) {
           Employment_Status: (row.Employment_Status || "Active") as "Active" | "Resigned/Terminated",
           Employment_End_Date: row.Employment_End_Date || null,
           Joining_Date: row.Joining_Date || null,
+          Probation_End_Date: row.Probation_End_Date || null,
           Official_Email: null,
           Personal_Email: null,
           Contact_Number: null,
@@ -156,7 +157,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const csv = recordsToCSV(bulkUploadRows, BULK_UPLOAD_HEADERS);
+    const csv = recordsToCSV(bulkUploadRows.filter((row) => row !== null) as Record<string, unknown>[], BULK_UPLOAD_HEADERS);
 
     return new NextResponse(csv, {
       headers: {

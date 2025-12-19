@@ -136,7 +136,7 @@ export async function GET() {
       );
     }
 
-    const csv = recordsToCSV(registrationRows, REGISTRATION_HEADERS);
+    const csv = recordsToCSV(registrationRows as Record<string, unknown>[], REGISTRATION_HEADERS);
 
     return new NextResponse(csv, {
       headers: {
