@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDashboardSummary } from "@/hooks/use-dashboard-summary";
 import DownloadButton from "@/components/ui/download-button";
 
@@ -16,7 +16,35 @@ const formatByCurrency = (value?: number | null, currency = "PKR") => {
 
 const DashboardOverview = () => {
   const [month, setMonth] = useState<string | undefined>(undefined);
+  const [bulkUploadMonth, setBulkUploadMonth] = useState<string>(() => {
+    // Default to previous month (e.g., if current is Jan 2026, default to Dec 2025)
+    const now = new Date();
+    const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    return `${prevMonth.getFullYear()}-${String(prevMonth.getMonth() + 1).padStart(2, '0')}`;
+  });
   const { data, isLoading } = useDashboardSummary(month);
+
+  // Debug logging for production
+  useEffect(() => {
+    if (!isLoading && data) {
+      console.log('[DASHBOARD_CLIENT] Data received:', {
+        probationsEnding: data.probationsEnding?.length,
+        departmentBreakdown: data.departmentBreakdown?.length,
+        pendingRequests: data.pendingRequests,
+        hasAlerts: (data.probationsEnding && data.probationsEnding.length > 0) || (data.pendingRequests && (data.pendingRequests.onboarding > 0 || data.pendingRequests.changeRequests > 0)),
+        hasDepartmentBreakdown: data.departmentBreakdown && data.departmentBreakdown.length > 0,
+      });
+      console.log('[DASHBOARD_CLIENT] Probations ending array:', data.probationsEnding);
+      console.log('[DASHBOARD_CLIENT] Department breakdown array:', data.departmentBreakdown);
+      console.log('[DASHBOARD_CLIENT] Should show alerts section:', 
+        (data.probationsEnding && data.probationsEnding.length > 0) || 
+        (data.pendingRequests && (data.pendingRequests.onboarding > 0 || data.pendingRequests.changeRequests > 0))
+      );
+      console.log('[DASHBOARD_CLIENT] Should show department breakdown section:', 
+        data.departmentBreakdown && data.departmentBreakdown.length > 0
+      );
+    }
+  }, [data, isLoading]);
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8">
@@ -54,11 +82,96 @@ const DashboardOverview = () => {
         </div>
       ) : (
         <>
-          <section className="grid gap-4 md:grid-cols-3">
+          <section className="grid gap-4 md:grid-cols-4">
             <StatCard label="Total Employees" value={data.employees.total} caption="Directory records" />
             <StatCard label="Active" value={data.employees.active} caption="Currently employed" trend="positive" />
             <StatCard label="Resigned / Terminated" value={data.employees.resigned} caption="Offboarded records" trend="negative" />
+            {data.newJoiners !== undefined && (
+              <StatCard label="New Joiners" value={data.newJoiners} caption="This month" />
+            )}
           </section>
+
+          {/* Alerts Section */}
+          {(data.probationsEnding && data.probationsEnding.length > 0) || (data.pendingRequests && (data.pendingRequests.onboarding > 0 || data.pendingRequests.changeRequests > 0)) ? (
+            <section className="rounded-4xl border border-slate-200 bg-white/80 p-6 shadow-sm">
+              <p className="text-xs uppercase tracking-wide text-slate-400 mb-4">Alerts & Reminders</p>
+              <div className="space-y-4">
+                {data.probationsEnding && data.probationsEnding.length > 0 && (
+                  <div className="rounded-3xl border border-amber-200 bg-amber-50/80 p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-sm font-semibold text-amber-900">Probations Ending Soon ({data.probationsEnding.length})</p>
+                      <Link href="/directory" className="text-xs font-semibold text-amber-700 underline">View All</Link>
+                    </div>
+                    <div className="mt-2 space-y-2">
+                      {data.probationsEnding.slice(0, 5).map((emp) => (
+                        <div key={emp.Employee_ID} className="flex items-center justify-between text-sm">
+                          <span className="text-amber-800">{emp.Full_Name}</span>
+                          <span className="text-amber-600">{emp.daysRemaining} days remaining</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {data.pendingRequests && (data.pendingRequests.onboarding > 0 || data.pendingRequests.changeRequests > 0) && (
+                  <div className="rounded-3xl border border-blue-200 bg-blue-50/80 p-4">
+                    <p className="text-sm font-semibold text-blue-900 mb-2">Pending Requests</p>
+                    <div className="flex gap-4 text-sm">
+                      {data.pendingRequests.onboarding > 0 && (
+                        <Link href="/submissions" className="text-blue-700 underline">
+                          {data.pendingRequests.onboarding} Onboarding {data.pendingRequests.onboarding === 1 ? 'Submission' : 'Submissions'}
+                        </Link>
+                      )}
+                      {data.pendingRequests.changeRequests > 0 && (
+                        <span className="text-blue-600">{data.pendingRequests.changeRequests} Change Requests</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </section>
+          ) : null}
+
+          {/* Department Breakdown */}
+          {data.departmentBreakdown && data.departmentBreakdown.length > 0 && (
+            <section className="rounded-4xl border border-slate-200 bg-white/80 p-6 shadow-sm">
+              <p className="text-xs uppercase tracking-wide text-slate-400 mb-4">Department Breakdown</p>
+              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                {data.departmentBreakdown.map((dept) => (
+                  <div key={dept.Department} className="rounded-3xl border border-slate-100 bg-slate-50/80 p-4">
+                    <p className="text-sm font-semibold text-slate-900">{dept.Department}</p>
+                    <div className="mt-2 flex gap-4 text-xs text-slate-600">
+                      <span>Active: <span className="font-semibold text-slate-900">{dept.activeCount}</span></span>
+                      <span>Total: <span className="font-semibold text-slate-900">{dept.totalCount}</span></span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Attrition Metrics */}
+          {data.attrition && (
+            <section className="rounded-4xl border border-slate-200 bg-white/80 p-6 shadow-sm">
+              <p className="text-xs uppercase tracking-wide text-slate-400 mb-4">Attrition Metrics</p>
+              <div className="grid gap-4 md:grid-cols-3">
+                <div>
+                  <p className="text-xs text-slate-400">Current Month Rate</p>
+                  <p className="text-2xl font-semibold text-slate-900">{data.attrition.currentMonthRate}%</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Previous Month Rate</p>
+                  <p className="text-2xl font-semibold text-slate-900">{data.attrition.previousMonthRate}%</p>
+                  {data.attrition.trend === 'up' && <span className="text-xs font-semibold text-rose-500">↑ Increasing</span>}
+                  {data.attrition.trend === 'down' && <span className="text-xs font-semibold text-emerald-500">↓ Decreasing</span>}
+                  {data.attrition.trend === 'stable' && <span className="text-xs font-semibold text-slate-500">→ Stable</span>}
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Average Tenure</p>
+                  <p className="text-2xl font-semibold text-slate-900">{data.attrition.averageTenure} months</p>
+                </div>
+              </div>
+            </section>
+          )}
 
           <section className="rounded-4xl border border-slate-200 bg-white/80 p-6 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -104,13 +217,32 @@ const DashboardOverview = () => {
                 <h2 className="text-2xl font-semibold text-slate-900">{data.payroll.monthLabel ?? "Latest cycle"}</h2>
                 <p className="text-sm text-slate-500">Employee + employer contributions exactly as filed.</p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 <LinkButton href="/eobi" label="Go to EOBI explorer" />
                 <DownloadButton
-                  variant="secondary"
-                  label="Download EOBI sheet"
-                  href={`/api/eobi?format=csv${data.payroll.month ? `&month=${data.payroll.month}` : ""}`}
+                  variant="primary"
+                  label="Download Registration CSV (New Employees)"
+                  href="/api/eobi/registration"
                 />
+                <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2">
+                  <label htmlFor="dashboard-bulk-upload-month" className="text-xs font-semibold text-slate-600 whitespace-nowrap">
+                    Month:
+                  </label>
+                  <input
+                    id="dashboard-bulk-upload-month"
+                    type="month"
+                    value={bulkUploadMonth}
+                    onChange={(e) => setBulkUploadMonth(e.target.value)}
+                    className="rounded-xl border border-slate-200 px-2 py-1 text-xs text-slate-700"
+                    min="2020-01"
+                    max={`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`}
+                  />
+                  <DownloadButton
+                    variant="secondary"
+                    label="Generate Monthly Upload CSV"
+                    href={`/api/eobi/bulk-upload?month=${bulkUploadMonth}`}
+                  />
+                </div>
               </div>
             </div>
             <div className="mt-6 grid gap-4 md:grid-cols-3">
