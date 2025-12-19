@@ -373,7 +373,7 @@ export const getDashboardSummary = async (requestedMonth?: string): Promise<Dash
       attrition: {
         currentMonthRate: 0,
         previousMonthRate: 0,
-        trend: 'stable',
+        trend: 'stable' as const,
         averageTenure: 0,
       },
       pendingRequests: {
@@ -392,7 +392,7 @@ export const getDashboardSummary = async (requestedMonth?: string): Promise<Dash
         totalContribution: 0,
       },
       months,
-    };
+    } as DashboardSummary;
   }
 };
 
