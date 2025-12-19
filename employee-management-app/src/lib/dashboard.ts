@@ -15,10 +15,18 @@ const employeeTableRef = `\`${projectId}.${dataset}.${employeeTable}\``;
 
 // Validate table configuration
 const validateTableConfig = async () => {
-  if (!employeeTable || employeeTable === "EmployeeData_v2") {
+  const incorrectTableNames = [
+    "EmployeeData_v2",
+    "EmployeeDirectoryLatest_v1",
+    "EmployeeDirectory_v1",
+    "EmployeeData",
+  ];
+  
+  if (!employeeTable || incorrectTableNames.includes(employeeTable)) {
     console.warn(
       `[DASHBOARD] WARNING: BQ_TABLE is set to "${employeeTable}". ` +
-      `Expected "Employees" table. This might query the wrong table.`
+      `Expected "Employees" table (the migrated table). This might query the wrong table. ` +
+      `Please update your .env.local file to set BQ_TABLE=Employees`
     );
   }
 
@@ -112,46 +120,280 @@ const fetchEmployeeCounts = async () => {
   return counts;
 };
 
+const fetchNewJoinersThisMonth = async () => {
+  const bigquery = getBigQueryClient();
+  
+  const query = `
+    SELECT COUNT(DISTINCT Employee_ID) as new_joiners
+    FROM ${employeeTableRef}
+    WHERE DATE_TRUNC(CAST(Joining_Date AS DATE), MONTH) = DATE_TRUNC(CURRENT_DATE(), MONTH)
+    AND UPPER(TRIM(Employment_Status)) = 'ACTIVE'
+    AND Employee_ID IS NOT NULL
+  `;
+  
+  const [rows] = await bigquery.query({ query });
+  const count = Number((rows[0] as { new_joiners: number })?.new_joiners ?? 0);
+  
+  return count;
+};
+
+const fetchProbationsEndingSoon = async () => {
+  try {
+    const bigquery = getBigQueryClient();
+    
+    const query = `
+      SELECT 
+        Employee_ID,
+        Full_Name,
+        Department,
+        Probation_End_Date,
+        DATE_DIFF(CAST(Probation_End_Date AS DATE), CURRENT_DATE(), DAY) as days_remaining
+      FROM ${employeeTableRef}
+      WHERE UPPER(TRIM(Employment_Status)) = 'ACTIVE'
+      AND Probation_End_Date IS NOT NULL
+      AND CAST(Probation_End_Date AS DATE) BETWEEN CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 30 DAY)
+      AND Employee_ID IS NOT NULL
+      ORDER BY Probation_End_Date ASC
+      LIMIT 20
+    `;
+    
+    const [rows] = await bigquery.query({ query });
+    return (rows as any[]).map((row) => ({
+      Employee_ID: Number(row.Employee_ID),
+      Full_Name: row.Full_Name ?? '',
+      Department: row.Department ?? null,
+      Probation_End_Date: row.Probation_End_Date ? String(row.Probation_End_Date).split('T')[0] : '',
+      daysRemaining: Number(row.days_remaining ?? 0),
+    }));
+  } catch (error) {
+    console.error('[DASHBOARD] Error fetching probations ending soon:', error);
+    return [];
+  }
+};
+
+const fetchDepartmentBreakdown = async () => {
+  try {
+    const bigquery = getBigQueryClient();
+    
+    const query = `
+      SELECT
+        Department,
+        COUNT(DISTINCT CASE WHEN UPPER(TRIM(Employment_Status)) = 'ACTIVE' THEN Employee_ID END) as active_count,
+        COUNT(DISTINCT Employee_ID) as total_count
+      FROM ${employeeTableRef}
+      WHERE Department IS NOT NULL
+      AND Employee_ID IS NOT NULL
+      GROUP BY Department
+      ORDER BY active_count DESC
+    `;
+    
+    const [rows] = await bigquery.query({ query });
+    return (rows as any[]).map((row) => ({
+      Department: String(row.Department ?? ''),
+      activeCount: Number(row.active_count ?? 0),
+      totalCount: Number(row.total_count ?? 0),
+    }));
+  } catch (error) {
+    console.error('[DASHBOARD] Error fetching department breakdown:', error);
+    return [];
+  }
+};
+
+const fetchAttritionMetrics = async () => {
+  try {
+    const bigquery = getBigQueryClient();
+    
+    // Current month resignations
+    const currentMonthQuery = `
+      SELECT COUNT(DISTINCT Employee_ID) as count
+      FROM ${employeeTableRef}
+      WHERE UPPER(TRIM(Employment_Status)) IN ('RESIGNED/TERMINATED', 'RESIGNED', 'TERMINATED')
+      AND DATE_TRUNC(CAST(Employment_End_Date AS DATE), MONTH) = DATE_TRUNC(CURRENT_DATE(), MONTH)
+      AND Employee_ID IS NOT NULL
+    `;
+    
+    // Previous month resignations
+    const previousMonthQuery = `
+      SELECT COUNT(DISTINCT Employee_ID) as count
+      FROM ${employeeTableRef}
+      WHERE UPPER(TRIM(Employment_Status)) IN ('RESIGNED/TERMINATED', 'RESIGNED', 'TERMINATED')
+      AND DATE_TRUNC(CAST(Employment_End_Date AS DATE), MONTH) = DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), MONTH)
+      AND Employee_ID IS NOT NULL
+    `;
+    
+    // Average headcount (current month)
+    const avgHeadcountQuery = `
+      SELECT COUNT(DISTINCT Employee_ID) as count
+      FROM ${employeeTableRef}
+      WHERE UPPER(TRIM(Employment_Status)) = 'ACTIVE'
+      AND Employee_ID IS NOT NULL
+    `;
+    
+    // Average tenure of resigned employees
+    const tenureQuery = `
+      SELECT AVG(DATE_DIFF(CAST(Employment_End_Date AS DATE), CAST(Joining_Date AS DATE), DAY)) as avg_tenure_days
+      FROM ${employeeTableRef}
+      WHERE UPPER(TRIM(Employment_Status)) IN ('RESIGNED/TERMINATED', 'RESIGNED', 'TERMINATED')
+      AND Employment_End_Date IS NOT NULL
+      AND Joining_Date IS NOT NULL
+      AND Employee_ID IS NOT NULL
+    `;
+    
+    const [currentRows, previousRows, headcountRows, tenureRows] = await Promise.all([
+      bigquery.query({ query: currentMonthQuery }),
+      bigquery.query({ query: previousMonthQuery }),
+      bigquery.query({ query: avgHeadcountQuery }),
+      bigquery.query({ query: tenureQuery }),
+    ]);
+    
+    const currentMonthResignations = Number((currentRows[0][0] as { count: number })?.count ?? 0);
+    const previousMonthResignations = Number((previousRows[0][0] as { count: number })?.count ?? 0);
+    const avgHeadcount = Number((headcountRows[0][0] as { count: number })?.count ?? 0);
+    const avgTenureDays = Number((tenureRows[0][0] as { avg_tenure_days: number })?.avg_tenure_days ?? 0);
+    
+    const currentMonthRate = avgHeadcount > 0 ? (currentMonthResignations / avgHeadcount) * 100 : 0;
+    const previousMonthRate = avgHeadcount > 0 ? (previousMonthResignations / avgHeadcount) * 100 : 0;
+    
+    let trend: 'up' | 'down' | 'stable' = 'stable';
+    if (currentMonthRate > previousMonthRate * 1.1) trend = 'up';
+    else if (currentMonthRate < previousMonthRate * 0.9) trend = 'down';
+    
+    const avgTenureMonths = avgTenureDays / 30;
+    
+    return {
+      currentMonthRate: Math.round(currentMonthRate * 100) / 100,
+      previousMonthRate: Math.round(previousMonthRate * 100) / 100,
+      trend,
+      averageTenure: Math.round(avgTenureMonths * 10) / 10,
+    };
+  } catch (error) {
+    console.error('[DASHBOARD] Error fetching attrition metrics:', error);
+    return {
+      currentMonthRate: 0,
+      previousMonthRate: 0,
+      trend: 'stable' as const,
+      averageTenure: 0,
+    };
+  }
+};
+
+const fetchPendingRequests = async () => {
+  const bigquery = getBigQueryClient();
+  const onboardingTable = process.env.BQ_ONBOARDING_TABLE ?? 'Employee_Onboarding_Intake';
+  const onboardingTableRef = `\`${projectId}.${dataset}.${onboardingTable}\``;
+  
+  try {
+    const query = `
+      SELECT COUNT(*) as count
+      FROM ${onboardingTableRef}
+      WHERE Status = 'pending'
+    `;
+    const [rows] = await bigquery.query({ query });
+    const onboardingCount = Number((rows[0] as { count: number })?.count ?? 0);
+    
+    return {
+      onboarding: onboardingCount,
+      changeRequests: 0, // Change request system not implemented yet
+    };
+  } catch (error) {
+    console.warn('[DASHBOARD] Could not fetch pending requests:', error);
+    return {
+      onboarding: 0,
+      changeRequests: 0,
+    };
+  }
+};
+
 export const getDashboardSummary = async (requestedMonth?: string): Promise<DashboardSummary> => {
-  // Log table configuration for diagnostics
-  console.log(`[DASHBOARD] Configuration:`, {
-    projectId,
-    dataset,
-    employeeTable,
-    fullTableRef: employeeTableRef,
-  });
+  try {
+    // Log table configuration for diagnostics
+    console.log(`[DASHBOARD] Configuration:`, {
+      projectId,
+      dataset,
+      employeeTable,
+      fullTableRef: employeeTableRef,
+    });
 
-  // Validate table configuration and existence
-  await validateTableConfig();
+    // Validate table configuration and existence
+    await validateTableConfig();
 
-  const months = await fetchSalaryMonths();
-  const activeMonth = requestedMonth ?? months[0]?.value;
-  const monthLabel = months.find((month) => month.value === activeMonth)?.label;
+    const months = await fetchSalaryMonths();
+    const activeMonth = requestedMonth ?? months[0]?.value;
+    const monthLabel = months.find((month) => month.value === activeMonth)?.label;
 
-  const [employees, payroll, eobi] = await Promise.all([
-    fetchEmployeeCounts(),
-    activeMonth ? fetchPayrollSummary(activeMonth) : Promise.resolve([]),
-    activeMonth ? fetchEobiSummary(activeMonth) : Promise.resolve({ headcount: 0, employeeContribution: 0, employerContribution: 0, totalContribution: 0 }),
-  ]);
+    const [employees, payroll, eobi, newJoiners, probationsEnding, departmentBreakdown, attrition, pendingRequests] = await Promise.all([
+      fetchEmployeeCounts(),
+      activeMonth ? fetchPayrollSummary(activeMonth) : Promise.resolve([]),
+      activeMonth ? fetchEobiSummary(activeMonth) : Promise.resolve({ headcount: 0, employeeContribution: 0, employerContribution: 0, totalContribution: 0 }),
+      fetchNewJoinersThisMonth(),
+      fetchProbationsEndingSoon(),
+      fetchDepartmentBreakdown(),
+      fetchAttritionMetrics(),
+      fetchPendingRequests(),
+    ]);
 
-  // Log final summary for diagnostics
-  console.log(`[DASHBOARD] Summary generated:`, {
-    employees,
-    payrollMonth: activeMonth,
-    payrollTotals: payroll.length,
-    eobiHeadcount: eobi.headcount,
-  });
+    // Log final summary for diagnostics
+    console.log(`[DASHBOARD] Summary generated:`, {
+      employees,
+      newJoiners,
+      probationsEnding: probationsEnding.length,
+      departmentBreakdown: departmentBreakdown.length,
+      payrollMonth: activeMonth,
+      payrollTotals: payroll.length,
+      eobiHeadcount: eobi.headcount,
+    });
 
-  return {
-    employees,
-    payroll: {
-      month: activeMonth,
-      monthLabel,
-      totals: payroll,
-    },
-    eobi,
-    months,
-  };
+    return {
+      employees,
+      newJoiners,
+      probationsEnding,
+      departmentBreakdown,
+      attrition,
+      pendingRequests,
+      payroll: {
+        month: activeMonth,
+        monthLabel,
+        totals: payroll,
+      },
+      eobi,
+      months,
+    };
+  } catch (error) {
+    console.error('[DASHBOARD] Error in getDashboardSummary:', error);
+    // Return a safe default summary to prevent complete dashboard failure
+    const months = await fetchSalaryMonths().catch(() => []);
+    const activeMonth = requestedMonth ?? months[0]?.value;
+    const monthLabel = months.find((month) => month.value === activeMonth)?.label;
+    
+    return {
+      employees: { total: 0, active: 0, resigned: 0 },
+      newJoiners: 0,
+      probationsEnding: [],
+      departmentBreakdown: [],
+      attrition: {
+        currentMonthRate: 0,
+        previousMonthRate: 0,
+        trend: 'stable',
+        averageTenure: 0,
+      },
+      pendingRequests: {
+        onboarding: 0,
+        changeRequests: 0,
+      },
+      payroll: {
+        month: activeMonth,
+        monthLabel,
+        totals: [],
+      },
+      eobi: {
+        headcount: 0,
+        employeeContribution: 0,
+        employerContribution: 0,
+        totalContribution: 0,
+      },
+      months,
+    };
+  }
 };
 
 
