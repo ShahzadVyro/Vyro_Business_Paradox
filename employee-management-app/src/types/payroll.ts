@@ -156,4 +156,15 @@ export interface PayTemplateConfirmation {
   Employee_ID_Lookup?: boolean;
 }
 
+export interface SalaryRowEditorProps {
+  salary: import("@/types/api/payroll").SalaryRecord;
+  onSave: (updates: Partial<import("@/types/api/payroll").SalaryRecord>) => Promise<void>;
+  onCancel?: () => void;
+}
+
+export interface EmployeeSalaryComponentsProps {
+  employeeId: number;
+  onSave?: () => void;
+}
+
 

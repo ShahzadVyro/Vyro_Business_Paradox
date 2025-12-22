@@ -433,6 +433,46 @@ export async function addIncrement(
       .toISOString()
       .split('T')[0];
     
+    // Check if employee has existing salary records and detect currency change
+    const checkExistingCurrencyQuery = `
+      SELECT Currency, Payroll_Month
+      FROM ${salariesTableRef}
+      WHERE Employee_ID = @employeeId
+      ORDER BY Payroll_Month DESC
+      LIMIT 1
+    `;
+    const [existingRows] = await bigquery.query({
+      query: checkExistingCurrencyQuery,
+      params: { employeeId: employeeIdNum },
+    });
+    
+    const existingRecord = existingRows[0] as { Currency?: string; Payroll_Month?: Date } | undefined;
+    const previousCurrency = existingRecord?.Currency;
+    const currencyChanged = previousCurrency && previousCurrency !== currency;
+    
+    // If currency changed, mark old currency records for this month and future months as inactive
+    if (currencyChanged && previousCurrency) {
+      const updateOldCurrencyQuery = `
+        UPDATE ${salariesTableRef}
+        SET Status = '',
+            Updated_At = CURRENT_TIMESTAMP()
+        WHERE Employee_ID = @employeeId
+          AND Currency = @oldCurrency
+          AND Payroll_Month >= CAST(@payrollMonth AS DATE)
+      `;
+      
+      await bigquery.query({
+        query: updateOldCurrencyQuery,
+        params: {
+          employeeId: employeeIdNum,
+          oldCurrency: previousCurrency,
+          payrollMonth,
+        },
+      });
+      
+      console.log(`[PAY_TEMPLATE] Currency changed from ${previousCurrency} to ${currency} for employee ${employeeIdNum}`);
+    }
+    
     // Get next Salary_ID
     const maxSalaryIdQuery = `
       SELECT COALESCE(MAX(Salary_ID), 0) as max_id
@@ -443,7 +483,7 @@ export async function addIncrement(
     
     // Get employee details for payroll snapshot
     const employeeDetailsQuery = `
-      SELECT Designation, Department, Bank_Name, Account_Number_IBAN
+      SELECT Designation, Department, Bank_Name, Account_Number_IBAN, Joining_Date, Employment_End_Date, Probation_End_Date
       FROM ${employeesTableRef}
       WHERE Employee_ID = @employeeId
     `;
@@ -456,18 +496,40 @@ export async function addIncrement(
       Department?: string;
       Bank_Name?: string;
       Account_Number_IBAN?: string;
+      Joining_Date?: Date;
+      Employment_End_Date?: Date;
+      Probation_End_Date?: Date;
     } | undefined;
+    
+    // Check if in probation
+    const isInProbation = empDetails?.Probation_End_Date 
+      ? new Date(empDetails.Probation_End_Date) > new Date(payrollMonth)
+      : false;
+    
+    // Calculate Revised with OPD (USD only)
+    const revisedWithOPD = currency === "USD" && !isInProbation 
+      ? updatedSalary + 21 
+      : updatedSalary;
+    
+    // Calculate worked days (simplified - will be calculated properly in create sheet API)
+    const totalDaysInMonth = new Date(effectiveDateObj.getFullYear(), effectiveDateObj.getMonth() + 1, 0).getDate();
+    const workedDays = totalDaysInMonth; // Default to full month, will be recalculated
+    
+    // Calculate prorated pay
+    const proratedPay = (revisedWithOPD / totalDaysInMonth) * workedDays;
     
     // Insert new salary record
     const insertSalaryQuery = `
       INSERT INTO ${salariesTableRef}
-        (Salary_ID, Employee_ID, Payroll_Month, Currency, Gross_Income,
-         Salary_Effective_Date, Designation_At_Payroll, Department_At_Payroll,
-         Bank_Name_At_Payroll, Bank_Account_At_Payroll, Created_At)
+        (Salary_ID, Employee_ID, Payroll_Month, Currency, Regular_Pay, Revised_with_OPD, Prorated_Pay, Gross_Income,
+         Salary_Effective_Date, New_Addition_Increment_Decrement, Date_of_Increment_Decrement,
+         Designation_At_Payroll, Department_At_Payroll,
+         Bank_Name_At_Payroll, Bank_Account_At_Payroll, Worked_Days, Status, Created_At)
       VALUES
-        (@salaryId, @employeeId, CAST(@payrollMonth AS DATE), @currency, @grossIncome,
-         CAST(@effectiveDate AS DATE), @designation, @department,
-         @bankName, @bankAccount, CURRENT_TIMESTAMP())
+        (@salaryId, @employeeId, CAST(@payrollMonth AS DATE), @currency, @regularPay, @revisedWithOPD, @proratedPay, @grossIncome,
+         CAST(@effectiveDate AS DATE), @incrementAmount, CAST(@effectiveDate AS DATE),
+         @designation, @department,
+         @bankName, @bankAccount, @workedDays, @status, CURRENT_TIMESTAMP())
     `;
     
     const salaryParams: Record<string, unknown> = {
@@ -475,12 +537,18 @@ export async function addIncrement(
       employeeId: employeeIdNum,
       payrollMonth,
       currency,
-      grossIncome: updatedSalary,
+      regularPay: updatedSalary,
+      revisedWithOPD,
+      proratedPay,
+      grossIncome: proratedPay, // Will be recalculated when bonuses/etc are added
       effectiveDate,
+      incrementAmount: updatedSalary - (previousSalary ?? 0),
       designation: designation ?? empDetails?.Designation ?? null,
       department: department ?? empDetails?.Department ?? null,
       bankName: empDetails?.Bank_Name ?? null,
       bankAccount: empDetails?.Account_Number_IBAN ?? null,
+      workedDays,
+      status: '1', // Active
     };
     
     const salaryTypes: Record<string, string> = {

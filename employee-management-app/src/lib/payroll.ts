@@ -212,7 +212,23 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
       e.Personal_Email,
       e.Designation,
       e.Department,
-      e.Employment_Status
+      e.Employment_Status,
+      e.Joining_Date,
+      e.Employment_End_Date,
+      COALESCE(s.Email, e.Official_Email, e.Personal_Email) AS Email,
+      COALESCE(s.Date_of_Joining, e.Joining_Date) AS Date_of_Joining_Display,
+      COALESCE(s.Date_of_Leaving, e.Employment_End_Date) AS Date_of_Leaving_Display,
+      s.Month_Key,
+      s.Key,
+      s.Status,
+      s.Last_Month_Salary,
+      s.New_Addition_Increment_Decrement,
+      s.Date_of_Increment_Decrement,
+      s.Payable_from_Last_Month,
+      s.Revised_with_OPD,
+      s.Salary_Status,
+      s.PaySlip_Status,
+      s.Month AS Month_Abbrev
     FROM ${salariesRef} s
     LEFT JOIN ${employeeRef} e ON s.Employee_ID = e.Employee_ID
     ${whereClause}
@@ -258,6 +274,21 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
         Date_of_Increment: row.Date_of_Increment ? convertDateToString(row.Date_of_Increment) ?? null : null,
         Payable_From: row.Payable_From ? convertDateToString(row.Payable_From) ?? null : null,
         Salary_Effective_Date: row.Salary_Effective_Date ? convertDateToString(row.Salary_Effective_Date) ?? null : null,
+        // New fields
+        Date_of_Joining: row.Date_of_Joining_Display ? convertDateToString(row.Date_of_Joining_Display) ?? null : null,
+        Date_of_Leaving: row.Date_of_Leaving_Display ? convertDateToString(row.Date_of_Leaving_Display) ?? null : null,
+        Date_of_Increment_Decrement: row.Date_of_Increment_Decrement ? convertDateToString(row.Date_of_Increment_Decrement) ?? null : null,
+        Email: row.Email ?? null,
+        Month_Key: row.Month_Key ?? null,
+        Key: row.Key ?? null,
+        Status: row.Status ?? null,
+        Last_Month_Salary: row.Last_Month_Salary ?? null,
+        New_Addition_Increment_Decrement: row.New_Addition_Increment_Decrement ?? null,
+        Payable_from_Last_Month: row.Payable_from_Last_Month ?? null,
+        Revised_with_OPD: row.Revised_with_OPD ?? null,
+        Salary_Status: row.Salary_Status ?? null,
+        PaySlip_Status: row.PaySlip_Status ?? null,
+        Month: row.Month_Abbrev ?? null,
       };
       
       return normalized;
@@ -645,6 +676,7 @@ const shouldIncludeRow = (row: SalaryRecord, filterMonth?: string | null) => {
 };
 
 export const shapeSalaryRow = (row: SalaryRecord) => ({
+  Salary_ID: row.Salary_ID,
   Employee_ID: row.Employee_ID,
   Employee_Name: row.Employee_Name,
   Department: row.Department,

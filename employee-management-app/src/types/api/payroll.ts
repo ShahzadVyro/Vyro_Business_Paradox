@@ -1,5 +1,6 @@
 export interface SalaryRecord {
   // Core fields
+  Salary_ID?: number | null; // Primary key for salary record
   Payroll_Month: string | null; // Can be null from BigQuery
   Currency: string;
   Employee_ID: number | null; // INT64 - standardized numeric ID
@@ -36,6 +37,12 @@ export interface SalaryRecord {
   Worked_Days: number | null;
   Comments: string | null;
   Internal_Comments?: string | null;
+  Salary_Status?: string | null;
+  PaySlip_Status?: string | null;
+  Payable_from_Last_Month?: number | null;
+  Date_of_Joining?: string | null;
+  Date_of_Leaving?: string | null;
+  Date_of_Increment_Decrement?: string | null;
   
   // Employee State at Payroll (new fields)
   Designation_At_Payroll?: string | null;

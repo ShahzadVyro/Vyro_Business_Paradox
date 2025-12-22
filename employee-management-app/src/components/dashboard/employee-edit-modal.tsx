@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { PersonalDetailsForm, EmploymentDetailsForm, AccountDetailsForm, EOBIDetailsForm, IncrementForm } from "./employee-edit-forms";
+import EmployeeSalaryComponentsForm from "./employee-salary-components-form";
 import type { EmployeeRecord } from "@/types/employee";
 
 interface Props {
@@ -79,9 +80,7 @@ export default function EmployeeEditModal({ employee, isOpen, onClose, onSave }:
             <AccountDetailsForm employee={employee} onSave={handleSave} onCancel={onClose} />
           )}
           {activeTab === "salary" && (
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-center text-slate-400">
-              Salary details are managed through payroll system
-            </div>
+            <EmployeeSalaryComponentsForm employee={employee} onCancel={onClose} />
           )}
           {activeTab === "eobi" && (
             <EOBIDetailsForm employee={employee} onSave={handleSave} onCancel={onClose} />
