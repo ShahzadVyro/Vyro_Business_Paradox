@@ -25,7 +25,6 @@ const VALID_FIELDS = [
   "Probation_Period_Months",
   "Probation_Start_Date",
   "Probation_End_Date",
-  "Gross_Salary",
   "Bank_Name",
   "Bank_Account_Title",
   "Account_Number_IBAN",
@@ -136,7 +135,7 @@ export async function PATCH(
       updateQuery = `
         UPDATE ${EMPLOYEES_TABLE}
         SET ${field} = CAST(@value AS DATE),
-            Updated_At = CURRENT_DATETIME()
+            Updated_At = CURRENT_TIMESTAMP()
         WHERE Employee_ID = @employeeId
       `;
       queryParams = {
@@ -147,7 +146,7 @@ export async function PATCH(
       updateQuery = `
         UPDATE ${EMPLOYEES_TABLE}
         SET ${field} = @value,
-            Updated_At = CURRENT_DATETIME()
+            Updated_At = CURRENT_TIMESTAMP()
         WHERE Employee_ID = @employeeId
       `;
       queryParams = {
@@ -300,7 +299,7 @@ async function handleBulkUpdate(employeeId: string, body: BulkUpdateRequest) {
   const updateQuery = `
     UPDATE ${EMPLOYEES_TABLE}
     SET ${setClauses.join(", ")},
-        Updated_At = CURRENT_DATETIME()
+        Updated_At = CURRENT_TIMESTAMP()
     WHERE Employee_ID = @employeeId
   `;
 
@@ -324,12 +323,12 @@ async function handleBulkUpdate(employeeId: string, body: BulkUpdateRequest) {
   const joiningDateUpdate = body.updates.find(u => u.field === 'Joining_Date' && u.value !== null && u.value !== '');
   if (joiningDateUpdate) {
     try {
-      const probationUpdateQuery = `
-        UPDATE ${EMPLOYEES_TABLE}
-        SET Probation_End_Date = DATE_ADD(CAST(@joiningDate AS DATE), INTERVAL 3 MONTH),
-            Probation_Period_Months = 3,
-            Probation_Start_Date = CAST(@joiningDate AS DATE),
-            Updated_At = CURRENT_DATETIME()
+        const probationUpdateQuery = `
+          UPDATE ${EMPLOYEES_TABLE}
+          SET Probation_End_Date = DATE_ADD(CAST(@joiningDate AS DATE), INTERVAL 3 MONTH),
+              Probation_Period_Months = 3,
+              Probation_Start_Date = CAST(@joiningDate AS DATE),
+              Updated_At = CURRENT_TIMESTAMP()
         WHERE Employee_ID = @employeeId
           AND (Probation_End_Date IS NULL OR Probation_Period_Months IS NULL)
       `;

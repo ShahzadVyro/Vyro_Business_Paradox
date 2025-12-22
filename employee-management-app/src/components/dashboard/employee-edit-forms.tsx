@@ -517,10 +517,8 @@ export const IncrementForm = ({ employee, onSave, onCancel }: EditFormProps) => 
         throw new Error(error.message || "Failed to save increment");
       }
 
-      // Update employee record with new salary, designation, and department
-      const updates: Array<{ field: string; value: string | number | null }> = [
-        { field: "Gross_Salary", value: Number(formData.Updated_Salary) },
-      ];
+      // Update employee record with designation and department (salary is managed in Employee_Salaries table)
+      const updates: Array<{ field: string; value: string | number | null }> = [];
 
       if (formData.Designation) {
         updates.push({ field: "Designation", value: formData.Designation });
