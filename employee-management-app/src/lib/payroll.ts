@@ -287,8 +287,8 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
   let convertedRows: SalaryRecord[] = [];
   try {
     console.log('[FETCH_SALARIES] Starting data transformation', { rowsCount: rows.length });
-    convertedRows = rows
-      .map((row) => {
+    const mappedRows = rows
+      .map((row): SalaryRecord | null => {
         try {
           const normalized = {
             ...row,
@@ -336,8 +336,9 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
           });
           return null;
         }
-      })
-      .filter((row): row is SalaryRecord => row !== null && row.Employee_ID !== null); // Filter out NULL Employee_IDs and failed transformations
+      });
+    
+    convertedRows = mappedRows.filter((row): row is SalaryRecord => row !== null && row.Employee_ID !== null); // Filter out NULL Employee_IDs and failed transformations
     
     console.log('[FETCH_SALARIES] Data transformation completed', { 
       originalCount: rows.length,
