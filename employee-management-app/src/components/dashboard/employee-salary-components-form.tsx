@@ -31,7 +31,7 @@ const fetchSalaryHistory = async (employeeId: number, currency?: string) => {
 };
 
 const fetchLatestSalary = async (employeeId: number) => {
-  const response = await fetch(`/api/salaries/${employeeId}`);
+  const response = await fetch(`/api/employees/${employeeId}/salary`);
   if (!response.ok) {
     if (response.status === 404) {
       return null;
