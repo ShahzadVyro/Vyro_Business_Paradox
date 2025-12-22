@@ -228,7 +228,7 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
       s.Revised_with_OPD,
       s.Salary_Status,
       s.PaySlip_Status,
-      s.Month AS Month_Abbrev
+      FORMAT_DATE('%b %Y', s.Payroll_Month) AS Month_Abbrev
     FROM ${salariesRef} s
     LEFT JOIN ${employeeRef} e ON s.Employee_ID = e.Employee_ID
     ${whereClause}
