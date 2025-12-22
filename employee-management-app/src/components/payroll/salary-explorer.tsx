@@ -391,7 +391,7 @@ const SalaryExplorer = () => {
                           field="Unpaid_Leaves"
                           onSave={async (field, value) => handleUpdate({ [field]: value } as Partial<SalaryRecord>)}
                           type="number"
-                          formatValue={formatNumber}
+                          formatValue={(val) => formatNumber(val as number | null)}
                           parseValue={(val) => (val === "" ? null : parseFloat(val))}
                         />
                         <EditableCell
