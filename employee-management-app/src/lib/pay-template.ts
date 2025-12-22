@@ -351,7 +351,7 @@ export async function fetchConfirmations(month: string): Promise<PayTemplateConf
         FROM ${salariesTableRef}
       ) s ON SAFE_CAST(e.Employee_ID AS INT64) = SAFE_CAST(s.Employee_ID AS INT64) AND s.rn = 1
       LEFT JOIN ${payTemplateConfirmationsTableRef} c
-        ON SAFE_CAST(e.Employee_ID AS STRING) = SAFE_CAST(c.Employee_ID AS STRING) AND c.Month = @month
+        ON e.Employee_ID = c.Employee_ID AND c.Month = @month
       WHERE FORMAT_DATE('%Y-%m', e.Probation_End_Date) = @month
         AND e.Employment_Status = 'Active'
       ORDER BY e.Probation_End_Date ASC
@@ -400,7 +400,6 @@ export async function addIncrement(
     const month = effectiveDate.substring(0, 7); // Extract YYYY-MM from date
     
     // Insert into Pay_Template_Increments
-    // Note: Employee_ID in Pay_Template_Increments is STRING, but in Employees table it's INT64
     const insertIncrementQuery = `
       INSERT INTO ${payTemplateIncrementsTableRef} 
         (Type, Month, Employee_ID, Employee_Name, Currency, Previous_Salary, Updated_Salary, 
@@ -408,7 +407,7 @@ export async function addIncrement(
       SELECT 
         'Increment',
         @month,
-        CAST(@employeeId AS STRING),
+        @employeeId,
         Full_Name,
         @currency,
         @previousSalary,
@@ -422,18 +421,28 @@ export async function addIncrement(
       WHERE Employee_ID = @employeeId
     `;
     
+    // Build params and types for BigQuery query
+    const queryParams: Record<string, unknown> = {
+      month,
+      employeeId: employeeIdNum,
+      currency,
+      previousSalary: previousSalary ?? null,
+      updatedSalary,
+      effectiveDate,
+      comments: comments ?? null,
+      remarks: remarks ?? null,
+    };
+
+    // Specify types for parameters that can be null (required by BigQuery)
+    const queryTypes: Record<string, string> = {};
+    if (queryParams.previousSalary === null) queryTypes.previousSalary = "FLOAT64";
+    if (queryParams.comments === null) queryTypes.comments = "STRING";
+    if (queryParams.remarks === null) queryTypes.remarks = "STRING";
+
     await bigquery.query({
       query: insertIncrementQuery,
-      params: {
-        month,
-        employeeId: employeeIdNum,
-        currency,
-        previousSalary: previousSalary ?? null,
-        updatedSalary,
-        effectiveDate,
-        comments: comments ?? null,
-        remarks: remarks ?? null,
-      },
+      params: queryParams,
+      ...(Object.keys(queryTypes).length > 0 && { types: queryTypes }),
     });
     
     // Update Employees table (only Designation and Department, salary is managed in Salaries table)
@@ -517,7 +526,7 @@ export async function approveConfirmation(
           Created_At, Updated_At
         )
         VALUES (
-          CAST(e.Employee_ID AS STRING), e.Employee_Name, e.Probation_End_Date, CURRENT_DATE(),
+          e.Employee_ID, e.Employee_Name, e.Probation_End_Date, CURRENT_DATE(),
           'PKR', e.Updated_Salary, @month, TRUE, CURRENT_TIMESTAMP(), @approvedBy,
           CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
         )

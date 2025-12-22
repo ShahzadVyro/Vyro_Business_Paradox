@@ -20,7 +20,7 @@ Copy `.env.local.example` → `.env.local` and update paths or IDs if needed:
 GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/service-account.json
 GCP_PROJECT_ID=test-imagine-web
 BQ_DATASET=Vyro_Business_Paradox
-BQ_TABLE=EmployeeData_v2
+BQ_TABLE=Employees
 BQ_AUDIT_TABLE=EmployeeChangeLog
 ```
 
@@ -49,9 +49,9 @@ Open http://localhost:3000 — you’ll see the dashboard with search, filters, 
 
 ### 6. Useful Scripts
 
-| Script        | Description                     |
-| ------------- | -------------------------------- |
-| `npm run dev` | Start Next.js dev server (UI+API) |
-| `npm run lint`| Run ESLint (Next.js rules)        |
-| `npm run build` | Production build                |
-| `npm run start` | Run built app                   |
+| Script          | Description                       |
+| --------------- | --------------------------------- |
+| `npm run dev`   | Start Next.js dev server (UI+API) |
+| `npm run lint`  | Run ESLint (Next.js rules)        |
+| `npm run build` | Production build                  |
+| `npm run start` | Run built app                     |

@@ -1,0 +1,42 @@
+-- ============================================================================
+-- Add EOBI_Number Column to Employees Table
+-- ============================================================================
+-- This script adds the EOBI_Number column to the Employees table.
+-- EOBI_Number stores the employee's EOBI registration number (one per employee).
+-- Monthly EOBI submission data is stored in the Employee_EOBI table.
+--
+-- Project: test-imagine-web
+-- Dataset: Vyro_Business_Paradox
+-- Table: Employees
+--
+-- Created: December 2025
+-- ============================================================================
+
+-- Add EOBI_Number column to Employees table
+-- Note: This will fail if the column already exists, which is fine
+ALTER TABLE `test-imagine-web.Vyro_Business_Paradox.Employees`
+ADD COLUMN EOBI_Number STRING OPTIONS(description="Employees Old-Age Benefits Institution registration number");
+
+-- ============================================================================
+-- DATA MODEL EXPLANATION
+-- ============================================================================
+-- 
+-- Employees Table (Dimension Table):
+--   - EOBI_Number: The employee's EOBI registration number (one per employee)
+--   - This is set once when the employee is registered with EOBI
+--   - Example: "4700G690432"
+--
+-- Employee_EOBI Table (Fact Table):
+--   - Stores monthly EOBI submission records
+--   - One record per employee per month
+--   - Contains: Payroll_Month, NO_OF_DAYS_WORKED, EOBI_NO, DOB, DOJ, DOE, etc.
+--   - Links to Employees via Employee_ID
+--
+-- Workflow:
+--   1. New employee joins → No EOBI_Number yet
+--   2. Download Registration CSV → Upload to EOBI portal
+--   3. EOBI assigns number → Update Employees.EOBI_Number
+--   4. Each month → Generate monthly upload CSV from Employee_EOBI table
+--   5. After submission → Import CSV back to Employee_EOBI table
+--
+-- ============================================================================

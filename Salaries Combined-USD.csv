@@ -1,0 +1,627 @@
+Month Key,Key,Status,Employee ID,Employee Name,Designation,emails,Date of Joining,Date of Leaving,Worked Days,Dec Salary,New Addition/Increment/Decrement,Date of Increment/ Decrement,Payable from Last Month,Regular Pay,Prorated Pay,Performance Bonus, Paid Overtime ,Reimbursements, Other ,Gross Income,Unpaid Leaves,Deductions, Net Income ,Comments,Internal comments,Currency,Month
+Jan5184ameer hamza,5184ameer hamza,1,5184,Ameer Hamza,Senior Machine Learning Engineer,ameer.hamza@vyro.ai,25-Sep-23,,31,"6,000",,,,6000,6000,,,,,6000,,,"6,000",,,USD,Jan
+Jan5270bisma pervaiz,5270bisma pervaiz,1,5270,Bisma Pervaiz,Senior Backend Engineer,bisma.pervaiz@vyro.ai,06-May-24,,31,"1,600",,,,1600,1600,,,11,,1611,,,"1,611",GoLand reimbursement ,,USD,Jan
+Jan5141daniel gonçalves,5141daniel gonçalves,,5141,Daniel Gonçalves,Machine Learning Engineeer,daniel.goncalves@vyro.ai,19-Jun-23,11-Jan-25,11,"1,500",,,,1500,532,,,,,532,,,532,,,USD,Jan
+Jan5221jan frederic panne (deceased),5221jan frederic panne (deceased),,5221,Jan Frederic Panne (Deceased),ML Engineer,,11-Jan-24,13-May-24,13,797,,,,1900,797,,,,,797,,,797,Calculation based on 31 days for Month of May,Sadaka and clear,USD,Jan
+Jan5415kamran khalid,5415kamran khalid,1,5415,Kamran Khalid,"Product Manager, Imagine",kamran.khalid@vyro.ai,13-May-24,,31,"3,000",,,,3000,3000,,,,,3000,,,"3,000",,,USD,Jan
+Jan5245muhammad ahmed,5245muhammad ahmed,1,5245,Muhammad Ahmed,ML Lead ,muhammad.ahmed@vyro.ai,18-Mar-24,,31,"3,500",,,,3500,3500,,,,,3500,,,"3,500",,,USD,Jan
+Jan5109muhammad hammad maqsood,5109muhammad hammad maqsood,1,5109,Muhammad Hammad Maqsood,Fullstack Developer,hammad.maqsood@vyro.ai,03-Mar-23,,31,"1,432",,,,1432,1432,,,20,,1452,,,"1,452",GitHub Co-Pilot reimbursement ,,USD,Jan
+Jan5148muhammad mutahhar bin muzaffar,5148muhammad mutahhar bin muzaffar,1,5148,Muhammad Mutahhar Bin Muzaffar,Frontend Developer,muhammad.mutahhar@vyro.ai,10-Jul-23,,31,"1,123",,,,1113,1113,,,10,,1123,,,"1,123",GitHub Co-Pilot reimbursement ,,USD,Jan
+Jan5102muhammad shariq,5102muhammad shariq,1,5102,Muhammad Shariq,Backend Lead ,shariq.arif@vyro.ai,27-Feb-23,,31,"2,500",,,,2500,2500,179,,,,2679,,,"2,679",Quarterly Bonus,,USD,Jan
+Jan5107muhammad talal haider,5107muhammad talal haider,1,5107,Muhammad Talal Haider,Senior Product Designer,talal.haider@vyro.ai,01-Mar-23,,31,"1,500",,,,1500,1500,,,,,1500,,,"1,500",,,USD,Jan
+Jan5085muhammad wajahat sohail,5085muhammad wajahat sohail,1,5085,Muhammad Wajahat Sohail,IOS Development Lead,wajahat.sohail@vyro.ai,23-Nov-22,,31,"1,528",,,,1525,1525,,,,,1525,,,"1,525","PKR 425,500 Converted to USD ",,USD,Jan
+Jan5084muhammad zaid abbasi,5084muhammad zaid abbasi,1,5084,Muhammad Zaid Abbasi,Senior Android Developer,zaid.abbasi@vyro.ai,21-Nov-22,,31,"1,800",,,,1800,1800,,,,,1800,,,"1,800",,,USD,Jan
+Jan5124nabeel ur rehman,5124nabeel ur rehman,,5124,Nabeel Ur Rehman,DevOps Lead,nabeel.rehman@vyro.ai,02-May-23,31-Jan-25,31,"1,500",,,,1500,1500,,,,,1500,,,"1,500",,okay to send,USD,Jan
+Jan5183omeir ahmed,5183omeir ahmed,1,5183,Omeir Ahmed,Sr. iOS Engineer,omair.ahmed@vyro.ai,25-Sep-23,,31,"1,900",,,,1900,1900,,,9,,1909,,,"1,909",OPD Claim,,USD,Jan
+Jan5194saad ahmed,5194saad ahmed,1,5194,Saad Ahmed,Product & Business Executive ,saad.ahmed@vyro.ai,30-Oct-23,,31,"2,400",,,,2400,2400,,,,,2400,,,"2,400",,,USD,Jan
+Jan5096saad aziz,5096saad aziz,,5096,Saad Aziz,Technical Product Manager,saad.aziz@vyro.ai,01-Feb-23,,31,"1,077",,,,1075,1075,,,20,,1095,,,"1,095",PKR 300k Converted to USD & GitHub Co-Pilot claim,,USD,Jan
+Jan5101shawal fida,5101shawal fida,1,5101,Shawal Fida,Interim iOS Marketing and Content Lead,shawal.fida@vyro.ai,20-Feb-23,,31,826,,,,824,824,179,,,,1004,,,"1,004","PKR 230k Converted to USD  & PKR 50,000 Quarterly bonus also paid out in USD",,USD,Jan
+Jan5240shahek raza,5240shahek raza,,5240,Shahek Raza,Senior Growth Executive,shehak.raza@vyro.ai,11-Mar-24,31-Jan-25,31,"1,500",,,,1500,1500,,,,22,1522,,,"1,522",OPD contribution payout,,USD,Jan
+Jan5212umer janjua,5212umer janjua,1,5212,Umer Janjua,Manager People & Talent,umer.janjua@vyro.ai,18-Dec-23,,31,"1,600",1760,01-Jan,,1760,1760,,,,,1760,,,"1,760",,,USD,Jan
+Jan5274awais chaudhry ,5274awais chaudhry ,1,5274,Awais Chaudhry ,Senior Growth Executive,awais.chaudhry@vyro.ai,27-May-24,,31,"1,700",,,,1700,1700,358,,,,2058,,,"2,058","PKR 100,000 Quarterly bonus also paid out in USD",,USD,Jan
+Jan5276timothy john house,5276timothy john house,1,5276,Timothy John House,Product Consultant,timothy.house@vyro.ai,27-May-24,,31,0,,,,438,438,,,,,438,,,438,To be paid for 3 Hrs for the Month of December & 4 Hrs for the month of January @62.50/Hr,These were verified by Zain,USD,Jan
+Jan5024talha arshad,5024talha arshad,1,5024,Talha Arshad,Business Development Manager,talha.arshad@vyro.ai,30-Mar-21,,31,"1,077",,,,1075,1075,,,,,1075,,,"1,075",PKR 300k converted to USD,,USD,Jan
+Jan5298sebastian luedke,5298sebastian luedke,1,5298,Sebastian Luedke,Creative Advisor,sebastian.ludke@vyro.ai,,,31,"1,200",,,,1200,1200,,,,,1200,,,"1,200",2 Payments of $600 each a month ($600 sent to him previously ),,USD,Jan
+Jan5304mustafa kamal,5304mustafa kamal,1,5304,Mustafa Kamal,Affiliate Advisor,Mustafakamalwasti@gmail.com,,,31,"1,645",,,,1500,1500,,,,,1500,,,"1,500",,,USD,Jan
+Jan5302muhammad zakria amir,5302muhammad zakria amir,1,5302,Muhammad Zakria Amir,Growth Executive,zakria.amir@vyro.ai,,,31,"3,000",,,,3000,3000,,,,,3000,,,"3,000",,,USD,Jan
+Jan5264umar sheraz,5264umar sheraz,1,5264,Umar Sheraz,Growth Executive,umar.sheraz@vyro.ai,02-May-24,,31,"1,000",,,,1000,1000,,,,,1000,,,"1,000",,,USD,Jan
+Jan5187shaiq habib,5187shaiq habib,1,5187,Shaiq Habib,Data Analyst,shaiq.habib@vyro.ai,09-Oct-23,,31,"1,077",,,,1075,1075,358,,,,1434,,,"1,434","PKR 300,000 Paid out in USD & PKR 100,000 Quarterly bonus also paid out in USD",,USD,Jan
+Jan5301mohid khan,5301mohid khan,1,5301,Mohid Khan,Visual Designer,mohid.khan@vyro.ai,,,31,808,,,,807,807,,,,,807,,,807,"PKR 225,000 Paid out in USD ",,USD,Jan
+Jan5310muhammad haris khan,5310muhammad haris khan,1,5310,Muhammad Haris Khan,Frontend Developer,muhammad.haris@vyro.ai,07-Oct-24,,31,862,,,,860,860,,,,,860,,,860,"PKR 240,000 Paid out in USD",,USD,Jan
+Jan5119muhammad usman,5119muhammad usman,1,5119,Muhammad Usman,Devops (Consultant),muhammad.usman@vyro.ai,07-Oct-24,,31,"3,000",,,,3000,3000,,,,,3000,,,"3,000",,,USD,Jan
+Jan5311saif ur rehman,5311saif ur rehman,1,5311,Saif ur Rehman,Product Manager,saif.rehman@vyro.ai,21-Oct-24,,31,"1,077",,,,1075,1075,,,,,1075,,,"1,075","PKR 300,000 Paid out in USD",,USD,Jan
+Jan5307mohsin ali,5307mohsin ali,1,5307,Mohsin Ali,Senior SEO Specialist,mohsin.ali1@vyro.ai,,10-Jan-25,10,"1,364",,,,1362,439,,,,,439,,,439,"PKR 380,000 Paid out in USD ",,USD,Jan
+Jan5313insha wamiq,5313insha wamiq,1,5313,Insha Wamiq,Sr Product Manager,insha.wamiq@vyro.ai,28-Oct-24,03-Jan-25,3,"1,292",,,,1290,125,,,,,125,,,125,"PKR 360,000 Paid out in USD ",,USD,Jan
+Jan5321fatima bashir,5321fatima bashir,,5321,Fatima Bashir,Assistant Manager Talent Acquisition,fatima.bashir@vyro.ai,06-Nov-24,,31,"1,440",,,,1440,1440,,,,,1440,,,"1,440",,,USD,Jan
+Jan5327kashif mehmood,5327kashif mehmood,,5327,Kashif Mehmood,Sr Engineer developer II,kashif.mehmood@vyro.ai,18-Nov-24,,31,"1,364",,,,1362,1362,,,,,1362,44,,"1,318","PKR 380,000 Paid out in USD (One unpaid leave)",,USD,Jan
+Jan5329zeeshan afzal,5329zeeshan afzal,,5329,Zeeshan Afzal,Senior WebGL Engineer,zeeshan.afzal@vyro.ai,15-Nov-24,,31,"2,000",,,,2000,2000,,,,,2000,,,"2,000",,,USD,Jan
+Jan5333umar farooq waheed,5333umar farooq waheed,1,5333,Umar Farooq Waheed,Sr backend Engineer,umarfarooq.waheed@vyro.ai,03-Dec-24,03-Jan-25,3,"1,871",,,,2000,194,,,,,194,,,194,,,USD,Jan
+Jan5338qazi umer jamil,5338qazi umer jamil,,5338,Qazi Umer Jamil,Sr Devops Engineer,qazi.umer.jamil@vyro.ai,16-Dec-24,21-Jan-25,21,"1,032",3000,01-Jan,,3000,2032,,,,,2032,,,"2,032",,,USD,Jan
+Jan5339mustafa shakil,5339mustafa shakil,,5339,Mustafa Shakil,Sr Tech Recruiter,mustafa.shakil@vyro.ai,16-Dec-24,,31,671,,,,1300,1300,,,103,,1403,,,"1,403",LinkedIn Subscription,,USD,Jan
+Jan5272syed maaz ahmed,5272syed maaz ahmed,,5272,Syed Maaz Ahmed,Senior Marketing Executive,maaz.ahmed@vyro.ai,20-May-24,,31,"1,257",,,,1255,1255,,,,,1255,,,"1,255","PKR 350,000 Paid out in USD",,USD,Jan
+Jan5295zainab malik,5295zainab malik,,5295,Zainab Malik,Content Marketing Lead,zainab.malik@vyro.ai,19-Aug-24,,31,898,,,,896,896,,,,,896,,,896,"PKR 250,000 Paid out in USD",,USD,Jan
+Jan5342javokhir akramjonov,5342javokhir akramjonov,,5342,Javokhir Akramjonov,Backend Engineer,javokhir.akramjonov@vyro.ai,01-Jan-25,,31,,,,,1400,1400,,,,,1400,,,"1,400",,,USD,Jan
+Jan5365hock ng,5365hock ng,,5365,Hock Ng,"Creative Program Consultant,",hock.ng@vyro.ai,22-Jan-25,,10,,,,,1500,600,,,,,600,,,600,To be paid for 4 Hrs for the Month of January @150/Hr,These has been verified byKamran & Shawal,USD,Jan
+Jan5241muawiz umer,5241muawiz umer,,5241,Muawiz Umer,Associate ML Engineer,umar.muawiz@vyro.ai,11-Mar-24,,31,,,01-Jan,,900,900,,,,,900,,,900,,,USD,Jan
+Jan5359syed tabeed hassan rizvi,5359syed tabeed hassan rizvi,,5359,Syed Tabeed Hassan Rizvi,DevOps Engineer,tabeed.rizvi@vyro.ai,27-Jan-25,,5,,,,,1150,185,,,,,185,,,185,,,USD,Jan
+Jan5366charlotte norman,5366charlotte norman,,5366,Charlotte Norman,Product Marketing Consultant,charlotte.norman@vyro.ai,27-Jan-25,,5,,,,,2800,0,,,,,0,,,0,Paid at $350/Hour,,USD,Jan
+Jantotal,total,,,Total,,,,,,"65,920",4760,05-Jan,0,76816,66321,1075,0,172,22,67591,44,0,"67,547",0,,USD,Jan
+MonthKey,Key,Status,Employee ID,Employee Name,Designation,emails,Date of Joining,Date of Leaving,Worked Days,Last month's  Salary,New Addition/Increment/Decrement,Date of Increment/ Decrement,Payable from Last Month,Regular Pay,Prorated Pay,Performance Bonus, Paid Overtime ,Reimbursements, Other ,Gross Income,Unpaid Leaves,Deductions, Net Income ,Comments,Internal comments,Currency,Month
+Feb5184ameer hamza,5184ameer hamza,1,5184,Ameer Hamza,Senior Machine Learning Engineer,ameer.hamza@vyro.ai,25-Sep-23,,28,"6,000",,,,6000,6000,,,,,6000,,,"6,000",,,USD,Feb
+Feb5270bisma pervaiz,5270bisma pervaiz,1,5270,Bisma Pervaiz,Senior Backend Engineer,bisma.pervaiz@vyro.ai,06-May-24,,28,"1,611",,,,1600,1600,179,,,,1779,,,"1,779",last quarter (October – December 2024),,USD,Feb
+Feb5221jan frederic panne (deceased),5221jan frederic panne (deceased),,5221,Jan Frederic Panne (Deceased),ML Engineer,,11-Jan-24,13-May-24,13,797,,,,1900,797,,,,,797,,,797,Calculation based on 31 days for Month of May,Sadaka and clear,USD,Feb
+Feb5415kamran khalid,5415kamran khalid,1,5415,Kamran Khalid,"Product Manager, Imagine",kamran.khalid@vyro.ai,13-May-24,,28,"3,000",,,,3000,3000,,,,,3000,,,"3,000",,,USD,Feb
+Feb5245muhammad ahmed,5245muhammad ahmed,1,5245,Muhammad Ahmed,ML Lead ,muhammad.ahmed@vyro.ai,18-Mar-24,,28,"3,500",,,,3500,3500,,,,,3500,,,"3,500",,,USD,Feb
+Feb5109muhammad hammad maqsood,5109muhammad hammad maqsood,1,5109,Muhammad Hammad Maqsood,Fullstack Developer,hammad.maqsood@vyro.ai,03-Mar-23,,28,"1,452",,,,1432,1432,,,10,,1442,,,"1,442",GitHub Co-Pilot reimbursement ,,USD,Feb
+Feb5148muhammad mutahhar bin muzaffar,5148muhammad mutahhar bin muzaffar,1,5148,Muhammad Mutahhar Bin Muzaffar,Frontend Developer,muhammad.mutahhar@vyro.ai,10-Jul-23,,28,"1,123",,,,1113,1113,,,10,,1123,,,"1,123",GitHub Co-Pilot reimbursement ,,USD,Feb
+Feb5102muhammad shariq,5102muhammad shariq,1,5102,Muhammad Shariq,Backend Lead ,shariq.arif@vyro.ai,27-Feb-23,,28,"2,679",,,,2500,2500,,,,72,2572,,,"2,572",Referral bonus for Haris as approved by Ahmed Abu Bakar,,USD,Feb
+Feb5107muhammad talal haider,5107muhammad talal haider,1,5107,Muhammad Talal Haider,Senior Product Designer,talal.haider@vyro.ai,01-Mar-23,,28,"1,500",,,,1500,1500,,,,,1500,,,"1,500",,,USD,Feb
+Feb5085muhammad wajahat sohail,5085muhammad wajahat sohail,1,5085,Muhammad Wajahat Sohail,IOS Development Lead,wajahat.sohail@vyro.ai,23-Nov-22,,28,"1,525",,,,1522,1522,,,,,1522,,,"1,522","PKR 425,500 Converted to USD ",,USD,Feb
+Feb5084muhammad zaid abbasi,5084muhammad zaid abbasi,1,5084,Muhammad Zaid Abbasi,Senior Android Developer,zaid.abbasi@vyro.ai,21-Nov-22,,28,"1,800",,,,1800,1800,,,,,1800,,,"1,800",,,USD,Feb
+Feb5183omeir ahmed,5183omeir ahmed,1,5183,Omeir Ahmed,Sr. iOS Engineer,omair.ahmed@vyro.ai,25-Sep-23,10-Feb-25,10,"1,909",,,,1900,679,,,,20,699,,,699,OPD balance paid out (10th Feb Last working day),,USD,Feb
+Feb5194saad ahmed,5194saad ahmed,1,5194,Saad Ahmed,Product & Business Executive ,saad.ahmed@vyro.ai,30-Oct-23,,28,"2,400",,,,2400,2400,,,,,2400,,,"2,400",,,USD,Feb
+Feb5096saad aziz,5096saad aziz,1,5096,Saad Aziz,Technical Product Manager,saad.aziz@vyro.ai,01-Feb-23,,28,"1,095",,01-Feb,,1359,1359,,,,,1359,,,"1,359",PKR 380k Converted to USD ,,USD,Feb
+Feb5101shawal fida,5101shawal fida,1,5101,Shawal Fida,Interim iOS Marketing and Content Lead,shawal.fida@vyro.ai,20-Feb-23,,28,"1,004","1,500",01-Feb,,1500,1500,,,,,1500,,,"1,500",,,USD,Feb
+Feb5212umer janjua,5212umer janjua,1,5212,Umer Janjua,Manager People & Talent,umer.janjua@vyro.ai,18-Dec-23,,28,"1,760",,,,1760,1760,,,,,1760,,,"1,760",,,USD,Feb
+Feb5274awais chaudhry ,5274awais chaudhry ,1,5274,Awais Chaudhry ,Senior Growth Executive,awais.chaudhry@vyro.ai,27-May-24,,28,"2,058",,,,1700,1700,,,,,1700,,,"1,700",,,USD,Feb
+Feb5276timothy john house,5276timothy john house,1,5276,Timothy John House,Product Consultant,timothy.house@vyro.ai,27-May-24,,28,438,,,,438,438,,,,,438,,,438,To be paid for 7 Hrs for the Month of Feb @62.50/Hr,Verified by Zain,USD,Feb
+Feb5024talha arshad,5024talha arshad,1,5024,Talha Arshad,Business Development Manager,talha.arshad@vyro.ai,30-Mar-21,,28,"1,075",,,,1073,1073,,,,,1073,,,"1,073",PKR 300k converted to USD,,USD,Feb
+Feb5298sebastian luedke,5298sebastian luedke,1,5298,Sebastian Luedke,Creative Advisor,sebastian.ludke@vyro.ai,,28-Feb-25,28,"1,200",,,,1200,1200,,,,,1200,,,"1,200",2 Payments of $600 each a month ($600 sent to him previously ),,USD,Feb
+Feb5304mustafa kamal,5304mustafa kamal,1,5304,Mustafa Kamal,Affiliate Advisor,Mustafakamalwasti@gmail.com,,28-Feb-25,28,"1,500",,,,1500,1500,,,,,1500,,,"1,500",,OPD balance for him was removed,USD,Feb
+Feb5302muhammad zakria amir,5302muhammad zakria amir,1,5302,Muhammad Zakria Amir,Growth Executive,zakria.amir@vyro.ai,,,28,"3,000",,,,3000,3000,,,,,3000,,,"3,000",,,USD,Feb
+Feb5264umar sheraz,5264umar sheraz,1,5264,Umar Sheraz,Growth Executive,umar.sheraz@vyro.ai,02-May-24,,28,"1,000",,,,1000,1000,,,,,1000,,,"1,000",,,USD,Feb
+Feb5187shaiq habib,5187shaiq habib,1,5187,Shaiq Habib,Data Analyst,shaiq.habib@vyro.ai,09-Oct-23,,28,"1,434",,,,1073,1073,,,,,1073,,,"1,073","PKR 300,000 Paid out in USD ",,USD,Feb
+Feb5301mohid khan,5301mohid khan,1,5301,Mohid Khan,Visual Designer,mohid.khan@vyro.ai,,,28,807,,,,805,805,,,,,805,,,805,"PKR 225,000 Paid out in USD ",,USD,Feb
+Feb5310muhammad haris khan,5310muhammad haris khan,1,5310,Muhammad Haris Khan,Frontend Developer,muhammad.haris@vyro.ai,07-Oct-24,,28,860,,01-Feb,,1144,1144,,,,,1144,,,"1,144","PKR 320,000 Paid out in USD",,USD,Feb
+Feb5119muhammad usman,5119muhammad usman,1,5119,Muhammad Usman,Devops (Consultant),muhammad.usman@vyro.ai,07-Oct-24,28-Feb-25,28,"3,000",,,,3000,3000,,,,,3000,,,"3,000",,,USD,Feb
+Feb5311saif ur rehman,5311saif ur rehman,1,5311,Saif ur Rehman,Product Manager,saif.rehman@vyro.ai,21-Oct-24,,28,"1,075","360,000",01-Feb,,1288,1288,,,,,1288,,,"1,288","PKR 360,000 Paid out in USD",,USD,Feb
+Feb5321fatima bashir,5321fatima bashir,1,5321,Fatima Bashir,Assistant Manager Talent Acquisition,fatima.bashir@vyro.ai,06-Nov-24,20-Feb-25,20,"1,440",,,,1440,1029,,,,,1029,,,"1,029",,,USD,Feb
+Feb5327kashif mehmood,5327kashif mehmood,1,5327,Kashif Mehmood,Sr Engineer developer II,kashif.mehmood@vyro.ai,18-Nov-24,,28,"1,318",,,,1359,1359,,,,,1359,,,"1,359","PKR 380,000 Paid out in USD",,USD,Feb
+Feb5329zeeshan afzal,5329zeeshan afzal,1,5329,Zeeshan Afzal,Senior WebGL Engineer,zeeshan.afzal@vyro.ai,15-Nov-24,,28,"2,000",,,,2000,2000,,,,,2000,,,"2,000",,,USD,Feb
+Feb5339mustafa shakil,5339mustafa shakil,1,5339,Mustafa Shakil,Sr Tech Recruiter,mustafa.shakil@vyro.ai,16-Dec-24,,28,"1,403",,,,1300,1300,,,103,,1403,,,"1,403",,,USD,Feb
+Feb5272syed maaz ahmed,5272syed maaz ahmed,1,5272,Syed Maaz Ahmed,Senior Marketing Executive,maaz.ahmed@vyro.ai,20-May-24,,28,"1,255",,,,1252,1252,,,,,1252,,,"1,252","PKR 350,000 Paid out in USD",,USD,Feb
+Feb5295zainab malik,5295zainab malik,1,5295,Zainab Malik,Content Marketing Lead,zainab.malik@vyro.ai,19-Aug-24,,28,896,,,,894,894,,,,,894,,,894,"PKR 250,000 Paid out in USD",,USD,Feb
+Feb5342javokhir akramjonov,5342javokhir akramjonov,1,5342,Javokhir Akramjonov,Backend Engineer,javokhir.akramjonov@vyro.ai,01-Jan-25,,28,"1,400",,,,1400,1400,,,,,1400,,,"1,400",,,USD,Feb
+Feb5365hock ng,5365hock ng,1,5365,Hock Ng,"Creative Program Consultant,",hock.ng@vyro.ai,22-Jan-25,20-Feb-25,0,600,,,,1500,0,,,,,0,,,0,,"No payments for him, notified on email",USD,Feb
+Feb5241muawiz umer,5241muawiz umer,1,5241,Muawiz Umer,Associate ML Engineer,umar.muawiz@vyro.ai,11-Mar-24,,28,900,,,,900,900,,,,,900,,,900,,,USD,Feb
+Feb5359syed tabeed hassan rizvi,5359syed tabeed hassan rizvi,1,5359,Syed Tabeed Hassan Rizvi,DevOps Engineer,tabeed.rizvi@vyro.ai,27-Jan-25,,28,185,,,,1150,1150,,,,,1150,,,"1,150",,,USD,Feb
+Feb5366charlotte norman,5366charlotte norman,1,5366,Charlotte Norman,Product Marketing Consultant,charlotte.norman@vyro.ai,27-Jan-25,,28,452,,,,2800,2800,,,,,2800,,350,"2,450",Payment for total of 7 hours for Jan & Feb 2025 (The 28th Jan to the 18th Feb),,USD,Feb
+Feb5229ayesha syed,5229ayesha syed,1,5229,Ayesha Syed,Marketig Artist,ayesha.syed@vyro.ai,13-Feb-25,,28,,825,13-Feb,,640,640,,,,,640,,,640,,,USD,Feb
+Feb5370honglang qin,5370honglang qin,,5370,Honglang Qin,Backend Engineer,honglang.qin@vyro.ai,03-Feb-25,,26,,,,,2500,2321,,,,,2321,,,"2,321",,,USD,Feb
+Feb5371mahmoud nasim abouelmaati mohamed abouelenin,5371mahmoud nasim abouelmaati mohamed abouelenin,1,5371,Mahmoud Nasim Abouelmaati Mohamed Abouelenin,SEO Consultant,mahmoud.nessim@vyro.ai,03-Feb-25,,28,,,,,1300,1300,,,,,1300,,,"1,300",,,USD,Feb
+Feb5373aisha noor,5373aisha noor,1,5373,Aisha Noor,Senior Content Writer ,aisha.noor@vyro.ai,10-Feb-25,,19,,,,,910,618,,,,,618,,,618,,,USD,Feb
+Feb5364maaz ullah khan warsi,5364maaz ullah khan warsi,,5364,Maaz Ullah Khan Warsi,DevOps Engineer,maazullah.khan@vyro.ai,27-Jan-25,,28,,,,177.42,1100,1100,,,,,1277,,,"1,277",,,USD,Feb
+Feb5378muhammad mehdi,5378muhammad mehdi,,5378,Muhammad Mehdi,Product Manager,muhammad.mehdi@vyro.ai,17-Feb-25,,12,,,,,1620,694,,,,,694,,,694,,,USD,Feb
+Feb5244amish tufail,5244amish tufail,,5244,Amish Tufail,Software Engineer I,amish.tufail@vyro.ai,11-Mar-24,,28,,"1,000",11-Feb,,822,822,,,,,822,,,822,,,USD,Feb
+Febtotal,total,,,Total,,,,,,"61,654","363,325",11-Aug,177.42,74992,70463,179,0,123,92,71033,0,350,"70,683",0,,USD,Feb
+MonthKey,Key,Status,Employee ID,Employee Name,Designation,emails,Date of Joining,Date of Leaving,Worked Days,Last month's  Salary,New Addition/Increment/Decrement,Date of Increment/ Decrement,Payable from Last Month,Regular Pay,Prorated Pay,Performance Bonus, Paid Overtime ,Reimbursements, Other ,Gross Income,Unpaid Leaves,Deductions, Net Income ,Comments,Internal comments,Currency,Month
+Mar5184ameer hamza,5184ameer hamza,,5184,Ameer Hamza,Senior Machine Learning Engineer,ameer.hamza@vyro.ai,25-Sep-23,,31,"6,000",,,,6000,6000,,,,18,6018,,,"6,018",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5270bisma pervaiz,5270bisma pervaiz,,5270,Bisma Pervaiz,Senior Backend Engineer,bisma.pervaiz@vyro.ai,06-May-24,,31,"1,600",,,,1600,1600,,,,18,1618,,,"1,618",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5221jan frederic panne (deceased),5221jan frederic panne (deceased),HOLD,5221,Jan Frederic Panne (Deceased),ML Engineer,,11-Jan-24,13-May-24,13,797,,,,1900,797,,,,,797,,,797,Calculation based on 31 days for Month of May,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5415kamran khalid,5415kamran khalid,,5415,Kamran Khalid,"Product Manager, Imagine",kamran.khalid@vyro.ai,13-May-24,,31,"3,000",,,,3000,3000,,,,18,3018,,,"3,018",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5245muhammad ahmed,5245muhammad ahmed,,5245,Muhammad Ahmed,ML Lead ,muhammad.ahmed@vyro.ai,18-Mar-24,,31,"3,500",,,,3500,3500,,,,18,3518,,,"3,518",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5109muhammad hammad maqsood,5109muhammad hammad maqsood,,5109,Muhammad Hammad Maqsood,Fullstack Developer,hammad.maqsood@vyro.ai,03-Mar-23,,31,"1,442",,,,1432,1432,,,,18,1450,,,"1,450",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5148muhammad mutahhar bin muzaffar,5148muhammad mutahhar bin muzaffar,,5148,Muhammad Mutahhar Bin Muzaffar,Frontend Developer,muhammad.mutahhar@vyro.ai,10-Jul-23,,31,"1,123",,,,1113,1113,,,10,18,1141,,,"1,141",GitHub Co-Pilot reimbursement ,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5102muhammad shariq,5102muhammad shariq,,5102,Muhammad Shariq,Backend Lead ,shariq.arif@vyro.ai,27-Feb-23,,31,"2,572",,,,2500,2500,,,,18,2518,,,"2,518",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5107muhammad talal haider,5107muhammad talal haider,,5107,Muhammad Talal Haider,Senior Product Designer,talal.haider@vyro.ai,01-Mar-23,,31,"1,500",,,,1500,1500,,,,18,1518,,,"1,518",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5085muhammad wajahat sohail,5085muhammad wajahat sohail,,5085,Muhammad Wajahat Sohail,IOS Development Lead,wajahat.sohail@vyro.ai,23-Nov-22,,31,"1,522",,,,1518,1518,,,,18,1535,,,"1,535","PKR 425,500 Converted to USD ","PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5084muhammad zaid abbasi,5084muhammad zaid abbasi,,5084,Muhammad Zaid Abbasi,Senior Android Developer,zaid.abbasi@vyro.ai,21-Nov-22,,31,"1,800",,,,1800,1800,,,,18,1818,,,"1,818",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5194saad ahmed,5194saad ahmed,,5194,Saad Ahmed,Product & Business Executive ,saad.ahmed@vyro.ai,30-Oct-23,,31,"2,400",,,,2400,2400,,,,18,2418,,,"2,418",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5096saad aziz,5096saad aziz,,5096,Saad Aziz,Technical Product Manager,saad.aziz@vyro.ai,01-Feb-23,,31,"1,359",,,,1355,1355,,,,18,1373,,,"1,373",PKR 380k Converted to USD ,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5101shawal fida,5101shawal fida,,5101,Shawal Fida,Interim iOS Marketing and Content Lead,shawal.fida@vyro.ai,20-Feb-23,,31,"1,500",,,,1500,1500,,,,18,1518,,,"1,518",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5212umer janjua,5212umer janjua,,5212,Umer Janjua,Manager People & Talent,umer.janjua@vyro.ai,18-Dec-23,,31,"1,760",,,,1760,1760,,,,18,1778,,,"1,778",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5274awais chaudhry ,5274awais chaudhry ,,5274,Awais Chaudhry ,Senior Growth Executive,awais.chaudhry@vyro.ai,27-May-24,,31,"1,700",,,,1700,1700,,,,18,1718,,,"1,718",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5276timothy john house,5276timothy john house,Hold to be confirmed yet,5276,Timothy John House,Product Consultant,timothy.house@vyro.ai,27-May-24,,31,438,,,,0,0,,,,,0,,,0,To be paid for 7 Hrs for the Month of Feb @62.50/Hr,,USD,Mar
+Mar5024talha arshad,5024talha arshad,,5024,Talha Arshad,Business Development Manager,talha.arshad@vyro.ai,30-Mar-21,,31,"1,073",,,,1070,1070,,,,18,1088,,,"1,088",PKR 300k converted to USD,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5302muhammad zakria amir,5302muhammad zakria amir,,5302,Muhammad Zakria Amir,Growth Executive,zakria.amir@vyro.ai,,,31,"3,000",,,,3000,3000,,,,18,3018,,,"3,018",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5264umar sheraz,5264umar sheraz,,5264,Umar Sheraz,Growth Executive,umar.sheraz@vyro.ai,02-May-24,,31,"1,000",,,,1000,1000,,,,18,1018,,,"1,018",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5187shaiq habib,5187shaiq habib,,5187,Shaiq Habib,Data Analyst,shaiq.habib@vyro.ai,09-Oct-23,,31,"1,073",,,,1070,1070,,,,18,1088,,,"1,088","PKR 300,000 Paid out in USD ","PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5301mohid khan,5301mohid khan,,5301,Mohid Khan,Visual Designer,mohid.khan@vyro.ai,,,31,805,,,,803,803,,,,18,820,,,820,"PKR 225,000 Paid out in USD ","PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5310muhammad haris khan,5310muhammad haris khan,,5310,Muhammad Haris Khan,Frontend Developer,muhammad.haris@vyro.ai,07-Oct-24,,31,"1,144",,,,1141,1141,,,,18,1159,,,"1,159","PKR 320,000 Paid out in USD","PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5311saif ur rehman,5311saif ur rehman,,5311,Saif ur Rehman,Product Manager,saif.rehman@vyro.ai,21-Oct-24,,31,"1,288",,,,1284,1284,,,,18,1302,,,"1,302","PKR 360,000 Paid out in USD","PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5327kashif mehmood,5327kashif mehmood,,5327,Kashif Mehmood,Sr Engineer developer II,kashif.mehmood@vyro.ai,18-Nov-24,,31,"1,359","1,500",01-Mar,,1500,1500,,,,18,1518,,,"1,518",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5329zeeshan afzal,5329zeeshan afzal,,5329,Zeeshan Afzal,Senior WebGL Engineer,zeeshan.afzal@vyro.ai,15-Nov-24,,31,"2,000",,,,2000,2000,,,,18,2018,,,"2,018",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5339mustafa shakil,5339mustafa shakil,,5339,Mustafa Shakil,Sr Tech Recruiter,mustafa.shakil@vyro.ai,16-Dec-24,,31,"1,403",,,,1300,1300,,,103,18,1421,,,"1,421",LinkedIn Claim,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5272syed maaz ahmed,5272syed maaz ahmed,,5272,Syed Maaz Ahmed,Senior Marketing Executive,maaz.ahmed@vyro.ai,20-May-24,,31,"1,252",,,,1248,1248,,,,18,1266,,,"1,266","PKR 350,000 Paid out in USD","PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5295zainab malik,5295zainab malik,,5295,Zainab Malik,Content Marketing Lead,zainab.malik@vyro.ai,19-Aug-24,,18,894,,,,892,518,,,,55,573,,,573,"PKR 250,000 Paid out in USD & OPD payout",Eidi was not approved for her,USD,Mar
+Mar5342javokhir akramjonov,5342javokhir akramjonov,,5342,Javokhir Akramjonov,Backend Engineer,javokhir.akramjonov@vyro.ai,01-Jan-25,,31,"1,400",,,,1400,1400,,,,,1400,,,"1,400",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5241muawiz umer,5241muawiz umer,,5241,Muawiz Umer,Associate ML Engineer,umar.muawiz@vyro.ai,11-Mar-24,,31,900,,,,900,900,,,,18,918,,,918,,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5359syed tabeed hassan rizvi,5359syed tabeed hassan rizvi,,5359,Syed Tabeed Hassan Rizvi,DevOps Engineer,tabeed.rizvi@vyro.ai,27-Jan-25,,31,"1,150",,,,1150,1150,,,,18,1168,,,"1,168",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5366charlotte norman,5366charlotte norman,,5366,Charlotte Norman,Product Marketing Consultant,charlotte.norman@vyro.ai,27-Jan-25,,31,"2,450",,,,2975,2975,,,,,2975,,,"2,975",8.5 Hours for the period of 25th Feb-24th March,Approved by Kamran & Zain,USD,Mar
+Mar5229ayesha syed,5229ayesha syed,,5229,Ayesha Syed,Marketig Artist,ayesha.syed@vyro.ai,13-Feb-25,,31,640,,,,825,825,,,,18,843,,,843,,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5370honglang qin,5370honglang qin,,5370,Honglang Qin,Backend Engineer,honglang.qin@vyro.ai,03-Feb-25,,31,"2,321",,,,2500,2500,,,,,2500,,,"2,500",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5371mahmoud nasim abouelmaati mohamed abouelenin,5371mahmoud nasim abouelmaati mohamed abouelenin,,5371,Mahmoud Nasim Abouelmaati Mohamed Abouelenin,SEO Consultant,mahmoud.nessim@vyro.ai,03-Feb-25,,31,"1,300",,,,1560,1560,,,,,1560,,,"1,560",Payment for 12 Hours for the Month of March,"Although his hours were capped at 10 Hr/ month, but this time around as discussed with Zain and Syed Osama this was okay to process this month",USD,Mar
+Mar5373aisha noor,5373aisha noor,,5373,Aisha Noor,Senior Content Writer ,aisha.noor@vyro.ai,10-Feb-25,,31,618,,,,910,910,,,,18,928,,,928,,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5364maaz ullah khan warsi,5364maaz ullah khan warsi,,5364,Maaz Ullah Khan Warsi,DevOps Engineer,maazullah.khan@vyro.ai,27-Jan-25,,31,"1,277",,,,1100,1100,,,,18,1118,,,"1,118",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5378muhammad mehdi,5378muhammad mehdi,,5378,Muhammad Mehdi,Product Manager,muhammad.mehdi@vyro.ai,17-Feb-25,,31,694,,,695.51,1620,1620,,,,18,2333,,,"2,333",One-time Travel payment from Karachi as mentioned in the contract,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5244amish tufail,5244amish tufail,,5244,Amish Tufail,Software Engineer I,amish.tufail@vyro.ai,11-Mar-24,,31,822,,,,1000,1000,,,,18,1018,,,"1,018",,"PKR 5,000 converted to USD as Eidi from Vyro ",USD,Mar
+Mar5387muhammad ali chaudhry,5387muhammad ali chaudhry,,5387,Muhammad Ali Chaudhry,Sr Customer Success Manager ,muhammad.ali@vyro.ai,17-Mar-25,,15,,,,,1400,677,,,,18,695,,,695,,,USD,Mar
+Martotal,total,,,Total,,,,,,"63,077","1,500",01-Mar,695.51,64926,65229,0,0,113,644,66699,0,0,"66,699",0,,USD,Mar
+MonthKey,Key,Status,Employee ID,Employee Name,Designation,emails,Date of Joining,Date of Leaving,Worked Days,Last month's  Salary,New Addition/Increment/Decrement,Date of Increment/ Decrement,Payable from Last Month,Regular Pay,Prorated Pay,Performance Bonus, Paid Overtime ,Reimbursements, Other ,Gross Income,Unpaid Leaves,Deductions, Net Income ,Comments,Internal comments,Currency,Month
+Apr5184ameer hamza,5184ameer hamza,1,5184,Ameer Hamza,Senior Machine Learning Engineer,ameer.hamza@vyro.ai,25-Sep-23,,30,"6,018",,,,6000,6000,,,,,6000,,,"6,000",,,USD,Apr
+Apr5270bisma pervaiz,5270bisma pervaiz,1,5270,Bisma Pervaiz,Senior Backend Engineer,bisma.pervaiz@vyro.ai,06-May-24,,30,"1,618",,,,1600,1600,178,,,,1778,,,"1,778",Quaterly bonus,,USD,Apr
+Apr5221jan frederic panne (deceased),5221jan frederic panne (deceased),,5221,Jan Frederic Panne (Deceased),ML Engineer,,11-Jan-24,13-May-24,13,797,,,,1900,797,,,,,797,,,797,Calculation based on 31 days for Month of May,,USD,Apr
+Apr5415kamran khalid,5415kamran khalid,1,5415,Kamran Khalid,"Product Manager, Imagine",kamran.khalid@vyro.ai,13-May-24,,30,"3,018","USD 6,000",01-Apr,,6000,6000,,,1546,,7546,,1000,"6,546","Reimbursments and loan claim
+Total loan of $3000 to be deducted at $1000 each month until the full amount is recovered
+Total Deducted this month = $1000
+Total to be recovered = $3000
+Total balance $2000",Link to the sheet:https://docs.google.com/spreadsheets/d/1fEtyBZuMbLjuYoJpcp27Zoci8JwUuj9q21swOlenRR4/edit?gid=0#gid=0,USD,Apr
+Apr5245muhammad ahmed,5245muhammad ahmed,1,5245,Muhammad Ahmed,ML Lead ,muhammad.ahmed@vyro.ai,18-Mar-24,,30,"3,518",,,,3500,3500,,,,,3500,,,"3,500",,,USD,Apr
+Apr5109muhammad hammad maqsood,5109muhammad hammad maqsood,1,5109,Muhammad Hammad Maqsood,Fullstack Developer,hammad.maqsood@vyro.ai,03-Mar-23,,30,"1,450",,,,1432,1432,,,20,,1452,,,"1,452",GitHub Co-Pilot,,USD,Apr
+Apr5148muhammad mutahhar bin muzaffar,5148muhammad mutahhar bin muzaffar,1,5148,Muhammad Mutahhar Bin Muzaffar,Frontend Developer,muhammad.mutahhar@vyro.ai,10-Jul-23,,30,"1,141",,,,1113,1113,178,,10,,1301,,,"1,301",GitHub Co-Pilot reimbursement & Quaterly bonus,,USD,Apr
+Apr5102muhammad shariq,5102muhammad shariq,1,5102,Muhammad Shariq,Backend Lead ,shariq.arif@vyro.ai,27-Feb-23,,30,"2,518",,,,2500,2500,,,,,2500,,,"2,500",,,USD,Apr
+Apr5107muhammad talal haider,5107muhammad talal haider,1,5107,Muhammad Talal Haider,Senior Product Designer,talal.haider@vyro.ai,01-Mar-23,,30,"1,518",,,,1500,1500,,,,,1500,,,"1,500",,,USD,Apr
+Apr5085muhammad wajahat sohail,5085muhammad wajahat sohail,1,5085,Muhammad Wajahat Sohail,IOS Development Lead,wajahat.sohail@vyro.ai,23-Nov-22,,30,"1,532",,,,1514,1514,,,,,1514,,,"1,514","PKR 425,500 Converted to USD ",,USD,Apr
+Apr5084muhammad zaid abbasi,5084muhammad zaid abbasi,1,5084,Muhammad Zaid Abbasi,Senior Android Developer,zaid.abbasi@vyro.ai,21-Nov-22,,30,"1,818",,,,1800,1800,,,43,,1843,,,"1,843",OPD claim,,USD,Apr
+Apr5194saad ahmed,5194saad ahmed,1,5194,Saad Ahmed,Senior Product Manager,saad.ahmed@vyro.ai,30-Oct-23,,30,"2,418",,,,2400,2400,,,,,2400,,,"2,400",,,USD,Apr
+Apr5096saad aziz,5096saad aziz,1,5096,Saad Aziz,Technical Product Manager,saad.aziz@vyro.ai,01-Feb-23,,30,"1,370",,,,1352,1352,,,,,1352,,,"1,352",PKR 380k Converted to USD ,,USD,Apr
+Apr5101shawal fida,5101shawal fida,1,5101,Shawal Fida,Interim iOS Marketing and Content Lead,shawal.fida@vyro.ai,20-Feb-23,,30,"1,518",,,,1500,1500,178,,,,1678,,,"1,678",,,USD,Apr
+Apr5212umer janjua,5212umer janjua,1,5212,Umer Janjua,Manager People & Talent,umer.janjua@vyro.ai,18-Dec-23,,30,"1,778",,,,1760,1760,,,,,1760,,,"1,760",,,USD,Apr
+Apr5274awais chaudhry ,5274awais chaudhry ,1,5274,Awais Chaudhry ,Senior Growth Executive,awais.chaudhry@vyro.ai,27-May-24,,30,"1,718",,,,1700,1700,,,,,1700,,,"1,700",,,USD,Apr
+Apr5276timothy john house,5276timothy john house,,5276,Timothy John House,Product Consultant,timothy.house@vyro.ai,27-May-24,,30,0,,,,0,0,,,,,0,,,0,No payments confirmed ,,USD,Apr
+Apr5024talha arshad,5024talha arshad,1,5024,Talha Arshad,Business Development Manager,talha.arshad@vyro.ai,30-Mar-21,,30,"1,085",350000 (USD Pegged),01-Apr,,1245,1245,,,,,1245,,,"1,245",PKR 350k converted to USD,,USD,Apr
+Apr5302muhammad zakria amir,5302muhammad zakria amir,1,5302,Muhammad Zakria Amir,Growth Executive,zakria.amir@vyro.ai,,,30,"3,018",,,,3000,3000,,,,,3000,,,"3,000",,,USD,Apr
+Apr5264umar sheraz,5264umar sheraz,1,5264,Umar Sheraz,Growth Executive,umar.sheraz@vyro.ai,02-May-24,,30,"1,018",,,,1000,1000,,,,,1000,,,"1,000",,,USD,Apr
+Apr5187shaiq habib,5187shaiq habib,1,5187,Shaiq Habib,Data Analyst,shaiq.habib@vyro.ai,09-Oct-23,,30,"1,085",,,,1067,1067,,,,,1067,,,"1,067","PKR 300,000 Paid out in USD ",,USD,Apr
+Apr5301mohid khan,5301mohid khan,1,5301,Mohid Khan,Visual Designer,mohid.khan@vyro.ai,,,30,818,,,,801,801,,,,,801,,,801,"PKR 225,000 Paid out in USD ",,USD,Apr
+Apr5310muhammad haris khan,5310muhammad haris khan,1,5310,Muhammad Haris Khan,Frontend Developer,muhammad.haris@vyro.ai,07-Oct-24,,30,"1,156",,,,1139,1139,,,,,1139,,,"1,139","PKR 320,000 Paid out in USD",,USD,Apr
+Apr5311saif ur rehman,5311saif ur rehman,1,5311,Saif ur Rehman,Product Manager,saif.rehman@vyro.ai,21-Oct-24,,30,"1,299",,,,1281,1281,,,,,1281,,,"1,281","PKR 360,000 Paid out in USD",,USD,Apr
+Apr5327kashif mehmood,5327kashif mehmood,1,5327,Kashif Mehmood,Sr Engineer developer II,kashif.mehmood@vyro.ai,18-Nov-24,,30,"1,518",,,,1500,1500,,,,,1500,,,"1,500",,,USD,Apr
+Apr5329zeeshan afzal,5329zeeshan afzal,1,5329,Zeeshan Afzal,Senior WebGL Engineer,zeeshan.afzal@vyro.ai,15-Nov-24,,30,"2,018",,,,2000,2000,,,,,2000,,,"2,000",,,USD,Apr
+Apr5339mustafa shakil,5339mustafa shakil,1,5339,Mustafa Shakil,Sr Tech Recruiter,mustafa.shakil@vyro.ai,16-Dec-24,,30,"1,420",,,,1300,1300,,,,,1300,,,"1,300",,,USD,Apr
+Apr5272syed maaz ahmed,5272syed maaz ahmed,1,5272,Syed Maaz Ahmed,Senior Marketing Executive,maaz.ahmed@vyro.ai,20-May-24,11-Apr-25,11,"1,263",,,,1245,457,,,,72,529,,,529,"PKR 350,000 Paid out in USD (OPD Payout)",,USD,Apr
+Apr5342javokhir akramjonov,5342javokhir akramjonov,1,5342,Javokhir Akramjonov,Backend Engineer,javokhir.akramjonov@vyro.ai,01-Jan-25,,30,"1,400",,,,1400,1400,,,,,1400,,,"1,400",,,USD,Apr
+Apr5241muawiz umer,5241muawiz umer,1,5241,Muawiz Umer,Associate ML Engineer,umar.muawiz@vyro.ai,11-Mar-24,,30,918,,,,900,900,,,,,900,,,900,,,USD,Apr
+Apr5359syed tabeed hassan rizvi,5359syed tabeed hassan rizvi,,5359,Syed Tabeed Hassan Rizvi,DevOps Engineer,tabeed.rizvi@vyro.ai,27-Jan-25,,30,"1,168",,,,1150,1150,,,,,1150,,,"1,150",,,USD,Apr
+Apr5366charlotte norman,5366charlotte norman,1,5366,Charlotte Norman,Product Marketing Consultant,charlotte.norman@vyro.ai,27-Jan-25,,30,"2,975",We technically pay her $350 an hour and she worked 12 hours ,,,4200,4200,,,,,4200,,,"4,200","12 Hours for the period of 25th March- 22nd April, 2025",Approved by Kamran and Zain,USD,Apr
+Apr5229ayesha syed,5229ayesha syed,1,5229,Ayesha Syed,Marketig Artist,ayesha.syed@vyro.ai,13-Feb-25,,30,843,,,,825,825,,,,,825,,,825,,,USD,Apr
+Apr5370honglang qin,5370honglang qin,1,5370,Honglang Qin,Backend Engineer,honglang.qin@vyro.ai,03-Feb-25,,30,"2,500",,,,2500,2500,100,,,,2600,,,"2,600",,,USD,Apr
+Apr5371mahmoud nasim abouelmaati mohamed abouelenin,5371mahmoud nasim abouelmaati mohamed abouelenin,,5371,Mahmoud Nasim Abouelmaati Mohamed Abouelenin,SEO Consultant,mahmoud.nessim@vyro.ai,03-Feb-25,,30,"1,560",3k/ 20 Hrs/ Month ,,,2800,2800,,,,,2800,,,"2,800",Adjusted Rate and hours (@$140/ hrs for 20 hours in April),,USD,Apr
+Apr5373aisha noor,5373aisha noor,1,5373,Aisha Noor,Senior Content Writer ,aisha.noor@vyro.ai,10-Feb-25,,30,928,,,,910,910,,,,,910,,,910,,,USD,Apr
+Apr5364maaz ullah khan warsi,5364maaz ullah khan warsi,1,5364,Maaz Ullah Khan Warsi,DevOps Engineer,maazullah.khan@vyro.ai,27-Jan-25,,30,"1,118",,,,1100,1100,,,,,1100,,,"1,100",,,USD,Apr
+Apr5378muhammad mehdi,5378muhammad mehdi,1,5378,Muhammad Mehdi,Product Manager,muhammad.mehdi@vyro.ai,17-Feb-25,,30,"2,332",,,,1620,1620,,,,,1620,,,"1,620",,,USD,Apr
+Apr5244amish tufail,5244amish tufail,1,5244,Amish Tufail,Software Engineer I,amish.tufail@vyro.ai,11-Mar-24,,30,"1,018",,,,1000,1000,,,,,1000,,,"1,000",,,USD,Apr
+Apr5387muhammad ali chaudhry,5387muhammad ali chaudhry,1,5387,Muhammad Ali Chaudhry,Sr Customer Success Manager ,muhammad.ali@vyro.ai,17-Mar-25,,30,695,,,,1400,1400,,,,,1400,,,"1,400",,,USD,Apr
+Apr5400david israel,5400david israel,1,5400,David Israel,ML/ R&D Engineer,david.israel@vyro.ai,21-Apr-25,,10,,,,,4000,1333,,,,,1333,,,"1,333",,Account details confimed with him,USD,Apr
+Apr5390muhammad haris mukhtar,5390muhammad haris mukhtar,,5390,Muhammad Haris Mukhtar,Senior Finance Executive,haris.mukhtar@vyro.ai,07-Apr-25,,24,,,,,1100,880,,,,,880,,,880,,,USD,Apr
+Apr5418shehak raza,5418shehak raza,1,5418,Shehak Raza,Assistant Manager Growth,shehak.raza@vyro.ai,14-Apr-25,,17,,,,,1500,850,,,,,850,,,850,,,USD,Apr
+Apr5083syed muhammad tayyab abbas,5083syed muhammad tayyab abbas,,5083,Syed Muhammad Tayyab Abbas,Product Designer,tayyab.abbas@vyro.ai,21-Nov-22,,30,,390K(USD Pegged),01-Apr,,1388,1388,,,,,1388,,,"1,388",PKR 390k converted to USD,,USD,Apr
+Aprtotal,total,,,Total,,,,,,"66,101",0,04-Oct,0,79041,74716,634,0,1619,72,77040,0,1000,"76,040",#VALUE!,0,USD,Apr
+MonthKey,Key,Status,Employee ID,Employee Name,Designation,emails,Date of Joining,Date of Leaving,Worked Days,Last month's  Salary,New Addition/Increment/Decrement,Date of Increment/ Decrement,Payable from Last Month,Regular Pay,Prorated Pay,Performance Bonus, Paid Overtime ,Reimbursements, Other ,Gross Income,Unpaid Leaves,Deductions, Net Income ,Comments,Internal comments,Currency,Month
+May5184ameer hamza,5184ameer hamza,1,5184,Ameer Hamza,Senior Machine Learning Engineer,ameer.hamza@vyro.ai,25-Sep-23,,31,"6,000",,,,6000,6000,,,,,6000,,,"6,000",,,USD,May
+May5270bisma pervaiz,5270bisma pervaiz,1,5270,Bisma Pervaiz,Senior Backend Engineer,bisma.pervaiz@vyro.ai,06-May-24,,31,"1,778","2,200",01-May,,2200,2200,,,,,2200,,,"2,200",,,USD,May
+May5221jan frederic panne (deceased),5221jan frederic panne (deceased),,5221,Jan Frederic Panne (Deceased),ML Engineer,,11-Jan-24,13-May-24,13,797,,,,1900,797,,,,,797,,,797,Calculation based on 31 days for Month of May,,USD,May
+May5415kamran khalid,5415kamran khalid,1,5415,Kamran Khalid,"Product Manager, Imagine",kamran.khalid@vyro.ai,13-May-24,,31,"6,546",,,,6000,6000,,,,,6000,,1000,"5,000","Loan Details
+Total loan of $3000 to be deducted at $1000 each month until the full amount is recovered
+Total Deducted this month = $1000
+Total deductions so far with this month's deduction $2000
+Total to be recovered = $3000
+Total balance $1000",,USD,May
+May5245muhammad ahmed,5245muhammad ahmed,1,5245,Muhammad Ahmed,ML Lead,muhammad.ahmed@vyro.ai,18-Mar-24,,31,"3,500",,,,3500,3500,,,27,,3527,,,"3,527",Runpod credits,Approved by Abdullah,USD,May
+May5109muhammad hammad maqsood,5109muhammad hammad maqsood,1,5109,Muhammad Hammad Maqsood,Front End Lead,hammad.maqsood@vyro.ai,03-Mar-23,,31,"1,452","2,500",01-May,,2500,2500,,,20,,2520,,,"2,520",Cursor AI,,USD,May
+May5148muhammad mutahhar bin muzaffar,5148muhammad mutahhar bin muzaffar,1,5148,Muhammad Mutahhar Bin Muzaffar,Frontend Developer,muhammad.mutahhar@vyro.ai,10-Jul-23,,31,"1,301",,,,1113,1113,,,10,177,1300,,,"1,300",GitHub Co-Pilot reimbursement,Referred Sameer Sohail,USD,May
+May5102muhammad shariq,5102muhammad shariq,1,5102,Muhammad Shariq,Backend Lead,shariq.arif@vyro.ai,27-Feb-23,,31,"2,500",,,,2500,2500,,,,,2500,,,"2,500",,,USD,May
+May5107muhammad talal haider,5107muhammad talal haider,1,5107,Muhammad Talal Haider,Senior Product Designer,talal.haider@vyro.ai,01-Mar-23,,31,"1,500",,,,1500,1500,,,,,1500,,,"1,500",,,USD,May
+May5085muhammad wajahat sohail,5085muhammad wajahat sohail,1,5085,Muhammad Wajahat Sohail,IOS Development Lead,wajahat.sohail@vyro.ai,23-Nov-22,,31,"1,514",,,,1508,1508,,,,,1508,,,"1,508","PKR 425,500 Converted to USD",,USD,May
+May5084muhammad zaid abbasi,5084muhammad zaid abbasi,1,5084,Muhammad Zaid Abbasi,Senior Android Developer,zaid.abbasi@vyro.ai,21-Nov-22,,31,"1,843",,,,1800,1800,,,,,1800,,,"1,800",,,USD,May
+May5194saad ahmed,5194saad ahmed,1,5194,Saad Ahmed,Senior Product Manager,saad.ahmed@vyro.ai,30-Oct-23,,31,"2,400",,,,2400,2400,,,,,2400,,,"2,400",,,USD,May
+May5096saad aziz,5096saad aziz,1,5096,Saad Aziz,Technical Product Manager,saad.aziz@vyro.ai,01-Feb-23,,31,"1,352",,,,1347,1347,,,17,,1364,,,"1,364",PKR 380k Converted to USD,JetBrain subscription approved by Abdullah,USD,May
+May5101shawal fida,5101shawal fida,1,5101,Shawal Fida,Interim iOS Marketing and Content Lead,shawal.fida@vyro.ai,20-Feb-23,,31,"1,678",,,,1500,1500,,,,,1500,,,"1,500",,,USD,May
+May5212umer janjua,5212umer janjua,1,5212,Umer Janjua,Manager People & Talent,umer.janjua@vyro.ai,18-Dec-23,,31,"1,760",,,,1760,1760,,,,,1760,,,"1,760",,,USD,May
+May5274awais chaudhry ,5274awais chaudhry ,1,5274,Awais Chaudhry ,Senior Growth Executive,awais.chaudhry@vyro.ai,27-May-24,,31,"1,700","2,800",01-May,,2800,2800,,,,,2800,,,"2,800",,,USD,May
+May5276timothy john house,5276timothy john house,,5276,Timothy John House,Product Consultant,timothy.house@vyro.ai,27-May-24,,0,0,,,,0,0,,,,,0,,,0,No payments confirmed,remove,USD,May
+May5024talha arshad,5024talha arshad,1,5024,Talha Arshad,Business Development Manager,talha.arshad@vyro.ai,30-Mar-21,,31,"1,245",,,,1241,1241,,,,,1241,,,"1,241",PKR 350k converted to USD,,USD,May
+May5302muhammad zakria amir,5302muhammad zakria amir,1,5302,Muhammad Zakria Amir,Manager Affiliates & Partnerships,zakria.amir@vyro.ai,,,31,"3,000",,,,3000,3000,,,374,,3374,,,"3,374",Visa claim (Discussed and approved by Ahmed Abu Bakar),https://vyroai.slack.com/archives/C04K2J0QSBV/p1748524658988809?thread_ts=1746678443.514179&cid=C04K2J0QSBV,USD,May
+May5264umar sheraz,5264umar sheraz,1,5264,Umar Sheraz,Growth Executive,umar.sheraz@vyro.ai,02-May-24,,31,"1,000","1,400",01-May,,1400,1400,,,,,1400,,,"1,400",,,USD,May
+May5187shaiq habib,5187shaiq habib,1,5187,Shaiq Habib,Data Analyst,shaiq.habib@vyro.ai,09-Oct-23,,31,"1,067",,,,1064,1064,,,,,1064,,,"1,064","PKR 300,000 Paid out in USD",,USD,May
+May5301mohid khan,5301mohid khan,1,5301,Mohid Khan,Visual Designer,mohid.khan@vyro.ai,,,31,801,,,,798,798,,,,,798,,,798,"PKR 225,000 Paid out in USD",,USD,May
+May5310muhammad haris khan,5310muhammad haris khan,1,5310,Muhammad Haris Khan,Frontend Developer,muhammad.haris@vyro.ai,07-Oct-24,30th May,30,"1,139",,,,1134,1098,,,,102,1200,,,"1,200","PKR 320,000 Paid out in USD",OPD Paid out,USD,May
+May5311saif ur rehman,5311saif ur rehman,1,5311,Saif ur Rehman,Product Manager,saif.rehman@vyro.ai,21-Oct-24,,31,"1,281",,,,1276,1276,,,,,1276,,,"1,276","PKR 360,000 Paid out in USD",,USD,May
+May5327kashif mehmood,5327kashif mehmood,1,5327,Kashif Mehmood,Sr Engineer developer II,kashif.mehmood@vyro.ai,18-Nov-24,,31,"1,500",,,,1500,1500,,,,,1500,,,"1,500",,,USD,May
+May5329zeeshan afzal,5329zeeshan afzal,1,5329,Zeeshan Afzal,Senior WebGL Engineer,zeeshan.afzal@vyro.ai,15-Nov-24,,31,"2,000","3,500",01-May,,3500,3500,,,,,3500,,,"3,500",,,USD,May
+May5339mustafa shakil,5339mustafa shakil,1,5339,Mustafa Shakil,Sr Tech Recruiter,mustafa.shakil@vyro.ai,16-Dec-24,,31,"1,300",,,,1300,1300,,,,100,1400,,,"1,400",$100 fixed as LinkedIn Allowance,approved by Ahmed,USD,May
+May5342javokhir akramjonov,5342javokhir akramjonov,1,5342,Javokhir Akramjonov,Backend Engineer,javokhir.akramjonov@vyro.ai,01-Jan-25,,31,"1,400",,,,1400,1400,,,,,1400,,,"1,400",,,USD,May
+May5241muawiz umer,5241muawiz umer,1,5241,Muawiz Umer,Associate ML Engineer,umar.muawiz@vyro.ai,11-Mar-24,,31,900,,,,900,900,,,20,,920,,,920,Cursor,,USD,May
+May5359syed tabeed hassan rizvi,5359syed tabeed hassan rizvi,1,5359,Syed Tabeed Hassan Rizvi,DevOps Engineer,tabeed.rizvi@vyro.ai,27-Jan-25,,31,"1,150","1,600",01-May,,1600,1600,,,,,1600,,,"1,600",,,USD,May
+May5366charlotte norman,5366charlotte norman,1,5366,Charlotte Norman,Product Marketing Consultant,charlotte.norman@vyro.ai,27-Jan-25,,31,"4,200",,,,2041,2041,,,,,2041,,,"2,041",,Confimred with Kamran & Zain,USD,May
+May5229ayesha syed,5229ayesha syed,1,5229,Ayesha Syed,Marketig Artist,ayesha.syed@vyro.ai,13-Feb-25,,31,825,,,,825,825,,,,,825,,,825,,,USD,May
+May5370honglang qin,5370honglang qin,1,5370,Honglang Qin,Backend Engineer,honglang.qin@vyro.ai,03-Feb-25,,31,"2,600",,,,2500,2500,,,,,2500,,,"2,500",,,USD,May
+May5371mahmoud nasim abouelmaati mohamed abouelenin,5371mahmoud nasim abouelmaati mohamed abouelenin,1,5371,Mahmoud Nasim Abouelmaati Mohamed Abouelenin,SEO Consultant,mahmoud.nessim@vyro.ai,03-Feb-25,,31,"2,800",,,,2700,2700,,,,,2700,,,"2,700",Worked 18 hours this month,Confimred with Shehak & Zain,USD,May
+May5373aisha noor,5373aisha noor,1,5373,Aisha Noor,Senior Content Writer,aisha.noor@vyro.ai,10-Feb-25,,31,910,,,,910,910,,,,,910,,,910,,,USD,May
+May5364maaz ullah khan warsi,5364maaz ullah khan warsi,1,5364,Maaz Ullah Khan Warsi,DevOps Engineer,maazullah.khan@vyro.ai,27-Jan-25,7th May,7,"1,100",,,,1100,248,,,,,248,,,248,,,USD,May
+May5378muhammad mehdi,5378muhammad mehdi,1,5378,Muhammad Mehdi,Product Manager,muhammad.mehdi@vyro.ai,17-Feb-25,30th May,30,"1,620",,,,1620,1568,,,,,1568,,,"1,568",,,USD,May
+May5244amish tufail,5244amish tufail,1,5244,Amish Tufail,Software Engineer I,amish.tufail@vyro.ai,11-Mar-24,25th May,25,"1,000",,,,1000,806,,,,107,913,,,913,,OPD Paid out,USD,May
+May5387muhammad ali chaudhry,5387muhammad ali chaudhry,1,5387,Muhammad Ali Chaudhry,Sr Customer Success Manager,muhammad.ali@vyro.ai,17-Mar-25,,31,"1,400",,,,1400,1400,,,,,1400,,,"1,400",,,USD,May
+May5400david israel,5400david israel,1,5400,David Israel,ML/ R&D Engineer,david.israel@vyro.ai,21-Apr-25,,31,"1,333",,,,4000,4000,,,,,4000,,,"4,000",,Account details confimed with him,USD,May
+May5390muhammad haris mukhtar,5390muhammad haris mukhtar,1,5390,Muhammad Haris Mukhtar,Senior Finance Executive,haris.mukhtar@vyro.ai,07-Apr-25,,31,880,,,,1100,1100,,,,,1100,,,"1,100",,,USD,May
+May5418shehak raza,5418shehak raza,1,5418,Shehak Raza,Assistant Manager Growth,shehak.raza@vyro.ai,14-Apr-25,,31,850,,,,1500,1500,,,,,1500,,,"1,500",,,USD,May
+May5083syed muhammad tayyab abbas,5083syed muhammad tayyab abbas,1,5083,Syed Muhammad Tayyab Abbas,Product Designer,tayyab.abbas@vyro.ai,21-Nov-22,,31,"1,388",,,,1383,1383,,,,,1383,,,"1,383",PKR 390k converted to USD,,USD,May
+May5394umaira jabeen,5394umaira jabeen,1,5394,Umaira Jabeen,Product Manager,umaira.jabeen@vyro.ai,29-Apr-25,,31,,,,99,1490,1490,,,,,1589,,,"1,589",,,USD,May
+May5408yichen,5408yichen,1,5408,YiChen,backednd,yi.chen@vyro.ai,12-May-25,,20,,,,,2500,1613,,,,,1613,,,"1,613",,,USD,May
+May5407syed anas kamal,5407syed anas kamal,1,5407,Syed Anas Kamal,WebGL Engineer,syed.anas@vyro.ai,12-May-25,,20,,,,,1500,968,,,,,968,,,968,,,USD,May
+May5404anas maqsood,5404anas maqsood,1,5404,Anas Maqsood,Senior Growth Manager,anas.maqsood@vyro.ai,12-May-25,,20,,,,,3000,1935,,,,,1935,,,"1,935",,,USD,May
+May5405moosah masood butt,5405moosah masood butt,,5405,Moosah Masood Butt,Jr Frontend Developer,moosah.masood@vyro.ai,05-May-25,,27,,,,,893,778,,,,,778,,,778,,,USD,May
+Maymunim husain,munim husain,,,Munim Husain,Financial Consultant,#REF!,23-May-25,,9,,,,,5000,2500,,,,,2500,,,"2,500",(50% Upfront/ 50% After project completion,,USD,May
+May5403adriana cristina ardelean,5403adriana cristina ardelean,1,5403,Adriana Cristina Ardelean,Manager - Tiktok Creator Program,adriana.cristina@vyro.ai,02-May-25,,30,,,,,800,774,,,,,774,,,774,,,USD,May
+May5204naveed ahmed,5204naveed ahmed,1,5204,Naveed Ahmed,Admin Executive,,01-May-25,,31,,,,,1241,1241,,,,,1241,,,"1,241",PKR 350k converted to USD,,USD,May
+Mayhafiz muhammad rafique,hafiz muhammad rafique,,,Hafiz Muhammad Rafique,Company Secretary,,01-May-25,,31,,,,,10000,10000,,,,,10000,,,"10,000",,,USD,May
+May5300omar sibghat,5300omar sibghat,1,5300,Omar Sibghat,Associate Machine Learning Engineer,omar.sibghat@vyro.ai,,,31,,860,01-May,,860,860,,,12,,872,,,872,,,USD,May
+May5332suha saeed jokhio,5332suha saeed jokhio,1,5332,Suha Saeed Jokhio,Product Marketing Specialist,suha.jukhio@vyro.ai,02-Dec-24,,31,,"1,210",01-May,,1210,1210,,,63,,1273,,,"1,273","2 claims of PKR 15,000 and PKR 3,225 were submitted, equaling $64.6
+$63 admissible till date was reimbursed in the month of May 2025 where as rest $1.6 will be covered next month ",,USD,May
+May5312abdur rehman shahid,5312abdur rehman shahid,1,5312,Abdur Rehman Shahid,Junior DevOps Engineer,abdur.rehman@vyro.ai,21-Oct-24,,31,,993,17-May,,846,846,,,,,846,,,846,,,USD,May
+Maytotal,total,,,Total,,,,,,"75,511","14,000",05-Jan,0,80620,79486,0,0,468,486,80440,0,1000,"103,830",#VALUE!,0,USD,May
+MonthKey,Key,,Employee ID,Employee Name,Designation,emails,Date of Joining,Date of Leaving,Worked Days,Last month's  Salary,New Addition/Increment/Decrement,Date of Increment/ Decrement,Payable from Last Month,Regular Pay,Prorated Pay,Performance Bonus, Paid Overtime ,Reimbursements, Other ,Gross Income,Unpaid Leaves,Deductions, Net Income ,Comments,Internal comments,Currency,Month
+June5184ameer hamza,5184ameer hamza,,5184,Ameer Hamza,Senior Machine Learning Engineer,ameer.hamza@vyro.ai,25-Sep-23,,30,"6,000",,,,6000,6000,,,,,6000,,,"6,000",,,USD,June
+June5270bisma pervaiz,5270bisma pervaiz,,5270,Bisma Pervaiz,Senior Backend Engineer,bisma.pervaiz@vyro.ai,06-May-24,,30,"2,200",,,,2200,2200,,,,,2200,,,"2,200",,,USD,June
+June5221jan frederic panne (deceased),5221jan frederic panne (deceased),,5221,Jan Frederic Panne (Deceased),ML Engineer,,11-Jan-24,13-May-24,13,797,,,,1900,797,,,,,797,,,797,Calculation based on 31 days for Month of May,,USD,June
+June5415kamran khalid,5415kamran khalid,,5415,Kamran Khalid,"Product Manager, Imagine",kamran.khalid@vyro.ai,13-May-24,,30,"5,000",,,,6000,6000,,,,,6000,,1000,"5,000","Loan Details
+Total loan of $3000 to be deducted at $1000 each month until the full amount is recovered
+Total Deducted this month = $1000
+Total deductions so far with this month's deduction $3000
+Total to be recovered = $3000
+Total balance $0",,USD,June
+June5245muhammad ahmed,5245muhammad ahmed,,5245,Muhammad Ahmed,ML Lead,muhammad.ahmed@vyro.ai,18-Mar-24,,30,"3,527",,,,3500,3500,,,,,3500,,,"3,500",,,USD,June
+June5109muhammad hammad maqsood,5109muhammad hammad maqsood,,5109,Muhammad Hammad Maqsood,Front End Lead,hammad.maqsood@vyro.ai,03-Mar-23,,30,"2,520",,,,2500,2500,,,20,,2520,,,"2,520", Cursor AI ,,USD,June
+June5148muhammad mutahhar bin muzaffar,5148muhammad mutahhar bin muzaffar,,5148,Muhammad Mutahhar Bin Muzaffar,Frontend Developer,muhammad.mutahhar@vyro.ai,10-Jul-23,,30,"1,299",,,,1113,1113,,,10,,1123,,,"1,123", GitHub Co-Pilot reimbursement ,,USD,June
+June5102muhammad shariq,5102muhammad shariq,,5102,Muhammad Shariq,Backend Lead,shariq.arif@vyro.ai,27-Feb-23,,30,"2,500","3,350",01-Jun-25,,3350,3350,,,,,3350,,,"3,350",,,USD,June
+June5107muhammad talal haider,5107muhammad talal haider,,5107,Muhammad Talal Haider,Senior Product Designer,talal.haider@vyro.ai,01-Mar-23,,30,"1,500","2,000",01-Jun,,2000,2000,,,,,2000,,,"2,000",,,USD,June
+June5085muhammad wajahat sohail,5085muhammad wajahat sohail,,5085,Muhammad Wajahat Sohail,IOS Development Lead,wajahat.sohail@vyro.ai,23-Nov-22,,30,"1,500",,,,1500,1500,,,,,1500,,,"1,500",,"was previously PKR 425,500 Converted to USD",USD,June
+June5084muhammad zaid abbasi,5084muhammad zaid abbasi,,5084,Muhammad Zaid Abbasi,Senior Android Developer,zaid.abbasi@vyro.ai,21-Nov-22,,30,"1,800",,,,1800,1800,,,10,,1810,,,"1,810",OPD Claim,,USD,June
+June5194saad ahmed,5194saad ahmed,,5194,Saad Ahmed,Senior Product Manager,saad.ahmed@vyro.ai,30-Oct-23,,30,"2,400",,,,2400,2400,,,,,2400,,,"2,400",,,USD,June
+June5096saad aziz,5096saad aziz,,5096,Saad Aziz,Technical Product Manager,saad.aziz@vyro.ai,01-Feb-23,,30,"1,356",,,,1339,1339,,,17,,1356,,,"1,356",,JetBrain subscription approved by Abdullah & was PKR 380k Converted to USD,USD,June
+June5101shawal fida,5101shawal fida,,5101,Shawal Fida,Interim iOS Marketing and Content Lead,shawal.fida@vyro.ai,20-Feb-23,,30,"1,500",,,,1500,1500,,,,,1500,,,"1,500",,,USD,June
+June5212umer janjua,5212umer janjua,,5212,Umer Janjua,Manager People & Talent,umer.janjua@vyro.ai,18-Dec-23,,30,"1,760",,,,1760,1760,,,,,1760,,,"1,760",,,USD,June
+June5274awais chaudhry ,5274awais chaudhry ,,5274,Awais Chaudhry ,Senior Growth Executive,awais.chaudhry@vyro.ai,27-May-24,30-Jun-25,30,"2,800",,,,2800,2800,,,,128,2928,,,"2,928",OPD paid out,,USD,June
+June5276timothy john house,5276timothy john house,,5276,Timothy John House,Product Consultant,timothy.house@vyro.ai,27-May-24,,30,0,,,,0,0,,,,,0,,,0,No payments confirmed,remove,USD,June
+June5024talha arshad,5024talha arshad,,5024,Talha Arshad,Business Development Manager,talha.arshad@vyro.ai,30-Mar-21,,30,"1,234",,,,1234,1234,,,,,1234,,,"1,234",,was previously PKR 350k converted to USD,USD,June
+June5302muhammad zakria amir,5302muhammad zakria amir,,5302,Muhammad Zakria Amir,Manager Affiliates & Partnerships,zakria.amir@vyro.ai,,,30,"3,372",,,,3000,3000,,,,,3000,,,"3,000",,,USD,June
+June5264umar sheraz,5264umar sheraz,,5264,Umar Sheraz,Growth Executive,umar.sheraz@vyro.ai,02-May-24,,30,"1,400",,,,1400,1400,,,,,1400,,,"1,400",,,USD,June
+June5187shaiq habib,5187shaiq habib,,5187,Shaiq Habib,Data Analyst,shaiq.habib@vyro.ai,09-Oct-23,,30,"1,057",,,,1057,1057,,,,,1057,,,"1,057",,"was previously PKR 300,000 Paid out in USD",USD,June
+June5301mohid khan,5301mohid khan,,5301,Mohid Khan,Visual Designer,mohid.khan@vyro.ai,,,30,793,,,,793,793,,,,,793,,,793,,"waspreviously PKR 225,000 Paid out in USD",USD,June
+June5311saif ur rehman,5311saif ur rehman,,5311,Saif ur Rehman,Product Manager,saif.rehman@vyro.ai,21-Oct-24,,30,"1,269",,,,1269,1269,,,,,1269,,,"1,269",,"was previously PKR 360,000 Paid out in USD",USD,June
+June5327kashif mehmood,5327kashif mehmood,,5327,Kashif Mehmood,Sr Engineer developer II,kashif.mehmood@vyro.ai,18-Nov-24,,30,"1,500",,,,1500,1500,,,,,1500,,,"1,500",,,USD,June
+June5329zeeshan afzal,5329zeeshan afzal,,5329,Zeeshan Afzal,Senior WebGL Engineer,zeeshan.afzal@vyro.ai,15-Nov-24,,30,"3,500",,,,3500,3500,,,,,3500,,,"3,500",,,USD,June
+June5339mustafa shakil,5339mustafa shakil,,5339,Mustafa Shakil,Sr Tech Recruiter,mustafa.shakil@vyro.ai,16-Dec-24,,30,"1,400",,,,1300,1300,,,,100,1400,,,"1,400",$100 fixed as LinkedIn Allowance,approved by Ahmed,USD,June
+June5342javokhir akramjonov,5342javokhir akramjonov,,5342,Javokhir Akramjonov,Backend Engineer,javokhir.akramjonov@vyro.ai,01-Jan-25,23-Jun-25,23,"1,400",,,,1400,1073,,,,,1073,,,"1,073",,,USD,June
+June5241muawiz umer,5241muawiz umer,,5241,Muawiz Umer,Associate ML Engineer,umar.muawiz@vyro.ai,11-Mar-24,,30,920,,,,900,900,,,,,900,,,900,,,USD,June
+June5359syed tabeed hassan rizvi,5359syed tabeed hassan rizvi,,5359,Syed Tabeed Hassan Rizvi,DevOps Engineer,tabeed.rizvi@vyro.ai,27-Jan-25,,30,"1,600",,,,1600,1600,,,,,1600,,,"1,600",,,USD,June
+June5366charlotte norman,5366charlotte norman,,5366,Charlotte Norman,Product Marketing Consultant,charlotte.norman@vyro.ai,27-Jan-25,02-Jun-25,2,0,,,,0,0,,,,,0,,,0,She confirmed herself,,USD,June
+June5229ayesha syed,5229ayesha syed,,5229,Ayesha Syed,Marketig Artist,ayesha.syed@vyro.ai,13-Feb-25,,30,825,,,,825,825,,,,,825,,,825,,,USD,June
+June5370honglang qin,5370honglang qin,,5370,Honglang Qin,Backend Engineer,honglang.qin@vyro.ai,03-Feb-25,,30,"2,500",,,,2500,2500,,,,,2500,,,"2,500",,,USD,June
+June5371mahmoud nasim abouelmaati mohamed abouelenin,5371mahmoud nasim abouelmaati mohamed abouelenin,,5371,Mahmoud Nasim Abouelmaati Mohamed Abouelenin,SEO Consultant,mahmoud.nessim@vyro.ai,03-Feb-25,,30,"2,700",,,,3000,3000,,,,,3000,,,"3,000",Worked 20 hours this month,Confirmed with zain & Shehak,USD,June
+June5373aisha noor,5373aisha noor,,5373,Aisha Noor,Senior Content Writer,aisha.noor@vyro.ai,10-Feb-25,05-Jun-25,5,910,,,,910,152,,,,19,170,,,170,OPD piad out,,USD,June
+June5387muhammad ali chaudhry,5387muhammad ali chaudhry,,5387,Muhammad Ali Chaudhry,Sr Customer Success Manager,muhammad.ali@vyro.ai,17-Mar-25,,30,"1,400",,,,"1,400",1400,,,,,1400,,,"1,400",,,USD,June
+June5400david israel,5400david israel,,5400,David Israel,ML/ R&D Engineer,david.israel@vyro.ai,21-Apr-25,,30,"4,000",,,,"4,000",4000,,,,,4000,,,"4,000",,Account details confimed with him,USD,June
+June5390muhammad haris mukhtar,5390muhammad haris mukhtar,,5390,Muhammad Haris Mukhtar,Senior Finance Executive,haris.mukhtar@vyro.ai,07-Apr-25,,30,"1,100",,,,"1,100",1100,,,,,1100,,,"1,100",,1980,USD,June
+June5418shehak raza,5418shehak raza,,5418,Shehak Raza,Assistant Manager Growth,shehak.raza@vyro.ai,14-Apr-25,,30,"1,500",,,,"1,500",1500,,,,,1500,,,"1,500",,,USD,June
+June5083syed muhammad tayyab abbas,5083syed muhammad tayyab abbas,,5083,Syed Muhammad Tayyab Abbas,Product Designer,tayyab.abbas@vyro.ai,21-Nov-22,,30,"1,375",,,,"1,375",1375,,,,,1375,,,"1,375",,was previously PKR 390k converted to USD,USD,June
+June5394umaira jabeen,5394umaira jabeen,,5394,Umaira Jabeen,Product Manager,umaira.jabeen@vyro.ai,29-Apr-25,,30,"1,589",,,,"1,490",1490,,,,,1490,,,"1,490",,,USD,June
+June5408yichen,5408yichen,,5408,YiChen,backednd,yi.chen@vyro.ai,12-May-25,,30,"1,613",,,,"2,500",2500,,,,,2500,,,"2,500",,,USD,June
+June5404anas maqsood,5404anas maqsood,,5404,Anas Maqsood,Senior Growth Manager,anas.maqsood@vyro.ai,12-May-25,,30,"1,935",,,,"3,000",3000,,,,,3000,,,"3,000",,,USD,June
+June5405moosah masood butt,5405moosah masood butt,,5405,Moosah Masood Butt,Jr Frontend Developer,moosah.masood@vyro.ai,05-May-25,,30,778,,,,893,893,,,,,893,,,893,,,USD,June
+Junemunim husain,munim husain,,,Munim Husain,Financial Consultant,#REF!,23-May-25,,30,0,,,,0,0,,,,,0,,,0,(50% Upfront/ 50% After project completion,,USD,June
+June5403adriana cristina ardelean,5403adriana cristina ardelean,,5403,Adriana Cristina Ardelean,Manager - Tiktok Creator Program,adriana.cristina@vyro.ai,02-May-25,,30,774,,,,800,800,,,,,800,,,800,,,USD,June
+June5204naveed ahmed,5204naveed ahmed,,5204,Naveed Ahmed,Admin Executive,,01-May-25,,30,881,,,,"1,234",1234,,,,,1234,,352,882,,"100k sent from Meezan, also 100k advance sent for June, while we will deduct this from his June's payment and be sending 250k instead of 350k, also amount used to be PKR 350k converted to USD",USD,June
+Junehafiz muhammad rafique,hafiz muhammad rafique,,,Hafiz Muhammad Rafique,Company Secretary,,01-May-25,,30,"10,000",,,,"10,000",10000,,,,,10000,,,"10,000",,,USD,June
+June5300omar sibghat,5300omar sibghat,,5300,Omar Sibghat,Associate Machine Learning Engineer,omar.sibghat@vyro.ai,,,30,872,,,,860,860,,,,,860,,,860,,,USD,June
+June5332suha saeed jokhio,5332suha saeed jokhio,,5332,Suha Saeed Jokhio,Product Marketing Specialist,suha.jukhio@vyro.ai,02-Dec-24,,30,"1,273",,,,"1,210",1210,,,2,,1212,,,"1,212",remaining 1.6 added from previous,,USD,June
+June5312abdur rehman shahid,5312abdur rehman shahid,,5312,Abdur Rehman Shahid,Junior DevOps Engineer,abdur.rehman@vyro.ai,21-Oct-24,,30,993,,,,993,993,,,,,993,,,993,,,USD,June
+June5424igor krasovskiy pr subotica,5424igor krasovskiy pr subotica,,5424,Igor Krasovskiy PR Subotica,Product Growth Designer,igor.krasovskiy@vyro.ai,02-Jun-25,,29,,,,,"3,000",2900,,,,,2900,,,"2,900",,,USD,June
+June5425aizaz ahmad,5425aizaz ahmad,,5425,Aizaz Ahmad,Senior Product Designer,aizaz.ahmad@vyro.ai,16-Jun-25,,15,,,,,"2,700",1350,,,,,1350,,,"1,350",,,USD,June
+June5427zain waseem,5427zain waseem,,5427,Zain Waseem,Senior Frontend Developer,zain.waseem@vyro.ai,16-Jun-25,,15,,,,,"1,100",550,,,,,550,,,550,,,USD,June
+June5431muhammad shariq nazr,5431muhammad shariq nazr,,5431,Muhammad Shariq Nazr,Growth Product Manager,shariq.nazr@vyro.ai,23-Jun-25,,8,,,,,"2,000",533,,,,,533,,,533,,,USD,June
+June5432aown raza,5432aown raza,,5432,Aown Raza,Youtube Production Strategist,aown.raza@vyro.ai,23-Jun-25,,8,,,,,"1,500",400,,,,,400,,,400,,,USD,June
+June5433bikram parmar,5433bikram parmar,,5433,Bikram Parmar,Influencer Marketing Consultant,bikram.parmar@hotmail.com,23-Jun-25,,8,,,,,"5,000",5000,,,,,5000,,,"5,000",Zain mention to sent in full,,USD,June
+June5435muhammad mehdi,5435muhammad mehdi,,5435,Muhammad Mehdi,Sr Product Manager,muhammad.mehdi@vyro.ai,26-Jun-25,,5,,,,,"1,820",303,,,,,303,,,303,,,USD,June
+June5292muhammad hassam khan,5292muhammad hassam khan,,5292,Muhammad Hassam Khan,Frontend Developer,hassam.khan@vyro.ai,29-Jul-24,,30,,"1,600",01-Jun,,"1,600",1600,,,,,1600,,,"1,600",,,USD,June
+MonthKey,Key,Status,Employee ID,Employee Name,Designation,emails,Date of Joining,Date of Leaving,Worked Days,Last month's  Salary,New Addition/Increment/Decrement,Date of Increment/ Decrement,Payable from Last Month,Regular Pay,Prorated Pay,Performance Bonus, Paid Overtime ,Reimbursements, Other ,Gross Income,Unpaid Leaves,Deductions, Net Income ,Comments,Internal comments,Currency,Month
+July5184ameer hamza,5184ameer hamza,,5184,Ameer Hamza,Senior Machine Learning Engineer,ameer.hamza@vyro.ai,25-Sep-23,,31,"6,000",,,,6000,6021,,,,128,6149,,,"6,149",,,USD,July
+July5270bisma pervaiz,5270bisma pervaiz,,5270,Bisma Pervaiz,Senior Backend Engineer,bisma.pervaiz@vyro.ai,06-May-24,,31,"2,200",,,,2200,2221,,,,128,2349,,,"2,349",,,USD,July
+July5221jan frederic panne (deceased),5221jan frederic panne (deceased),,5221,Jan Frederic Panne (Deceased),ML Engineer,,11-Jan-24,13-May-24,31,797,,,,1900,1900,,,,0,1900,,,"1,900",Calculation based on 31 days for Month of May,,USD,July
+July5415kamran khalid,5415kamran khalid,,5415,Kamran Khalid,"Product Manager, Imagine",kamran.khalid@vyro.ai,13-May-24,,31,"5,000",,,,6000,6021,,,,128,6149,,,"6,149",Was paid 6000 the difference to be paid here,,USD,July
+July5245muhammad ahmed,5245muhammad ahmed,,5245,Muhammad Ahmed,ML Lead ,muhammad.ahmed@vyro.ai,18-Mar-24,,31,"3,500",,,,3500,3521,,,40,128,3689,,,"3,689",Cursor AI 2 months,,USD,July
+July5109muhammad hammad maqsood,5109muhammad hammad maqsood,,5109,Muhammad Hammad Maqsood,Front End Lead,hammad.maqsood@vyro.ai,03-Mar-23,,31,"2,520",,,,2500,2521,,,20,128,2669,,,"2,669",Cursor AI,,USD,July
+July5148muhammad mutahhar bin muzaffar,5148muhammad mutahhar bin muzaffar,,5148,Muhammad Mutahhar Bin Muzaffar,Frontend Developer,muhammad.mutahhar@vyro.ai,10-Jul-23,,31,"1,123","2,000",01-Jul,,2000,2021,,,10,128,2159,,,"2,159",GitHub Co-Pilot reimbursement ,,USD,July
+July5102muhammad shariq,5102muhammad shariq,-,5102,Muhammad Shariq,Backend Lead ,shariq.arif@vyro.ai,27-Feb-23,,31,"3,350",,,,3350,3371,,,,128,3499,,,"3,499",,,USD,July
+July5107muhammad talal haider,5107muhammad talal haider,,5107,Muhammad Talal Haider,Senior Product Designer,talal.haider@vyro.ai,01-Mar-23,,31,"2,000",,,,2000,2021,,,,128,2149,,,"2,149",,,USD,July
+July5085muhammad wajahat sohail,5085muhammad wajahat sohail,,5085,Muhammad Wajahat Sohail,IOS Development Lead,wajahat.sohail@vyro.ai,23-Nov-22,,31,"1,500",,,,1500,1521,,,,128,1649,,,"1,649",,"was previously PKR 425,500 Converted to USD ",USD,July
+July5084muhammad zaid abbasi,5084muhammad zaid abbasi,,5084,Muhammad Zaid Abbasi,Senior Android Developer,zaid.abbasi@vyro.ai,21-Nov-22,,31,"1,810",,,,1800,1821,,,,76,1897,,,"1,897",,,USD,July
+July5194saad ahmed,5194saad ahmed,,5194,Saad Ahmed,Senior Product Manager,saad.ahmed@vyro.ai,30-Oct-23,,31,"2,400",,,,2400,2421,,,,128,2549,,,"2,549",,,USD,July
+July5096saad aziz,5096saad aziz,,5096,Saad Aziz,Technical Product Manager,saad.aziz@vyro.ai,01-Feb-23,,31,"1,356",,,,1339,1360,177,,17,128,1682,,,"1,682",JetBrain & Quaterly bonus,JetBrain subscription approved by Abdullah & was PKR 380k Converted to USD ,USD,July
+July5101shawal fida,5101shawal fida,,5101,Shawal Fida,Interim iOS Marketing and Content Lead,shawal.fida@vyro.ai,20-Feb-23,,31,"1,500",,,,1500,1521,177,,,128,1826,,,"1,826",Quaterly Bonus,,USD,July
+July5212umer janjua,5212umer janjua,,5212,Umer Janjua,Manager People & Talent,umer.janjua@vyro.ai,18-Dec-23,,31,"1,760",,,,1760,1781,,,,128,1909,,,"1,909",,,USD,July
+July5276timothy john house,5276timothy john house,,5276,Timothy John House,Product Consultant,timothy.house@vyro.ai,27-May-24,,31,0,,,,0,0,,,,0,0,,,0,,remove,USD,July
+July5024talha arshad,5024talha arshad,,5024,Talha Arshad,Business Development Manager,talha.arshad@vyro.ai,30-Mar-21,,31,"1,234",,,,1234,1255,,,,128,1383,,,"1,383",,was previously PKR 350k converted to USD,USD,July
+July5302muhammad zakria amir,5302muhammad zakria amir,,5302,Muhammad Zakria Amir,Manager Affiliates & Partnerships,zakria.amir@vyro.ai,,,31,"3,000",,,,3000,3021,,,,128,3149,,,"3,149",,,USD,July
+July5264umar sheraz,5264umar sheraz,,5264,Umar Sheraz,Growth Executive,umar.sheraz@vyro.ai,02-May-24,,31,"1,400",,,,1400,1421,,,,128,1549,,,"1,549",,,USD,July
+July5187shaiq habib,5187shaiq habib,,5187,Shaiq Habib,Data Analyst,shaiq.habib@vyro.ai,09-Oct-23,,31,"1,057",,,,1057,1078,,,,128,1206,,,"1,206",,"was previously PKR 300,000 Paid out in USD ",USD,July
+July5301mohid khan,5301mohid khan,,5301,Mohid Khan,Visual Designer,mohid.khan@vyro.ai,,,31,793,,,,793,814,,,,128,942,,,942,,"waspreviously PKR 225,000 Paid out in USD ",USD,July
+July5311saif ur rehman,5311saif ur rehman,,5311,Saif ur Rehman,Product Manager,saif.rehman@vyro.ai,21-Oct-24,,31,"1,269",,,,1269,1290,,,,114,1404,,,"1,404",,"was previously PKR 360,000 Paid out in USD",USD,July
+July5327kashif mehmood,5327kashif mehmood,,5327,Kashif Mehmood,Sr Engineer developer II,kashif.mehmood@vyro.ai,18-Nov-24,,31,"1,500",,,,1500,1521,,,,94,1615,,,"1,615",,,USD,July
+July5329zeeshan afzal,5329zeeshan afzal,,5329,Zeeshan Afzal,Senior WebGL Engineer,zeeshan.afzal@vyro.ai,15-Nov-24,,31,"3,500",,,,3500,3521,,,,96,3617,,,"3,617",,,USD,July
+July5339mustafa shakil,5339mustafa shakil,,5339,Mustafa Shakil,Sr Tech Recruiter,mustafa.shakil@vyro.ai,16-Dec-24,,31,"1,400",,,,1300,1321,,,,75,1396,,,"1,396","$100 fixed as LinkedIn Allowance (added in coloumn ""s""",approved by Ahmed,USD,July
+July5241muawiz umer,5241muawiz umer,,5241,Muawiz Umer,Associate ML Engineer,umar.muawiz@vyro.ai,11-Mar-24,,31,900,,,,900,921,,,,128,1049,,,"1,049",,,USD,July
+July5359syed tabeed hassan rizvi,5359syed tabeed hassan rizvi,,5359,Syed Tabeed Hassan Rizvi,DevOps Engineer,tabeed.rizvi@vyro.ai,27-Jan-25,,31,"1,600",,,,1600,1621,,,,73,1695,,,"1,695",,,USD,July
+July5229ayesha syed,5229ayesha syed,,5229,Ayesha Syed,Marketig Artist,ayesha.syed@vyro.ai,13-Feb-25,,31,825,,,,825,846,,,,128,974,,,974,,,USD,July
+July5370honglang qin,5370honglang qin,,5370,Honglang Qin,Backend Engineer,honglang.qin@vyro.ai,03-Feb-25,,31,"2,500",,,,2500,2500,,,,0,2500,,,"2,500",,,USD,July
+July5371mahmoud nasim abouelmaati mohamed abouelenin,5371mahmoud nasim abouelmaati mohamed abouelenin,Hold,5371,Mahmoud Nasim Abouelmaati Mohamed Abouelenin,SEO Consultant,mahmoud.nessim@vyro.ai,03-Feb-25,,31,"3,000",,,,2325,2325,,,,0,2325,,,"2,325",Worked 15.5 hours this month,Needs to be Confirmed with zain & Shehak,USD,July
+July5387muhammad ali chaudhry,5387muhammad ali chaudhry,,5387,Muhammad Ali Chaudhry,Sr Customer Success Manager ,muhammad.ali@vyro.ai,17-Mar-25,,31,"1,400",,,,1400,1421,,,,5,1426,,,"1,426",,,USD,July
+July5400david israel,5400david israel,,5400,David Israel,ML/ R&D Engineer,david.israel@vyro.ai,21-Apr-25,,31,"4,000",,,,4000,4000,,,,0,4000,,,"4,000",,Account details confimed with him,USD,July
+July5390muhammad haris mukhtar,5390muhammad haris mukhtar,,5390,Muhammad Haris Mukhtar,Senior Finance Executive,haris.mukhtar@vyro.ai,07-Apr-25,,31,"1,100",,,,1100,1121,,,,0,1121,,,"1,121",,1121.20498,USD,July
+July5418shehak raza,5418shehak raza,,5418,Shehak Raza,Assistant Manager Growth,shehak.raza@vyro.ai,14-Apr-25,,31,"1,500",,,,1500,1521,,,,54,1575,,,"1,575",,,USD,July
+July5083syed muhammad tayyab abbas,5083syed muhammad tayyab abbas,,5083,Syed Muhammad Tayyab Abbas,Product Designer,tayyab.abbas@vyro.ai,21-Nov-22,,31,"1,375",,,,1375,1396,,,,128,1524,,,"1,524",,was previously PKR 390k converted to USD,USD,July
+July5394umaira jabeen,5394umaira jabeen,,5394,Umaira Jabeen,Product Manager,umaira.jabeen@vyro.ai,29-Apr-25,31-Jul-25,31,"1,490",,,,1490,1511,,,,0,1511,,,"1,511",,,USD,July
+July5408yichen,5408yichen,,5408,YiChen,backednd,yi.chen@vyro.ai,12-May-25,23-Jul-25,23,"2,500",,,,2500,1855,,,,0,1855,,,"1,855",,,USD,July
+July5404anas maqsood,5404anas maqsood,,5404,Anas Maqsood,Senior Growth Manager,anas.maqsood@vyro.ai,12-May-25,,31,"3,000",,,,3000,3000,,,,0,3000,,,"3,000",,,USD,July
+July5405moosah masood butt,5405moosah masood butt,,5405,Moosah Masood Butt,Jr Frontend Developer,moosah.masood@vyro.ai,05-May-25,,31,893,,,,893,893,,,,0,893,,,893,,,USD,July
+Julymunim husain,munim husain,,,Munim Husain,Financial Consultant,#REF!,23-May-25,,31,0,,,,0,0,,,,,0,,,0, (50% Upfront/ 50% After project completion,,USD,July
+July5403adriana cristina ardelean,5403adriana cristina ardelean,,5403,Adriana Cristina Ardelean,Manager - Tiktok Creator Program,adriana.cristina@vyro.ai,02-May-25,,31,800,,,,800,800,,,,,800,,,800,,,USD,July
+July5204naveed ahmed,5204naveed ahmed,,5204,Naveed Ahmed,Admin Executive,,01-May-25,,31,882,,,,1234,1234,,,,,1234,,,"1,234",Already Sent ,,USD,July
+Julyhafiz muhammad rafique,hafiz muhammad rafique,,,Hafiz Muhammad Rafique,Company Secretary,,01-May-25,,31,"10,000",,,,10000,10000,,,,,10000,,,"10,000",,,USD,July
+July5300omar sibghat,5300omar sibghat,,5300,Omar Sibghat,Associate Machine Learning Engineer,omar.sibghat@vyro.ai,,,31,860,,,,860,881,,,,37,918,,,918,,,USD,July
+July5332suha saeed jokhio,5332suha saeed jokhio,,5332,Suha Saeed Jokhio,Product Marketing Specialist,suha.jukhio@vyro.ai,02-Dec-24,,31,"1,212",,,,1210,1231,,,,20,1251,,,"1,251",,,USD,July
+July5312abdur rehman shahid,5312abdur rehman shahid,,5312,Abdur Rehman Shahid,Junior DevOps Engineer,abdur.rehman@vyro.ai,21-Oct-24,,31,993,,,,993,1014,,,,114,1128,,,"1,128",,,USD,July
+July5424igor krasovskiy pr subotica,5424igor krasovskiy pr subotica,,5424,Igor Krasovskiy PR Subotica,Product Growth Designer,igor.krasovskiy@vyro.ai,02-Jun-25,31-Jul-25,31,"2,900",,,,3000,3000,,,,0,3000,,,"3,000",,,USD,July
+July5425aizaz ahmad,5425aizaz ahmad,,5425,Aizaz Ahmad,Senior Product Designer,aizaz.ahmad@vyro.ai,16-Jun-25,,31,"1,350",,,,2700,2700,,,,0,2700,,,"2,700",,,USD,July
+July5427zain waseem,5427zain waseem,,5427,Zain Waseem,Senior Frontend Developer,zain.waseem@vyro.ai,16-Jun-25,,31,550,,,,1100,1100,,,20,0,1120,,,"1,120",Cursor AI,,USD,July
+July5431muhammad shariq nazr,5431muhammad shariq nazr,,5431,Muhammad Shariq Nazr,Growth Product Manager,shariq.nazr@vyro.ai,23-Jun-25,,31,533,,,,2000,2000,,,,0,2000,,,"2,000",,,USD,July
+July5432aown raza,5432aown raza,,5432,Aown Raza,Youtube Production Strategist,aown.raza@vyro.ai,23-Jun-25,,31,400,,,,1500,1500,,,,0,1500,,,"1,500",,,USD,July
+July5435muhammad mehdi,5435muhammad mehdi,,5435,Muhammad Mehdi,Sr Product Manager,muhammad.mehdi@vyro.ai,26-Jun-25,,31,303,,,,1820,1820,,,,0,1820,,,"1,820",,,USD,July
+July5292muhammad hassam khan,5292muhammad hassam khan,,5292,Muhammad Hassam Khan,Frontend Developer,hassam.khan@vyro.ai,29-Jul-24,,31,"1,600",,,,1600,1621,,,,62,1683,,,"1,683",,,USD,July
+July5139khadija umer,5139khadija umer,,5139,Khadija Umer,Product Designer,khadija.umer@vyro.ai,19-Jun-23,,31,,,,,1400,1421,,,,128,1549,,,"1,549",,,USD,July
+July5061ibrahim shah,5061ibrahim shah,,5061,Ibrahim Shah,Algorithm Engineer,ibrahim.shah@vyro.ai,27-Jun-22,,31,,,,,1800,1821,,,,128,1949,,,"1,949",,,USD,July
+total,total,,,Total,,,,,,"99,637","2,000",01-Jul,0,110327,110466,353,0,107,3766,114693,0,0,"114,693",#VALUE!,"1,121",,
+MonthKey,Key,Status,Employee ID,Employee Name,Designation,emails,Date of Joining,Date of Leaving,Worked Days,Last month's  Salary,New Addition/Increment/Decrement,Date of Increment/ Decrement,Payable from Last Month/ advance,Regular Pay,Prorated Pay,Performance Bonus, Paid Overtime ,Reimbursements, Other ,Gross Income,Unpaid Leaves,Deductions, Net Income ,Comments,Internal comments,Currency,Month
+Aug5184ameer hamza,5184ameer hamza,1,5184,Ameer Hamza,Senior Machine Learning Engineer,ameer.hamza@vyro.ai,25-Sep-23,,31,"6,021",,,,6000,6021,,,,,6021,,,"6,021",,,USD,Aug
+Aug5270bisma pervaiz,5270bisma pervaiz,1,5270,Bisma Pervaiz,Senior Backend Engineer,bisma.pervaiz@vyro.ai,06-May-24,25-Aug-25,25,"2,221",,,,2200,1791,,,,,1791,,,"1,791",,,USD,Aug
+Aug5221jan frederic panne (deceased),5221jan frederic panne (deceased),,5221,Jan Frederic Panne (Deceased),ML Engineer,,11-Jan-24,13-May-24,13,"1,900",,,,1900,797,,,,,,,,,Calculation based on 31 days for Month of May,#N/A,USD,Aug
+Aug5047kamran khalid,5047kamran khalid,,5047,Kamran Khalid,Group Product Manager,kamran.khalid@vyro.ai,13-May-24,,31,"6,021",,,,6000,6021,,,,,6021,,875,"5,146",Ajdustment for stay in SF: https://vyroai.slack.com/archives/C029AU5D82X/p1756449671766399?thread_ts=1754343918.676729&cid=C029AU5D82X,,USD,Aug
+Aug5245muhammad ahmed,5245muhammad ahmed,1,5245,Muhammad Ahmed,ML Lead ,muhammad.ahmed@vyro.ai,18-Mar-24,,31,"3,561",,,,3500,3521,,,20,,3541,,,"3,541",Cursor AI ,3541Cursor AI ,USD,Aug
+Aug5109muhammad hammad maqsood,5109muhammad hammad maqsood,1,5109,Muhammad Hammad Maqsood,Front End Lead,hammad.maqsood@vyro.ai,03-Mar-23,,31,"2,541",,,,2500,2521,,,21,,2542,,,"2,542",Cursor AI,Rate as per statebank on the date of purchase Cursor AIRate as per statebank on the date of purchase,USD,Aug
+Aug5148muhammad mutahhar bin muzaffar,5148muhammad mutahhar bin muzaffar,1,5148,Muhammad Mutahhar Bin Muzaffar,Frontend Developer,muhammad.mutahhar@vyro.ai,10-Jul-23,,31,"2,031",,,,2000,2021,,,30,,2051,,,"2,051",GitHub Co-Pilot & cursor AI reimbursement ,2051GitHub Co-Pilot & cursor AI reimbursement ,USD,Aug
+Aug5102muhammad shariq,5102muhammad shariq,1,5102,Muhammad Shariq,Backend Lead ,shariq.arif@vyro.ai,27-Feb-23,,31,"3,371",,,,3350,3371,,,,,3371,,,"3,371",,,USD,Aug
+Aug5107muhammad talal haider,5107muhammad talal haider,,5107,Muhammad Talal Haider,Senior Product Designer,talal.haider@vyro.ai,01-Mar-23,,31,"2,021",,,,2000,2021,,,,,2021,,,"2,021",,,USD,Aug
+Aug5085muhammad wajahat sohail,5085muhammad wajahat sohail,,5085,Muhammad Wajahat Sohail,IOS Development Lead,wajahat.sohail@vyro.ai,23-Nov-22,22-Aug-25,22,"1,521",,,3042,1500,1079,,,,,4121,,355,"3,767",2 months Pay added (Severance Package) Also PKR 100k deduction for laptop,"was previously PKR 425,500 Converted to USD  https://vyroai.slack.com/archives/C059R0MMY5S/p1755636617102739?thread_ts=1752176577.572709&cid=C059R0MMY5S",USD,Aug
+Aug5084muhammad zaid abbasi,5084muhammad zaid abbasi,,5084,Muhammad Zaid Abbasi,Senior Android Developer,zaid.abbasi@vyro.ai,21-Nov-22,,31,"1,821",,,,1800,1821,,,,,1821,,,"1,821",,,USD,Aug
+Aug5194saad ahmed,5194saad ahmed,,5194,Saad Ahmed,Senior Product Manager,saad.ahmed@vyro.ai,30-Oct-23,,31,"2,421",,,,2400,2421,,,,,2421,,,"2,421",,,USD,Aug
+Aug5096saad aziz,5096saad aziz,,5096,Saad Aziz,Technical Product Manager,saad.aziz@vyro.ai,01-Feb-23,,31,"1,554",,,,1339,1360,,,17,177,1554,,,"1,554",JetBrain & Referal bonus for Ghayas Ahmad,JetBrain subscription approved by Abdullah & was PKR 380k Converted to USD ,USD,Aug
+Aug5101shawal fida,5101shawal fida,,5101,Shawal Fida,Interim iOS Marketing and Content Lead,shawal.fida@vyro.ai,20-Feb-23,,31,"1,698","2,500",01-Aug,,2500,2521,,,,,2521,,,"2,521",,,USD,Aug
+Aug5212umer janjua,5212umer janjua,,5212,Umer Janjua,Manager People & Talent,umer.janjua@vyro.ai,18-Dec-23,,31,"1,781",,,,1760,1781,,,,,1781,,,"1,781",,,USD,Aug
+Aug5024talha arshad,5024talha arshad,,5024,Talha Arshad,Business Development Manager,talha.arshad@vyro.ai,30-Mar-21,,31,"1,255",,,,1234,1255,,,,,1255,,,"1,255",,was previously PKR 350k converted to USD,USD,Aug
+Aug5302muhammad zakria amir,5302muhammad zakria amir,,5302,Muhammad Zakria Amir,Manager Affiliates & Partnerships,zakria.amir@vyro.ai,,,31,"3,021",,,,3000,3021,,,,,3021,,375,"2,646","$3000 in cash was given for the US travel and was $1000 per month as an allowance 
+Since he landed in US on 15th the first $1000 will be consumed on 15th Sept 
+Period 
+(15th Aug-15th Sept = $1000)
+(15th Sept-15th Oct = $1000)
+(15th Oct-15th Nov = $1000)
+
+Also $375 deduction from the amount sent to Kamran for Stay in SF","https://vyroai.slack.com/archives/C029AU5D82X/p1756449671766399?thread_ts=1754343918.676729&cid=C029AU5D82X
+https://app.slack.com/client/TE5FZQQNN/C029AU5D82X",USD,Aug
+Aug5264umar sheraz,5264umar sheraz,,5264,Umar Sheraz,Growth Executive,umar.sheraz@vyro.ai,02-May-24,,31,"1,421",,,,1400,1421,,,,,1421,,,"1,421",,,USD,Aug
+Aug5187shaiq habib,5187shaiq habib,,5187,Shaiq Habib,Data Analyst,shaiq.habib@vyro.ai,09-Oct-23,,31,"1,078",,,,1057,1078,,,,,1078,,,"1,078",,"was previously PKR 300,000 Paid out in USD ",USD,Aug
+Aug5301mohid khan,5301mohid khan,,5301,Mohid Khan,Visual Designer,mohid.khan@vyro.ai,,,31,814,,,,793,814,,,,,814,,,814,,"waspreviously PKR 225,000 Paid out in USD ",USD,Aug
+Aug5311saif ur rehman,5311saif ur rehman,,5311,Saif ur Rehman,Product Manager,saif.rehman@vyro.ai,21-Oct-24,,31,"1,290",,,,1269,1290,,,,,1290,,,"1,290",,"was previously PKR 360,000 Paid out in USD",USD,Aug
+Aug5327kashif mehmood,5327kashif mehmood,,5327,Kashif Mehmood,Sr Engineer developer II,kashif.mehmood@vyro.ai,18-Nov-24,15-Aug-25,15,"1,521",,,3042,1500,736,,,,,3778,,,"3,778",2 months Pay added (Severance Package),,USD,Aug
+Aug5329zeeshan afzal,5329zeeshan afzal,,5329,Zeeshan Afzal,Senior WebGL Engineer,zeeshan.afzal@vyro.ai,15-Nov-24,19-Aug-25,19,"3,521",,,,3500,2158,,,,,2158,,,"2,158",,,USD,Aug
+Aug5339mustafa shakil,5339mustafa shakil,,5339,Mustafa Shakil,Sr Tech Recruiter,mustafa.shakil@vyro.ai,16-Dec-24,,31,"1,421",,,,1300,1321,,,,100,1421,,,"1,421",$100 fixed as LinkedIn Allowance ,approved by Ahmed,USD,Aug
+Aug5241muawiz umer,5241muawiz umer,,5241,Muawiz Umer,Associate ML Engineer,umar.muawiz@vyro.ai,11-Mar-24,,31,921,,,,900,921,,,,,921,,,921,,,USD,Aug
+Aug5359syed tabeed hassan rizvi,5359syed tabeed hassan rizvi,,5359,Syed Tabeed Hassan Rizvi,DevOps Engineer,tabeed.rizvi@vyro.ai,27-Jan-25,,31,"1,621",,,,1600,1621,,,,,1621,,,"1,621",,,USD,Aug
+Aug5229ayesha syed,5229ayesha syed,,5229,Ayesha Syed,Marketig Artist,ayesha.syed@vyro.ai,13-Feb-25,,31,846,,,,825,846,,,,,846,,,846,,,USD,Aug
+Aug5370honglang qin,5370honglang qin,,5370,Honglang Qin,Backend Engineer,honglang.qin@vyro.ai,03-Feb-25,,31,"2,500",,,,2500,2500,,,,,2500,,,"2,500",,,USD,Aug
+Aug5371mahmoud nasim abouelmaati mohamed abouelenin,5371mahmoud nasim abouelmaati mohamed abouelenin,,5371,Mahmoud Nasim Abouelmaati Mohamed Abouelenin,SEO Consultant,mahmoud.nessim@vyro.ai,03-Feb-25,,31,"2,325",,,,600,600,,,,,600,,,600,HOLD,"Worked 4 hours this month, Yet to Confirmed with zain ",USD,Aug
+Aug5387muhammad ali chaudhry,5387muhammad ali chaudhry,,5387,Muhammad Ali Chaudhry,Sr Customer Success Manager ,muhammad.ali@vyro.ai,17-Mar-25,,31,"1,421",,,,1400,1421,,,,,1421,,,"1,421",,,USD,Aug
+Aug5400david israel,5400david israel,,5400,David Israel,ML/ R&D Engineer,david.israel@vyro.ai,21-Apr-25,,31,"4,000",,,,4000,4000,,,,,4000,,,"4,000",,Account details confimed with him,USD,Aug
+Aug5390muhammad haris mukhtar,5390muhammad haris mukhtar,,5390,Muhammad Haris Mukhtar,Senior Finance Executive,haris.mukhtar@vyro.ai,07-Apr-25,,31,"1,121","1,375",01-Aug,,1375,1396,,,,,1396,,,"1,396",,#REF!,USD,Aug
+Aug5240shahek raza,5240shahek raza,,5240,Shahek Raza,Assistant Manager Growth,shehak.raza@vyro.ai,14-Apr-25,,31,"1,521",,,,1500,1521,,,,,1521,,,"1,521",,,USD,Aug
+Aug5083syed muhammad tayyab abbas,5083syed muhammad tayyab abbas,,5083,Syed Muhammad Tayyab Abbas,Product Designer,tayyab.abbas@vyro.ai,21-Nov-22,,31,"1,396",,,,1375,1396,,,,,1396,,,"1,396",,was previously PKR 390k converted to USD,USD,Aug
+Aug5404anas maqsood,5404anas maqsood,,5404,Anas Maqsood,Senior Growth Manager,anas.maqsood@vyro.ai,12-May-25,,31,"3,000",,,,3000,3014,,,,,3014,,,"3,014",,,USD,Aug
+Aug5405moosah masood butt,5405moosah masood butt,,5405,Moosah Masood Butt,Jr Frontend Developer,moosah.masood@vyro.ai,05-May-25,,31,893,,,,893,912,,,,,912,,,912,,,USD,Aug
+Aug5403adriana cristina ardelean,5403adriana cristina ardelean,,5403,Adriana Cristina Ardelean,Manager - Tiktok Creator Program,adriana.cristina@vyro.ai,02-May-25,15-Aug-25,15,800,,,,800,387,,,,,387,,,387,,,USD,Aug
+Aug5204naveed ahmed,5204naveed ahmed,,5204,Naveed Ahmed,Admin Executive,,01-May-25,,31,"1,234",,,,1234,1234,,,,,1234,,,"1,234",,,USD,Aug
+Aug5441hafiz muhammad rafique,5441hafiz muhammad rafique,,5441,Hafiz Muhammad Rafique,Company Secretary,,01-May-25,,31,"10,000",,,,10000,10000,,,,,10000,,,"10,000",,,USD,Aug
+Aug5300omar sibghat,5300omar sibghat,,5300,Omar Sibghat,Associate Machine Learning Engineer,omar.sibghat@vyro.ai,,,31,881,,,,860,881,,,,,881,,,881,,,USD,Aug
+Aug5332suha saeed jokhio,5332suha saeed jokhio,,5332,Suha Saeed Jokhio,Product Marketing Specialist,suha.jukhio@vyro.ai,02-Dec-24,,31,"1,231",,,,1210,1231,,,,,1231,,,"1,231",,,USD,Aug
+Aug5312abdur rehman shahid,5312abdur rehman shahid,,5312,Abdur Rehman Shahid,Junior DevOps Engineer,abdur.rehman@vyro.ai,21-Oct-24,12-Aug-25,12,"1,014",,,,993,393,,,,177,570,,,570,Refferal for Moosa Butt,,USD,Aug
+Aug5425aizaz ahmad,5425aizaz ahmad,,5425,Aizaz Ahmad,Senior Product Designer,aizaz.ahmad@vyro.ai,16-Jun-25,,31,"2,700",,,,2700,2708,,,,,2708,,,"2,708",,,USD,Aug
+Aug5427zain waseem,5427zain waseem,,5427,Zain Waseem,Senior Frontend Developer,zain.waseem@vyro.ai,16-Jun-25,,31,"1,120",,,,1100,1100,,,21,,1121,,,"1,121",Cursor AI,Rate as per statebank on the date of purchase,USD,Aug
+Aug5431muhammad shariq nazr,5431muhammad shariq nazr,,5431,Muhammad Shariq Nazr,Growth Product Manager,shariq.nazr@vyro.ai,23-Jun-25,,31,"2,000",,,,2000,2010,,,,,2010,,,"2,010",,,USD,Aug
+Aug5432aown raza,5432aown raza,,5432,Aown Raza,Youtube Production Strategist,aown.raza@vyro.ai,23-Jun-25,,31,"1,500",,,,1500,1500,,,,,1500,,,"1,500",,,USD,Aug
+Aug5435muhammad mehdi,5435muhammad mehdi,,5435,Muhammad Mehdi,Sr Product Manager,muhammad.mehdi@vyro.ai,26-Jun-25,,31,"1,820",,,,1820,1820,,,,,1820,,,"1,820",,,USD,Aug
+Aug5292muhammad hassam khan,5292muhammad hassam khan,,5292,Muhammad Hassam Khan,Frontend Developer,hassam.khan@vyro.ai,29-Jul-24,,31,"1,621",,,,1600,1621,,,,,1621,,,"1,621",,,USD,Aug
+Aug5139khadija umer,5139khadija umer,,5139,Khadija Umer,Product Designer,khadija.umer@vyro.ai,19-Jun-23,,31,"1,421",,,,1400,1421,,,,,1421,,,"1,421",,,USD,Aug
+Aug5061ibrahim shah,5061ibrahim shah,,5061,Ibrahim Shah,Algorithm Engineer,ibrahim.shah@vyro.ai,27-Jun-22,,31,"1,821",,,,1800,1821,,,,,1821,,,"1,821",,,USD,Aug
+Aug5443awais chaudhry,5443awais chaudhry,,5443,Awais Chaudhry,Senior Product Manager ,awais.chaudhry@vyro.ai,18-Aug-25,,14,,,,,4021,1816,,,,,1816,,,"1,816",,,USD,Aug
+MonthKey,Key,Status,Employee ID,Employee Name,Designation,emails,Date of Joining,Date of Leaving,Worked Days,Last month's  Salary,New Addition/Increment/Decrement,Date of Increment/ Decrement,Payable from Last Month/ advance,Regular Pay,Prorated Pay,Performance Bonus, Paid Overtime ,Reimbursements, Other ,Gross Income,Unpaid Leaves,Deductions, Net Income ,Comments,Internal comments,Currency,Month
+Sep5184ameer hamza,5184ameer hamza,1,5184,Ameer Hamza,Senior Machine Learning Engineer,ameer.hamza@vyro.ai,25-Sep-23,,30,"6,021",,,,6000,6021,,,,,6021,,,"6,021",,,USD,Sep
+Sep5047kamran khalid,5047kamran khalid,,5047,Kamran Khalid,Group Product Manager,kamran.khalid@vyro.ai,13-May-24,,30,"5,435",,,,6000,6021,,,,,6021,,,"6,021",,(We need to keep in mind to get the actual receipt from him for the air bnb as discussed here so we can ajdust that accordingly: https://vyroai.slack.com/archives/C029AU5D82X/p1759163488603339?thread_ts=1754343918.676729&cid=C029AU5D82X,USD,Sep
+Sep5245muhammad ahmed,5245muhammad ahmed,1,5245,Muhammad Ahmed,ML Lead ,muhammad.ahmed@vyro.ai,18-Mar-24,,30,"3,541",,,,3500,3521,,,20,,3541,,,"3,541",Cursor AI ,,USD,Sep
+Sep5109muhammad hammad maqsood,5109muhammad hammad maqsood,1,5109,Muhammad Hammad Maqsood,Front End Lead,hammad.maqsood@vyro.ai,03-Mar-23,,30,"2,542",,,,2500,2521,,,21,,2542,,,"2,542",Cursor AI,Rate as per statebank on the date of purchase,USD,Sep
+Sep5148muhammad mutahhar bin muzaffar,5148muhammad mutahhar bin muzaffar,1,5148,Muhammad Mutahhar Bin Muzaffar,Frontend Developer,muhammad.mutahhar@vyro.ai,10-Jul-23,,30,"2,051",,,,2000,2021,,,30,,2051,,,"2,051",GitHub Co-Pilot & cursor AI reimbursement ,,USD,Sep
+Sep5102muhammad shariq,5102muhammad shariq,1,5102,Muhammad Shariq,Backend Lead ,shariq.arif@vyro.ai,27-Feb-23,,30,"3,371","4,550",01-Sep,,4550,4550,,,,,4550,,,"4,550",,,USD,Sep
+Sep5107muhammad talal haider,5107muhammad talal haider,1,5107,Muhammad Talal Haider,Senior Product Designer,talal.haider@vyro.ai,01-Mar-23,,30,"2,021",,,,2000,2021,,,,,2021,,,"2,021",,,USD,Sep
+Sep5084muhammad zaid abbasi,5084muhammad zaid abbasi,1,5084,Muhammad Zaid Abbasi,Senior Android Developer,zaid.abbasi@vyro.ai,21-Nov-22,,30,"1,821","2,160",01-Sep,,2160,2160,,,,,2160,,,"2,160",,,USD,Sep
+Sep5194saad ahmed,5194saad ahmed,,5194,Saad Ahmed,Senior Product Manager,saad.ahmed@vyro.ai,30-Oct-23,,30,"2,421",,,,2400,2421,,,,,2421,,,"2,421",,,USD,Sep
+Sep5096saad aziz,5096saad aziz,,5096,Saad Aziz,Technical Product Manager,saad.aziz@vyro.ai,01-Feb-23,,30,"1,554",,,,1339,1360,,,17,,1377,,,"1,377",JetBrain Claim,JetBrain subscription approved by Abdullah & was PKR 380k Converted to USD ,USD,Sep
+Sep5101shawal fida,5101shawal fida,,5101,Shawal Fida,Interim iOS Marketing and Content Lead,shawal.fida@vyro.ai,20-Feb-23,,30,"2,521",,,,2500,2521,,,,,2521,,,"2,521",,,USD,Sep
+Sep5212umer janjua,5212umer janjua,,5212,Umer Janjua,Manager People & Talent,umer.janjua@vyro.ai,18-Dec-23,,30,"1,781",,,,1760,1781,,,,,1781,,,"1,781",,,USD,Sep
+Sep5024talha arshad,5024talha arshad,,5024,Talha Arshad,Business Development Manager,talha.arshad@vyro.ai,30-Mar-21,,30,"1,255",,,,1234,1255,,,,,1255,,,"1,255",,was previously PKR 350k converted to USD,USD,Sep
+Sep5302muhammad zakria amir,5302muhammad zakria amir,,5302,Muhammad Zakria Amir,Manager Affiliates & Partnerships,zakria.amir@vyro.ai,16-Sep-24,,30,"2,646",,,,3000,3021,,,,,3021,,,"3,021","$3000 in cash was given for the US travel and was $1000 per month as an allowance 
+Since he landed in US on 15th the first $1000 will be consumed on 15th Sept 
+Period. From 16th Sept this was increased to $1500 per month so the revised calculation would look like this 
+(15th Aug-15th Sept = $1000)
+(15th Sept-15th Oct = $1500)
+(15th Oct-15th Nov = $1500)
+
+Also $375 deduction from the amount sent to Kamran for Stay in SF out of which $212 we have to pay him in Sept after the new adjustment (This $212 was ajdusted details can be found here: https://vyroai.slack.com/archives/C029AU5D82X/p1759166396421439?thread_ts=1754343918.676729&cid=C029AU5D82X","Also the amount that we have sent him for the dinner and events added in the pervious cell, we need to make sure to get actual receipts from him so we can either ajust the excess amount or the other way to his food allowance or maybe even any futher event's that might come in ",USD,Sep
+Sep5264umar sheraz,5264umar sheraz,,5264,Umar Sheraz,Growth Executive,umar.sheraz@vyro.ai,02-May-24,,30,"1,421",,,,1400,1421,,,,,1421,,,"1,421",,,USD,Sep
+Sep5187shaiq habib,5187shaiq habib,,5187,Shaiq Habib,Data Analyst,shaiq.habib@vyro.ai,09-Oct-23,,30,"1,078",,,,1057,1078,,,,,1078,,,"1,078",,"was previously PKR 300,000 Paid out in USD ",USD,Sep
+Sep5301mohid khan,5301mohid khan,,5301,Mohid Khan,Visual Designer,mohid.khan@vyro.ai,16-Sep-24,,30,814,,,,793,814,,,,,814,,,814,,"waspreviously PKR 225,000 Paid out in USD ",USD,Sep
+Sep5311saif ur rehman,5311saif ur rehman,,5311,Saif ur Rehman,Product Manager,saif.rehman@vyro.ai,21-Oct-24,,30,"1,290",,,,1269,1290,,,,,1290,,,"1,290",,"was previously PKR 360,000 Paid out in USD",USD,Sep
+Sep5339mustafa shakil,5339mustafa shakil,,5339,Mustafa Shakil,Sr Tech Recruiter,mustafa.shakil@vyro.ai,16-Dec-24,,30,"1,421",,,,1300,1321,,,,100,1421,,,"1,421",$100 fixed as LinkedIn Allowance ,approved by Ahmed,USD,Sep
+Sep5241muawiz umer,5241muawiz umer,,5241,Muawiz Umer,Associate ML Engineer,umar.muawiz@vyro.ai,11-Mar-24,,30,921,,,,900,921,,,,,921,,,921,,,USD,Sep
+Sep5359syed tabeed hassan rizvi,5359syed tabeed hassan rizvi,,5359,Syed Tabeed Hassan Rizvi,DevOps Engineer,tabeed.rizvi@vyro.ai,27-Jan-25,,30,"1,621",,,,1600,1621,,,,,1621,,,"1,621",,,USD,Sep
+Sep5229ayesha syed,5229ayesha syed,,5229,Ayesha Syed,Marketig Artist,ayesha.syed@vyro.ai,13-Feb-25,,30,846,,,,825,846,,,,,846,,,846,,,USD,Sep
+Sep5370honglang qin,5370honglang qin,,5370,Honglang Qin,Backend Engineer,honglang.qin@vyro.ai,03-Feb-25,,30,"2,500","2,900",01-Sep,,2900,2900,,,,,2900,,,"2,900",,,USD,Sep
+Sep5371mahmoud nasim abouelmaati mohamed abouelenin,5371mahmoud nasim abouelmaati mohamed abouelenin,,5371,Mahmoud Nasim Abouelmaati Mohamed Abouelenin,SEO Consultant,mahmoud.nessim@vyro.ai,03-Feb-25,,30,600,,,,0,0,,,,,0,,,0,,Confirmed with him,USD,Sep
+Sep5387muhammad ali chaudhry,5387muhammad ali chaudhry,,5387,Muhammad Ali Chaudhry,Sr Customer Success Manager ,muhammad.ali@vyro.ai,17-Mar-25,,30,"1,421",,,,1400,1421,,,,,1421,,,"1,421",,,USD,Sep
+Sep5400david israel,5400david israel,,5400,David Israel,ML/ R&D Engineer,david.israel@vyro.ai,21-Apr-25,,30,"4,000",,,,4000,4000,,,,,4000,,,"4,000",,Account details confimed with him,USD,Sep
+Sep5390muhammad haris mukhtar,5390muhammad haris mukhtar,,5390,Muhammad Haris Mukhtar,Senior Finance Executive,haris.mukhtar@vyro.ai,07-Apr-25,,30,"1,396",,,,1375,1396,,,,,1396,,,"1,396",,#REF!,USD,Sep
+Sep5240shahek raza,5240shahek raza,,5240,Shahek Raza,Assistant Manager Growth,shehak.raza@vyro.ai,14-Apr-25,,30,"1,521",,,,1500,1521,,,,,1521,,,"1,521",,,USD,Sep
+Sep5083syed muhammad tayyab abbas,5083syed muhammad tayyab abbas,,5083,Syed Muhammad Tayyab Abbas,Product Designer,tayyab.abbas@vyro.ai,21-Nov-22,,30,"1,396",,,,1375,1396,,,,,1396,,,"1,396",,was previously PKR 390k converted to USD,USD,Sep
+Sep5404anas maqsood,5404anas maqsood,,5404,Anas Maqsood,Senior Growth Manager,anas.maqsood@vyro.ai,12-May-25,11-Sep,11,"3,014",,,,3000,1108,,,,,1108,,,"1,108",,,USD,Sep
+Sep5405moosah masood butt,5405moosah masood butt,,5405,Moosah Masood Butt,Jr Frontend Developer,moosah.masood@vyro.ai,05-May-25,,30,912,,,,893,914,,,,,914,,,914,,,USD,Sep
+Sep5204naveed ahmed,5204naveed ahmed,,5204,Naveed Ahmed,Admin Executive,,01-May-25,,30,"1,234",,,,1234,1234,,,,,1234,,,"1,234",,,USD,Sep
+Sep5441hafiz muhammad rafique,5441hafiz muhammad rafique,,5441,Hafiz Muhammad Rafique,Company Secretary,,01-May-25,,30,"10,000",,,,10000,10000,,,,,10000,,,"10,000",,,USD,Sep
+Sep5300omar sibghat,5300omar sibghat,,5300,Omar Sibghat,Associate Machine Learning Engineer,omar.sibghat@vyro.ai,09-Sep-24,,30,881,,,,860,881,,,,,881,,,881,,,USD,Sep
+Sep5332suha saeed jokhio,5332suha saeed jokhio,,5332,Suha Saeed Jokhio,Product Marketing Specialist,suha.jukhio@vyro.ai,02-Dec-24,,30,"1,231",,,,1210,1231,,,,,1231,,,"1,231",,,USD,Sep
+Sep5425aizaz ahmad,5425aizaz ahmad,,5425,Aizaz Ahmad,Senior Product Designer,aizaz.ahmad@vyro.ai,16-Jun-25,,30,"2,708",,,,2700,2721,,,,,2721,,,"2,721",,,USD,Sep
+Sep5427zain waseem,5427zain waseem,,5427,Zain Waseem,Senior Frontend Developer,zain.waseem@vyro.ai,16-Jun-25,,30,"1,121",,,,1100,1111,,,21,,1132,,,"1,132",Cursor AI,Rate as per statebank on the date of purchase,USD,Sep
+Sep5431muhammad shariq nazr,5431muhammad shariq nazr,,5431,Muhammad Shariq Nazr,Growth Product Manager,shariq.nazr@vyro.ai,23-Jun-25,22nd ​Sept 2025,22,"2,010",,,,2000,1482,,,,,1482,,,"1,482",,,USD,Sep
+Sep5432aown raza,5432aown raza,,5432,Aown Raza,Youtube Production Strategist,aown.raza@vyro.ai,23-Jun-25,,30,"1,500","3,500",01-Sep,,3500,3500,,,,,3500,,,"3,500",,,USD,Sep
+Sep5435muhammad mehdi,5435muhammad mehdi,,5435,Muhammad Mehdi,Sr Product Manager,muhammad.mehdi@vyro.ai,26-Jun-25,,30,"1,820",,,,1820,1820,,,,,1820,,,"1,820",,,USD,Sep
+Sep5292muhammad hassam khan,5292muhammad hassam khan,,5292,Muhammad Hassam Khan,Frontend Developer,hassam.khan@vyro.ai,29-Jul-24,,30,"1,621",,,,1600,1621,,,,,1621,,,"1,621",,,USD,Sep
+Sep5139khadija umer,5139khadija umer,,5139,Khadija Umer,Product Designer,khadija.umer@vyro.ai,19-Jun-23,,30,"1,421",,,,1400,1421,,,,,1421,,,"1,421",,,USD,Sep
+Sep5061ibrahim shah,5061ibrahim shah,,5061,Ibrahim Shah,Algorithm Engineer,ibrahim.shah@vyro.ai,27-Jun-22,,30,"1,821","2,800",01-Sep,,2800,2800,,,,,2800,,,"2,800",,,USD,Sep
+Sep5443awais chaudhry,5443awais chaudhry,,5443,Awais Chaudhry,Senior Product Manager ,awais.chaudhry@vyro.ai,18-Aug-25,,30,"1,816",,,,4021,4021,,,,,4021,,,"4,021",,,USD,Sep
+Sep5448anwarul islam,5448anwarul islam,,5448,Anwarul Islam,Front End Developer,anwarul.islam@vyro.ai,04-Sep-25,,27,,,,,1500,1350,,,,,1350,,,"1,350",,,USD,Sep
+Sep5337muhammad noman akhtar,5337muhammad noman akhtar,,5337,Muhammad Noman Akhtar,Backend Developer,noman.khan@vyro.ai,16-Dec-24,,30,,"1,750",01-Sep,,1750,1750,,,,,1750,,,"1,750",OPD balance cleared out upon conversion,,USD,Sep
+Sep5236muhammad anas khan,5236muhammad anas khan,,5236,Muhammad Anas Khan,Associate Software Engineer,anas.khan@vyro.ai,04-Mar-24,,30,,"1,127",01-Sep,,1127,1127,,,20,,1147,,,"1,147",Cursor claim &OPD balance cleared out upon conversion,,USD,Sep
+Sep5235muhammad waleed abdullah,5235muhammad waleed abdullah,,5235,Muhammad Waleed Abdullah,Associate Frontend Engineer,muhammad.waleed@vyro.ai,04-Mar-24,,30,,"2,100",01-Sep,,2100,2100,,,23,,2123,,,"2,123",Cursor claim &OPD balance cleared out upon conversion,,USD,Sep
+Sep5377muhammad noman shahid,5377muhammad noman shahid,,5377,Muhammad Noman Shahid,Machine Learning Engineer.,noman.shahid@vyro.ai,17-Feb-25,,30,,"1,150",01-Sep,,1150,1150,,,,,1150,,,"1,150",OPD balance cleared out upon conversion,,USD,Sep
+MonthKey,Key,Status,Employee ID,Employee Name,Designation,emails,Date of Joining,Date of Leaving,Worked Days,Last month's  Salary,New Addition/Increment/Decrement,Date of Increment/ Decrement,Payable from Last Month/ advance,Regular Pay,Prorated Pay,Performance Bonus, Paid Overtime ,Reimbursements, Other ,Gross Income,Unpaid Leaves,Deductions, Net Income ,,Comments,Currency,Month
+Oct5184ameer hamza,5184ameer hamza,1,5184,Ameer Hamza,Senior Machine Learning Engineer,ameer.hamza@vyro.ai,25-Sep-23,,31,"6,021","6,600",Oct-01,,6600,6600,,,,,6600,,,"6,600",,,USD,Oct
+Oct5047kamran khalid,5047kamran khalid,1,5047,Kamran Khalid,Group Product Manager,kamran.khalid@vyro.ai,13-May-24,,31,"6,021",,,,6000,6021,,,,779,6800,,750,"6,050",,,USD,Oct
+Oct5245muhammad ahmed,5245muhammad ahmed,1,5245,Muhammad Ahmed,ML Lead ,muhammad.ahmed@vyro.ai,18-Mar-24,,31,"3,541","4,000",Oct-01,,4000,4000,,,20,107,4127,,,"4,127",,Cursor AI + House Alloance adjustment,USD,Oct
+Oct5109muhammad hammad maqsood,5109muhammad hammad maqsood,1,5109,Muhammad Hammad Maqsood,Front End Lead,hammad.maqsood@vyro.ai,03-Mar-23,,31,"2,542",,,,2500,2521,,,21,,2542,,,"2,542",,Cursor AI,USD,Oct
+Oct5148muhammad mutahhar bin muzaffar,5148muhammad mutahhar bin muzaffar,1,5148,Muhammad Mutahhar Bin Muzaffar,Frontend Developer,muhammad.mutahhar@vyro.ai,10-Jul-23,,31,"2,051","2,350",1st October,,2350,2350,,,20,178,2548,,,"2,548",,cursor AI reimbursement + Quaterly bouns ,USD,Oct
+Oct5102muhammad shariq,5102muhammad shariq,1,5102,Muhammad Shariq,Backend Lead ,shariq.arif@vyro.ai,27-Feb-23,,31,"4,550",,,,4550,4550,,,21,,4571,,,"4,571",,,USD,Oct
+Oct5107muhammad talal haider,5107muhammad talal haider,1,5107,Muhammad Talal Haider,Senior Product Designer,talal.haider@vyro.ai,01-Mar-23,,31,"2,021",,,,2000,2021,,,,,2021,,,"2,021",,,USD,Oct
+Oct5084muhammad zaid abbasi,5084muhammad zaid abbasi,1,5084,Muhammad Zaid Abbasi,Senior Android Developer,zaid.abbasi@vyro.ai,21-Nov-22,,31,"2,160",,,,2160,2160,,,,,2160,,,"2,160",,,USD,Oct
+Oct5194saad ahmed,5194saad ahmed,1,5194,Saad Ahmed,Senior Product Manager,saad.ahmed@vyro.ai,30-Oct-23,,31,"2,421","4,200",1st october,,4200,4200,,,,,4200,,,"4,200",,,USD,Oct
+Oct5096saad aziz,5096saad aziz,1,5096,Saad Aziz,Technical Product Manager,saad.aziz@vyro.ai,01-Feb-23,,31,"1,377",,,,1339,1360,,,20,,1380,,,"1,380",,JetBrain Claim,USD,Oct
+Oct5101shawal fida,5101shawal fida,1,5101,Shawal Fida,Interim iOS Marketing and Content Lead,shawal.fida@vyro.ai,20-Feb-23,,31,"2,521",,,,2500,2521,,,,,2521,,,"2,521",,,USD,Oct
+Oct5212umer janjua,5212umer janjua,1,5212,Umer Janjua,Manager People & Talent,umer.janjua@vyro.ai,18-Dec-23,,31,"1,781",,,,1760,1781,,,,,1781,,,"1,781",,,USD,Oct
+Oct5024talha arshad,5024talha arshad,1,5024,Talha Arshad,Business Development Manager,talha.arshad@vyro.ai,30-Mar-21,,31,"1,255",,,,1234,1255,,,,,1255,,,"1,255",,,USD,Oct
+Oct5302muhammad zakria amir,5302muhammad zakria amir,1,5302,Muhammad Zakria Amir,Manager Affiliates & Partnerships,zakria.amir@vyro.ai,16-Sep-24,,31,"3,021",,,,3000,3021,,,,750,3771,,,"3,771",,"$3000 in cash was given for the US travel and was $1000 per month as an allowance 
+Since he landed in US on 15th aug the first $1000 will be consumed on 15th Sept 
+Period. From 16th Sept this was increased to $1500 per month so the revised calculation would look like this 
+(15th Aug-15th Sept = $1000)
+(15th Sept-15th Oct = $1500)
+(15th Oct-15th Nov = $1500)
+
+Also $375 deduction from the amount sent to Kamran for Stay in SF out of which $212 we have to pay him in Sept after the new adjustment (This $212 was ajdusted details can be found here: https://vyroai.slack.com/archives/C029AU5D82X/p1759166396421439?thread_ts=1754343918.676729&cid=C029AU5D82X
+
+
+Haris added this: Zakria - so in his opinion $3000 has been consumed from 15 Aug - 15 Oct and then we pay him again $750 for 16-31. Please include his $750 from 1-14 Nov as he will be returning back after that -https://mail.google.com/mail/u/0/#search/zakria/FMfcgzQcpdrwXMtzPbhKdrSQvHKLQbjw",USD,Oct
+Oct5264umar sheraz,5264umar sheraz,1,5264,Umar Sheraz,Growth Executive,umar.sheraz@vyro.ai,02-May-24,,31,"1,421",,,,1400,1421,,,,107,1528,,,"1,528",,House Allowance adjustment,USD,Oct
+Oct5187shaiq habib,5187shaiq habib,1,5187,Shaiq Habib,Data Analyst,shaiq.habib@vyro.ai,09-Oct-23,,31,"1,078",,,,1057,1078,,,,107,1185,,,"1,185",,House Allowance adjustment,USD,Oct
+Oct5301mohid khan,5301mohid khan,1,5301,Mohid Khan,Visual Designer,mohid.khan@vyro.ai,16-Sep-24,,31,814,,,,793,814,,,,,814,,,814,,,USD,Oct
+Oct5311saif ur rehman,5311saif ur rehman,1,5311,Saif ur Rehman,Product Manager,saif.rehman@vyro.ai,21-Oct-24,,31,"1,290",,,,1269,1290,,,,107,1397,,,"1,397",,House Allowance adjustment,USD,Oct
+Oct5339mustafa shakil,5339mustafa shakil,1,5339,Mustafa Shakil,Sr Tech Recruiter,mustafa.shakil@vyro.ai,16-Dec-24,26th October 2025.,26,"1,421",,,,1300,1108,,,,100,1208,,,"1,208",,$100 fixed as LinkedIn Allowance ,USD,Oct
+Oct5241muawiz umer,5241muawiz umer,1,5241,Muawiz Umer,Associate ML Engineer,umar.muawiz@vyro.ai,11-Mar-24,,31,921,,,,900,921,,,,,921,,,921,,,USD,Oct
+Oct5359syed tabeed hassan rizvi,5359syed tabeed hassan rizvi,1,5359,Syed Tabeed Hassan Rizvi,DevOps Engineer,tabeed.rizvi@vyro.ai,27-Jan-25,,31,"1,621",,,,1600,1621,,,,,1621,,,"1,621",,,USD,Oct
+Oct5229ayesha syed,5229ayesha syed,,5229,Ayesha Syed,Marketig Artist,ayesha.syed@vyro.ai,13-Feb-25,,31,846,,,,825,846,,,,178,1024,,,"1,024",,Quaterly bouns ,USD,Oct
+Oct5370honglang qin,5370honglang qin,1,5370,Honglang Qin,Backend Engineer,honglang.qin@vyro.ai,03-Feb-25,,31,"2,900",,,,2900,2900,,,,,2900,,,"2,900",,,USD,Oct
+Oct5371mahmoud nasim abouelmaati mohamed abouelenin,5371mahmoud nasim abouelmaati mohamed abouelenin,1,5371,Mahmoud Nasim Abouelmaati Mohamed Abouelenin,SEO Consultant,mahmoud.nessim@vyro.ai,03-Feb-25,,31,0,,,,0,0,,,,,0,,,0,,,USD,Oct
+Oct5387muhammad ali chaudhry,5387muhammad ali chaudhry,1,5387,Muhammad Ali Chaudhry,Sr Customer Success Manager ,muhammad.ali@vyro.ai,17-Mar-25,,31,"1,421",,,,1400,1421,,,,,1421,,,"1,421",,,USD,Oct
+Oct5400david israel,5400david israel,1,5400,David Israel,ML/ R&D Engineer,david.israel@vyro.ai,21-Apr-25,,31,"4,000",,,,4000,4000,,,,,4000,,,"4,000",,,USD,Oct
+Oct5390muhammad haris mukhtar,5390muhammad haris mukhtar,1,5390,Muhammad Haris Mukhtar,Senior Finance Executive,haris.mukhtar@vyro.ai,07-Apr-25,,31,"1,396",,,,1375,1396,,,,,1396,,,"1,396",,,USD,Oct
+Oct5240shahek raza,5240shahek raza,1,5240,Shahek Raza,Assistant Manager Growth,shehak.raza@vyro.ai,14-Apr-25,13th October 2025,13,"1,521",,,,1500,638,,,,,638,,,638,,,USD,Oct
+Oct5083syed muhammad tayyab abbas,5083syed muhammad tayyab abbas,1,5083,Syed Muhammad Tayyab Abbas,Product Designer,tayyab.abbas@vyro.ai,21-Nov-22,,31,"1,396",,,,1375,1396,,,,,1396,,,"1,396",,,USD,Oct
+Oct5405moosah masood butt,5405moosah masood butt,1,5405,Moosah Masood Butt,Jr Frontend Developer,moosah.masood@vyro.ai,05-May-25,,31,914,,,,893,914,,,,,914,,,914,,,USD,Oct
+Oct5204naveed ahmed,5204naveed ahmed,1,5204,Naveed Ahmed,Admin Executive,,01-May-25,,31,"1,234",,,,1234,1234,,,,,1234,,,"1,234",,,USD,Oct
+Oct5441hafiz muhammad rafique,5441hafiz muhammad rafique,1,5441,Hafiz Muhammad Rafique,Company Secretary,,01-May-25,,31,"10,000",,,,10000,10000,,,,,10000,,,"10,000",,,USD,Oct
+Oct5300omar sibghat,5300omar sibghat,1,5300,Omar Sibghat,Associate Machine Learning Engineer,omar.sibghat@vyro.ai,09-Sep-24,,31,881,,,,860,881,,,,,881,,,881,,,USD,Oct
+Oct5332suha saeed jokhio,5332suha saeed jokhio,1,5332,Suha Saeed Jokhio,Product Marketing Specialist,suha.jukhio@vyro.ai,02-Dec-24,,31,"1,231",,,,1210,1231,,,,,1231,,,"1,231",,,USD,Oct
+Oct5425aizaz ahmad,5425aizaz ahmad,1,5425,Aizaz Ahmad,Senior Product Designer,aizaz.ahmad@vyro.ai,16-Jun-25,,31,"2,721",,,,2700,2721,,,,,2721,,,"2,721",,,USD,Oct
+Oct5427zain waseem,5427zain waseem,1,5427,Zain Waseem,Senior Frontend Developer,zain.waseem@vyro.ai,16-Jun-25,,31,"1,132",,,,1100,1111,,,22,,1132,,,"1,132",,,USD,Oct
+Oct5432aown raza,5432aown raza,1,5432,Aown Raza,Youtube Production Strategist,aown.raza@vyro.ai,23-Jun-25,,31,"4,200",,,,3500,3500,,,,,3500,,,"3,500",,,USD,Oct
+Oct5435muhammad mehdi,5435muhammad mehdi,1,5435,Muhammad Mehdi,Sr Product Manager,muhammad.mehdi@vyro.ai,26-Jun-25,,31,"1,820",,,,1820,1820,,,,,1820,,,"1,820",,,USD,Oct
+Oct5292muhammad hassam khan,5292muhammad hassam khan,1,5292,Muhammad Hassam Khan,Frontend Developer,hassam.khan@vyro.ai,29-Jul-24,,31,"1,621",,,,1600,1621,,,,,1621,,,"1,621",,,USD,Oct
+Oct5139khadija umer,5139khadija umer,1,5139,Khadija Umer,Product Designer,khadija.umer@vyro.ai,19-Jun-23,,31,"1,421",,,,1400,1421,,,,,1421,,,"1,421",,,USD,Oct
+Oct5061ibrahim shah,5061ibrahim shah,1,5061,Ibrahim Shah,Algorithm Engineer,ibrahim.shah@vyro.ai,27-Jun-22,,31,"2,800",,,,2800,2800,,,,,2800,,,"2,800",,,USD,Oct
+Oct5443awais chaudhry,5443awais chaudhry,1,5443,Awais Chaudhry,Senior Product Manager ,awais.chaudhry@vyro.ai,18-Aug-25,,31,"4,021",,,,4021,4021,,,,,4021,,,"4,021",,,USD,Oct
+Oct5448anwarul islam,5448anwarul islam,1,5448,Anwarul Islam,Front End Developer,anwarul.islam@vyro.ai,04-Sep-25,,31,"1,350",,,,1500,1500,,,,,1500,,,"1,500",,,USD,Oct
+Oct5337muhammad noman akhtar,5337muhammad noman akhtar,1,5337,Muhammad Noman Akhtar,Backend Developer,noman.khan@vyro.ai,16-Dec-24,,31,"1,850",,,,1750,1750,,,,,1750,,,"1,750",,,USD,Oct
+Oct5236muhammad anas khan,5236muhammad anas khan,1,5236,Muhammad Anas Khan,Associate Software Engineer,anas.khan@vyro.ai,04-Mar-24,,31,"1,185",,,,1127,1127,,,20,,1147,,,"1,147",,Cursor claim,USD,Oct
+Oct5235muhammad waleed abdullah,5235muhammad waleed abdullah,1,5235,Muhammad Waleed Abdullah,Front End Lead,muhammad.waleed@vyro.ai,04-Mar-24,,31,"2,293",,,,2100,2100,,,22,,2122,,,"2,122",,Cursor claim,USD,Oct
+Oct5377muhammad noman shahid,5377muhammad noman shahid,1,5377,Muhammad Noman Shahid,Machine Learning Engineer.,noman.shahid@vyro.ai,17-Feb-25,,31,"1,224","1,550",1st October,,1550,1550,,,,,1550,,,"1,550",,,USD,Oct
+Oct5010muhammad abdullah rafique,5010muhammad abdullah rafique,1,5010,Muhammad Abdullah Rafique,CTO,Abdullah@vyro.ai,01-Sep-25,,31,"15,000",,,,15000,15000,,,,,15000,,,"15,000",,,USD,Oct
+Oct5002ahmed abu bakar,5002ahmed abu bakar,1,5002,Ahmed Abu Bakar,CEO,ahmed@vyro.ai,01-Sep-25,,31,"15,000",,,,15000,15000,,,,,15000,,,"15,000",,,USD,Oct
+Oct5027zain ul abedien,5027zain ul abedien,1,5027,Zain Ul Abedien,COO,zain@vyro.ai,01-Sep-25,,31,"15,000",,,,15000,15000,,,,,15000,,,"15,000",,,USD,Oct
+Oct5455han brendan,5455han brendan,1,5455,HAN BRENDAN,Machine Learning Engineer,han.brendan@vyro.ai,13-Oct-25,,19,,,,,1200,735,,,,,735,,,735,,,USD,Oct
+Oct5456muhammad usman raza,5456muhammad usman raza,,5456,Muhammad Usman Raza,AI Content Creator,usman.surda@vyro.ai,13-Oct-25,,19,,,,,2200,1348,,,,,1348,,,"1,348",,,USD,Oct
+Oct5462abdullah rasheed,5462abdullah rasheed,1,5462,Abdullah Rasheed,Growth Consultant,abdullah.rasheed@vyro.ai,07-Oct-25,,25,,,,,1000,806,,,,,806,,,806,,,USD,Oct
+Oct5464ahmad ali khwaja,5464ahmad ali khwaja,1,5464,Ahmad Ali Khwaja,Creative Partner- Motion Graphics,ahmed.ali@vyro.ai,27-Oct-25,,5,,,,,5000,806,,,,,806,,,806,,,USD,Oct
+Oct5395abdul ahad qureshi,5395abdul ahad qureshi,1,5395,Abdul Ahad Qureshi,Associate Full Stack Engineer,abdul.ahad@vyro.ai,12-May-25,,31,,,,,700,700,,,20,35,755,,,755,,OPD balance cleared out upon conversion to USD + cursur claim,USD,Oct
+Oct5376muhammad usama,5376muhammad usama,1,5376,Muhammad Usama,Product Manager Associate,muhammad.usama@vyro.ai,17-Feb-25,,31,,,,,1100,1100,,,,13,1113,,,"1,113",,OPD balance cleared out upon conversion to USD ,USD,Oct
+MonthKey,Key,Status,Employee ID,Employee Name,Designation,emails,Date of Joining,Date of Leaving,Worked Days,Last month's  Salary,New Addition/Increment/Decrement,Date of Increment/ Decrement,Payable from Last Month/ advance,Regular Pay,Prorated Pay,Performance Bonus, Paid Overtime ,Reimbursements, Other ,Gross Income,Unpaid Leaves,Deductions, Net Income ,Comments,,Currency,Month
+Nov5184ameer hamza,5184ameer hamza,1,5184,Ameer Hamza,Senior Machine Learning Engineer,ameer.hamza@vyro.ai,25-Sep-23,,30,"6,600",,,,6600,6600,,,,,6600,,,"6,600",,,USD,Nov
+Nov5047kamran khalid,5047kamran khalid,1,5047,Kamran Khalid,Group Product Manager,kamran.khalid@vyro.ai,13-May-24,,30,"6,050",,,,6000,6021,,,,,6021,,750,"5,271",,,USD,Nov
+Nov5245muhammad ahmed,5245muhammad ahmed,1,5245,Muhammad Ahmed,ML Lead,muhammad.ahmed@vyro.ai,18-Mar-24,,30,"4,127",,,,4000,4000,,,20,107,4127,,,"4,127",Cursor AI + House Alloance adjustment,,USD,Nov
+Nov5109muhammad hammad maqsood,5109muhammad hammad maqsood,1,5109,Muhammad Hammad Maqsood,Front End Lead,hammad.maqsood@vyro.ai,03-Mar-23,,30,"2,542","3,300",01-Nov,,3300,3300,,,21,,3321,,,"3,321",Cursor AI,,USD,Nov
+Nov5148muhammad mutahhar bin muzaffar,5148muhammad mutahhar bin muzaffar,1,5148,Muhammad Mutahhar Bin Muzaffar,Frontend Developer,muhammad.mutahhar@vyro.ai,10-Jul-23,,30,"2,548",,,,2350,2350,,,20,,2370,,,"2,370",cursor AI reimbursement,,USD,Nov
+Nov5102muhammad shariq,5102muhammad shariq,1,5102,Muhammad Shariq,Backend Lead,shariq.arif@vyro.ai,27-Feb-23,,30,"4,571",,,,4550,4550,,,21,,4571,,,"4,571",cursor AI reimbursement,,USD,Nov
+Nov5107muhammad talal haider,5107muhammad talal haider,1,5107,Muhammad Talal Haider,Senior Product Designer,talal.haider@vyro.ai,01-Mar-23,,30,"2,021",,,,2000,2021,,,,,2021,,,"2,021",,,USD,Nov
+Nov5084muhammad zaid abbasi,5084muhammad zaid abbasi,1,5084,Muhammad Zaid Abbasi,Senior Android Developer,zaid.abbasi@vyro.ai,21-Nov-22,,30,"2,160",,,,2160,2160,,,,,2160,,,"2,160",,,USD,Nov
+Nov5194saad ahmed,5194saad ahmed,1,5194,Saad Ahmed,Senior Product Manager,saad.ahmed@vyro.ai,30-Oct-23,,30,"4,200",,,,4200,4200,,,,,4200,,,"4,200",,,USD,Nov
+Nov5096saad aziz,5096saad aziz,1,5096,Saad Aziz,Technical Product Manager,saad.aziz@vyro.ai,01-Feb-23,,30,"1,380",,,,1339,1360,,,20,,1380,,,"1,380",JetBrain Claim,,USD,Nov
+Nov5101shawal fida,5101shawal fida,1,5101,Shawal Fida,Interim iOS Marketing and Content Lead,shawal.fida@vyro.ai,20-Feb-23,,30,"2,521",,,,2500,2521,,,,,2521,,,"2,521",,,USD,Nov
+Nov5212umer janjua,5212umer janjua,1,5212,Umer Janjua,Manager People & Talent,umer.janjua@vyro.ai,18-Dec-23,,30,"1,781",,,,1760,1781,,,,,1781,,,"1,781",,,USD,Nov
+Nov5024talha arshad,5024talha arshad,1,5024,Talha Arshad,Business Development Manager,talha.arshad@vyro.ai,30-Mar-21,,30,"1,255",,,,1234,1255,,,,,1255,,,"1,255",,,USD,Nov
+Nov5302muhammad zakria amir,5302muhammad zakria amir,1,5302,Muhammad Zakria Amir,Manager Affiliates & Partnerships,zakria.amir@vyro.ai,16-Sep-24,,30,"3,771",,,,3000,3021,,,,,3021,,,"3,021","$3000 in cash was given for the US travel and was $1000 per month as an allowance 
+Since he landed in US on 15th aug the first $1000 will be consumed on 15th Sept 
+Period. From 16th Sept this was increased to $1500 per month so the revised calculation would look like this 
+(15th Aug-15th Sept = $1000)
+(15th Sept-15th Oct = $1500)
+(15th Oct-15th Nov = $1500)
+
+Also $375 deduction from the amount sent to Kamran for Stay in SF out of which $212 we have to pay him in Sept after the new adjustment (This $212 was ajdusted details can be found here: https://vyroai.slack.com/archives/C029AU5D82X/p1759166396421439?thread_ts=1754343918.676729&cid=C029AU5D82X
+
+
+Haris added this: Zakria - so in his opinion $3000 has been consumed from 15 Aug - 15 Oct and then we pay him again $750 for 16-31. Please include his $750 from 1-14 Nov as he will be returning back after that -https://mail.google.com/mail/u/0/#search/zakria/FMfcgzQcpdrwXMtzPbhKdrSQvHKLQbjw",,USD,Nov
+Nov5264umar sheraz,5264umar sheraz,1,5264,Umar Sheraz,Growth Executive,umar.sheraz@vyro.ai,02-May-24,,30,"1,528","2,000",1st November,,2000,2000,,,,107,2107,,,"2,107",House Allowance adjustment,,USD,Nov
+Nov5187shaiq habib,5187shaiq habib,1,5187,Shaiq Habib,Data Analyst,shaiq.habib@vyro.ai,09-Oct-23,,30,"1,185","3,000",01-Nov,,3000,3000,,,,107,3107,,,"3,107",House Allowance adjustment,,USD,Nov
+Nov5301mohid khan,5301mohid khan,1,5301,Mohid Khan,Visual Designer,mohid.khan@vyro.ai,16-Sep-24,,30,814,,,,793,814,,,,,814,,,814,,,USD,Nov
+Nov5311saif ur rehman,5311saif ur rehman,1,5311,Saif ur Rehman,Product Manager,saif.rehman@vyro.ai,21-Oct-24,,30,"1,397","2,250",1st November,,2250,2250,,,,107,2357,,,"2,357",House Allowance adjustment,,USD,Nov
+Nov5241muawiz umer,5241muawiz umer,1,5241,Muawiz Umer,Associate ML Engineer,umar.muawiz@vyro.ai,11-Mar-24,,30,921,"1,800",1st November,,1800,1800,,,,,1800,,,"1,800",,,USD,Nov
+Nov5359syed tabeed hassan rizvi,5359syed tabeed hassan rizvi,1,5359,Syed Tabeed Hassan Rizvi,DevOps Engineer,tabeed.rizvi@vyro.ai,27-Jan-25,,30,"1,621",,,,1600,1621,,,,,1621,,,"1,621",,,USD,Nov
+Nov5229ayesha syed,5229ayesha syed,1,5229,Ayesha Syed,Marketig Artist,ayesha.syed@vyro.ai,13-Feb-25,,30,"1,024",,,,825,846,,,,,846,,,846,,,USD,Nov
+Nov5370honglang qin,5370honglang qin,1,5370,Honglang Qin,Backend Engineer,honglang.qin@vyro.ai,03-Feb-25,,30,"2,900",,,,2900,2900,,,,,2900,,,"2,900",,,USD,Nov
+Nov5371mahmoud nasim abouelmaati mohamed abouelenin,5371mahmoud nasim abouelmaati mohamed abouelenin,,5371,Mahmoud Nasim Abouelmaati Mohamed Abouelenin,SEO Consultant,mahmoud.nessim@vyro.ai,03-Feb-25,,30,0,,,,0,0,,,,,0,,,0,,,USD,Nov
+Nov5387muhammad ali chaudhry,5387muhammad ali chaudhry,1,5387,Muhammad Ali Chaudhry,Sr Customer Success Manager,muhammad.ali@vyro.ai,17-Mar-25,,30,"1,421",,,,1400,1421,,,,,1421,,,"1,421",,,USD,Nov
+Nov5400david israel,5400david israel,1,5400,David Israel,ML/ R&D Engineer,david.israel@vyro.ai,21-Apr-25,,30,"4,000",,,,4000,4000,,,,,4000,,,"4,000",,,USD,Nov
+Nov5390muhammad haris mukhtar,5390muhammad haris mukhtar,1,5390,Muhammad Haris Mukhtar,Senior Finance Executive,haris.mukhtar@vyro.ai,07-Apr-25,,30,"1,396",,,,1375,1396,,,,,1396,,,"1,396",,,USD,Nov
+Nov5083syed muhammad tayyab abbas,5083syed muhammad tayyab abbas,1,5083,Syed Muhammad Tayyab Abbas,Product Designer,tayyab.abbas@vyro.ai,21-Nov-22,,30,"1,396",,,,1375,1396,,,,178,1574,,,"1,574",Wedding bonus,,USD,Nov
+Nov5405moosah masood butt,5405moosah masood butt,1,5405,Moosah Masood Butt,Jr Frontend Developer,moosah.masood@vyro.ai,05-May-25,,30,914,,,,893,914,,,,,914,,,914,,,USD,Nov
+Nov5204naveed ahmed,5204naveed ahmed,1,5204,Naveed Ahmed,Admin Executive,,01-May-25,,30,"1,234",,,,1234,1234,,,,,1234,,,"1,234",,,USD,Nov
+Nov5441hafiz muhammad rafique,5441hafiz muhammad rafique,1,5441,Hafiz Muhammad Rafique,Company Secretary,,01-May-25,,30,"10,000",,,,10000,10000,,,,,10000,,,"10,000",,,USD,Nov
+Nov5300omar sibghat,5300omar sibghat,1,5300,Omar Sibghat,Associate Machine Learning Engineer,omar.sibghat@vyro.ai,09-Sep-24,,30,881,"1,600",1st November,,1600,1600,,,,,1600,,,"1,600",,,USD,Nov
+Nov5332suha saeed jokhio,5332suha saeed jokhio,1,5332,Suha Saeed Jokhio,Product Marketing Specialist,suha.jukhio@vyro.ai,02-Dec-24,,30,"1,231",,,,1210,1231,,,,,1231,,,"1,231",,,USD,Nov
+Nov5425aizaz ahmad,5425aizaz ahmad,1,5425,Aizaz Ahmad,Senior Product Designer,aizaz.ahmad@vyro.ai,16-Jun-25,,30,"2,721",,,,2700,2721,,,,,2721,,,"2,721",,,USD,Nov
+Nov5427zain waseem,5427zain waseem,1,5427,Zain Waseem,Senior Frontend Developer,zain.waseem@vyro.ai,16-Jun-25,14-Nov,14,"1,132",,,,1100,518,,,,,518,,,518,,,USD,Nov
+Nov5432aown raza,5432aown raza,,5432,Aown Raza,Youtube Production Strategist,aown.raza@vyro.ai,23-Jun-25,25-Nov,25,"3,500",,,,3500,2917,,,,,2917,,,"2,917",,,USD,Nov
+Nov5435muhammad mehdi,5435muhammad mehdi,1,5435,Muhammad Mehdi,Sr Product Manager,muhammad.mehdi@vyro.ai,26-Jun-25,,30,"1,820",,,,1820,1820,,,,,1820,,,"1,820",,,USD,Nov
+Nov5292muhammad hassam khan,5292muhammad hassam khan,1,5292,Muhammad Hassam Khan,Frontend Developer,hassam.khan@vyro.ai,29-Jul-24,,30,"1,621",,,,1600,1621,,,,,1621,,,"1,621",,,USD,Nov
+Nov5139khadija umer,5139khadija umer,1,5139,Khadija Umer,Product Designer,khadija.umer@vyro.ai,19-Jun-23,,30,"1,421",,,,1400,1421,,,,,1421,,,"1,421",,,USD,Nov
+Nov5061ibrahim shah,5061ibrahim shah,1,5061,Ibrahim Shah,Algorithm Engineer,ibrahim.shah@vyro.ai,27-Jun-22,,30,"2,800",,,,2800,2800,,,,,2800,,,"2,800",,,USD,Nov
+Nov5443awais chaudhry,5443awais chaudhry,1,5443,Awais Chaudhry,Senior Product Manager,awais.chaudhry@vyro.ai,18-Aug-25,,30,"4,021",,,,4021,4021,,,,,4021,,,"4,021",,,USD,Nov
+Nov5448anwarul islam,5448anwarul islam,1,5448,Anwarul Islam,Front End Developer,anwarul.islam@vyro.ai,04-Sep-25,,30,"1,500","3,000",4th November,,2850,2850,,,,,2850,,,"2,850",Sent in 2 payments 1500 & 1350,,USD,Nov
+Nov5337muhammad noman akhtar,5337muhammad noman akhtar,1,5337,Muhammad Noman Akhtar,Backend Developer,noman.khan@vyro.ai,16-Dec-24,,30,"1,750",,,,1750,1750,,,,,1750,,,"1,750",,,USD,Nov
+Nov5236muhammad anas khan,5236muhammad anas khan,1,5236,Muhammad Anas Khan,Associate Software Engineer,anas.khan@vyro.ai,04-Mar-24,,30,"1,147",,,,1127,1127,,,,,1127,,,"1,127",,,USD,Nov
+Nov5235muhammad waleed abdullah,5235muhammad waleed abdullah,1,5235,Muhammad Waleed Abdullah,Front End Lead,muhammad.waleed@vyro.ai,04-Mar-24,,30,"2,122",,,,2100,2100,,,22,,2122,,,"2,122",Cursor claim,,USD,Nov
+Nov5377muhammad noman shahid,5377muhammad noman shahid,1,5377,Muhammad Noman Shahid,Machine Learning Engineer.,noman.shahid@vyro.ai,17-Feb-25,,30,"1,550",,,,1550,1550,,,,,1550,,,"1,550",,,USD,Nov
+Nov5010muhammad abdullah rafique,5010muhammad abdullah rafique,1,5010,Muhammad Abdullah Rafique,CTO,Abdullah@vyro.ai,01-Sep-25,,30,"15,000",,,,15000,15000,,,,,15000,,,"15,000",,,USD,Nov
+Nov5002ahmed abu bakar,5002ahmed abu bakar,1,5002,Ahmed Abu Bakar,CEO,ahmed@vyro.ai,01-Sep-25,,30,"15,000",,,,15000,15000,,,,,15000,,,"15,000",,,USD,Nov
+Nov5027zain ul abedien,5027zain ul abedien,1,5027,Zain Ul Abedien,COO,zain@vyro.ai,01-Sep-25,,30,"15,000",,,,15000,15000,,,,,15000,,,"15,000",,,USD,Nov
+Nov5455han brendan,5455han brendan,1,5455,HAN BRENDAN,Machine Learning Engineer,han.brendan@vyro.ai,13-Oct-25,,30,735,,,,1200,1200,,,,,1200,,,"1,200",,,USD,Nov
+Nov5456muhammad usman raza,5456muhammad usman raza,,5456,Muhammad Usman Raza,AI Content Creator,usman.surda@vyro.ai,13-Oct-25,,30,"1,348",,,,2200,2200,,,,,2200,,,"2,200",,,USD,Nov
+Nov5462abdullah rasheed,5462abdullah rasheed,1,5462,Abdullah Rasheed,Growth Consultant,abdullah.rasheed@vyro.ai,07-Oct-25,,30,806,,,,1000,1000,,,,,1000,,,"1,000",,,USD,Nov
+Nov5464ahmad ali khwaja,5464ahmad ali khwaja,1,5464,Ahmad Ali Khwaja,Creative Partner- Motion Graphics,ahmed.ali@vyro.ai,27-Oct-25,,30,806,,,,5000,5000,,,,,5000,,,"5,000",,,USD,Nov
+Nov5395abdul ahad qureshi,5395abdul ahad qureshi,1,5395,Abdul Ahad Qureshi,Associate Full Stack Engineer,abdul.ahad@vyro.ai,12-May-25,,30,755,,,,700,700,,,20,,720,,,720,cursor claim,,USD,Nov
+Nov5376muhammad usama,5376muhammad usama,1,5376,Muhammad Usama,Product Manager,muhammad.usama@vyro.ai,17-Feb-25,,30,"1,113",,,,1100,1100,,,,,1100,,,"1,100",,,USD,Nov
+Nov5469ali abid,5469ali abid,1,5469,Ali Abid,Sr. PD,ali.abid@vyro.ai,10-Nov-25,,21,,,,,2800,1960,,,,,1960,,,"1,960",,,USD,Nov
+Nov5468taha hassan,5468taha hassan,1,5468,Taha Hassan,Creative Director,taha.hassan@vyro.ai,03-Nov-25,,28,,,,,1780,1661,,,,,1661,,,"1,661",,,USD,Nov
+Nov5473syed anas kamal,5473syed anas kamal,1,5473,Syed Anas Kamal,BE Engineer,anas.kamal@vyro.ai,24-Nov-25,,7,,,,,1700,397,,,,,397,,,397,,,USD,Nov
+Nov5256muhammad bilal tanveer,5256muhammad bilal tanveer,1,5256,Muhammad Bilal Tanveer,Motion Graphics Designer,bilal.tanveer@vyro.ai,01-Apr-24,,30,,"1,250",1st November,,1250,1250,,,,235,1485,,,"1,485",OPD balance cleared out on conversion,,USD,Nov
+Nov5259abdul moiez akhtar,5259abdul moiez akhtar,1,5259,Abdul Moiez Akhtar,Associate Software Engineer,abdul.moiez@vyro.ai,15-Apr-24,,30,,"1,500",01-Nov,,1500,1500,,,22,235,1757,,,"1,757",OPD balance cleared out on conversion,,USD,Nov

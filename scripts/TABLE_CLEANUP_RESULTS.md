@@ -89,3 +89,4 @@ The script will:
 3. Delete the tables
 4. Create a log file with deletion details
 
+

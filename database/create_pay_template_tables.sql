@@ -13,7 +13,7 @@
 CREATE TABLE IF NOT EXISTS `test-imagine-web.Vyro_Business_Paradox.Pay_Template_New_Hires` (
   Type STRING NOT NULL OPTIONS(description="Always 'New Hire'"),
   Month STRING NOT NULL OPTIONS(description="YYYY-MM format, extracted from Date_of_Joining"),
-  Employee_ID STRING OPTIONS(description="Employee ID from Employees table (may be looked up)"),
+  Employee_ID INT64 OPTIONS(description="Employee ID from Employees table (may be looked up)"),
   Employee_Name STRING NOT NULL OPTIONS(description="Full name of employee"),
   Designation STRING OPTIONS(description="Job title/designation"),
   Official_Email STRING OPTIONS(description="Official email address"),
@@ -42,7 +42,7 @@ OPTIONS(
 CREATE TABLE IF NOT EXISTS `test-imagine-web.Vyro_Business_Paradox.Pay_Template_Leavers` (
   Type STRING NOT NULL OPTIONS(description="Always 'Leaver'"),
   Month STRING NOT NULL OPTIONS(description="YYYY-MM format, extracted from Employment_End_Date"),
-  Employee_ID STRING OPTIONS(description="Employee ID from Employees table (may be looked up)"),
+  Employee_ID INT64 OPTIONS(description="Employee ID from Employees table (may be looked up)"),
   Employee_Name STRING NOT NULL OPTIONS(description="Full name of employee"),
   Employment_End_Date DATE OPTIONS(description="Last working day"),
   Payroll_Type STRING NOT NULL OPTIONS(description="PKR or USD"),
@@ -65,7 +65,7 @@ OPTIONS(
 CREATE TABLE IF NOT EXISTS `test-imagine-web.Vyro_Business_Paradox.Pay_Template_Increments` (
   Type STRING NOT NULL OPTIONS(description="Always 'Increment'"),
   Month STRING NOT NULL OPTIONS(description="YYYY-MM format, extracted from Effective_Date"),
-  Employee_ID STRING OPTIONS(description="Employee ID from Employees table (may be looked up)"),
+  Employee_ID INT64 OPTIONS(description="Employee ID from Employees table (may be looked up)"),
   Employee_Name STRING NOT NULL OPTIONS(description="Full name of employee"),
   Currency STRING NOT NULL OPTIONS(description="PKR or USD"),
   Previous_Salary FLOAT64 OPTIONS(description="Previous salary (may be looked up from Salaries/Employees table)"),
@@ -87,7 +87,7 @@ OPTIONS(
 -- ============================================================================
 
 CREATE TABLE IF NOT EXISTS `test-imagine-web.Vyro_Business_Paradox.Pay_Template_Confirmations` (
-  Employee_ID STRING OPTIONS(description="Employee ID from Employees table"),
+  Employee_ID INT64 OPTIONS(description="Employee ID from Employees table"),
   Employee_Name STRING NOT NULL OPTIONS(description="Full name of employee"),
   Probation_End_Date DATE OPTIONS(description="Date probation period ends"),
   Confirmation_Date DATE OPTIONS(description="Date employee was confirmed"),

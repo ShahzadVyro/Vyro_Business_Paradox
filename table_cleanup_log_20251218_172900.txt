@@ -1,0 +1,13 @@
+BigQuery Table Cleanup Log
+Date: 2025-12-18T17:29:00.050299
+Project: test-imagine-web
+Dataset: Vyro_Business_Paradox
+
+Deleted (5):
+  - EmployeeData
+  - EmployeeData_v2
+  - Directory_Employees_Data
+  - Combined-USD_2025
+  - Combined-PKR_2025
+
+Failed (0):
