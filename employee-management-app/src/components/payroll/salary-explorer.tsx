@@ -338,7 +338,7 @@ const SalaryExplorer = () => {
                         <td className="px-2 py-2 text-slate-600">{formatByCurrency(row.New_Addition_Increment_Decrement, row.Currency)}</td>
                         <td className="px-2 py-2 text-slate-600">{row.Date_of_Increment_Decrement ? formatDate(row.Date_of_Increment_Decrement) : "—"}</td>
                         <EditableCell
-                          value={row.Payable_from_Last_Month}
+                          value={row.Payable_from_Last_Month ?? null}
                           field="Payable_from_Last_Month"
                           currency={row.Currency}
                           onSave={async (field, value) => handleUpdate({ [field]: value } as Partial<SalaryRecord>)}
@@ -350,7 +350,7 @@ const SalaryExplorer = () => {
                         <td className="px-2 py-2 text-slate-600">{formatByCurrency(row.Revised_with_OPD, row.Currency)}</td>
                         <td className="px-2 py-2 text-slate-900 font-medium">{formatByCurrency(row.Prorated_Pay, row.Currency)}</td>
                         <EditableCell
-                          value={row.Performance_Bonus}
+                          value={row.Performance_Bonus ?? null}
                           field="Performance_Bonus"
                           currency={row.Currency}
                           onSave={async (field, value) => handleUpdate({ [field]: value } as Partial<SalaryRecord>)}
@@ -359,7 +359,7 @@ const SalaryExplorer = () => {
                           parseValue={(val) => (val === "" ? null : parseFloat(val))}
                         />
                         <EditableCell
-                          value={row.Paid_Overtime}
+                          value={row.Paid_Overtime ?? null}
                           field="Paid_Overtime"
                           currency={row.Currency}
                           onSave={async (field, value) => handleUpdate({ [field]: value } as Partial<SalaryRecord>)}
@@ -368,7 +368,7 @@ const SalaryExplorer = () => {
                           parseValue={(val) => (val === "" ? null : parseFloat(val))}
                         />
                         <EditableCell
-                          value={row.Reimbursements}
+                          value={row.Reimbursements ?? null}
                           field="Reimbursements"
                           currency={row.Currency}
                           onSave={async (field, value) => handleUpdate({ [field]: value } as Partial<SalaryRecord>)}
@@ -377,7 +377,7 @@ const SalaryExplorer = () => {
                           parseValue={(val) => (val === "" ? null : parseFloat(val))}
                         />
                         <EditableCell
-                          value={row.Other}
+                          value={row.Other ?? null}
                           field="Other"
                           currency={row.Currency}
                           onSave={async (field, value) => handleUpdate({ [field]: value } as Partial<SalaryRecord>)}
@@ -387,7 +387,7 @@ const SalaryExplorer = () => {
                         />
                         <td className="px-2 py-2 text-slate-900 font-bold">{formatByCurrency(row.Gross_Income, row.Currency)}</td>
                         <EditableCell
-                          value={row.Unpaid_Leaves}
+                          value={row.Unpaid_Leaves ?? null}
                           field="Unpaid_Leaves"
                           onSave={async (field, value) => handleUpdate({ [field]: value } as Partial<SalaryRecord>)}
                           type="number"
@@ -395,7 +395,7 @@ const SalaryExplorer = () => {
                           parseValue={(val) => (val === "" ? null : parseFloat(val))}
                         />
                         <EditableCell
-                          value={row.Deductions}
+                          value={row.Deductions ?? null}
                           field="Deductions"
                           currency={row.Currency}
                           onSave={async (field, value) => handleUpdate({ [field]: value } as Partial<SalaryRecord>)}
@@ -405,21 +405,21 @@ const SalaryExplorer = () => {
                         />
                         <td className="px-2 py-2 text-slate-900 font-bold">{formatByCurrency(row.Net_Income, row.Currency)}</td>
                         <EditableCell
-                          value={row.Comments}
+                          value={row.Comments ?? null}
                           field="Comments"
                           onSave={async (field, value) => handleUpdate({ [field]: value } as Partial<SalaryRecord>)}
                           type="text"
                           className="px-2 py-2 text-slate-600 max-w-xs"
                         />
                         <EditableCell
-                          value={row.Internal_Comments}
+                          value={row.Internal_Comments ?? null}
                           field="Internal_Comments"
                           onSave={async (field, value) => handleUpdate({ [field]: value } as Partial<SalaryRecord>)}
                           type="text"
                           className="px-2 py-2 text-slate-600 max-w-xs"
                         />
                         <EditableCell
-                          value={row.PaySlip_Status || "Not Sent"}
+                          value={row.PaySlip_Status ?? "Not Sent"}
                           field="PaySlip_Status"
                           onSave={async (field, value) => handleUpdate({ [field]: value } as Partial<SalaryRecord>)}
                           type="select"
