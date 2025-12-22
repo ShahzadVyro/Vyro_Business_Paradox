@@ -445,7 +445,6 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
             // Date fields
             Date_of_Joining: joiningDate,
             Date_of_Leaving: leavingDate,
-            Date_of_Increment_Decrement: row.Date_of_Increment_Decrement ? convertDateToString(row.Date_of_Increment_Decrement) ?? null : null,
             // Employee fields
             Email: email,
             Official_Email: row.Official_Email ?? null,
