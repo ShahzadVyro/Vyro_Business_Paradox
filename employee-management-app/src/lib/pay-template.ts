@@ -394,8 +394,8 @@ export async function addIncrement(
         CAST(@effectiveDate AS DATE),
         @comments,
         @remarks,
-        CURRENT_DATETIME(),
-        CURRENT_DATETIME()
+        CURRENT_TIMESTAMP(),
+        CURRENT_TIMESTAMP()
       FROM ${employeesTableRef}
       WHERE Employee_ID = @employeeId
     `;
@@ -493,13 +493,13 @@ export async function approveConfirmation(
         ) s ON SAFE_CAST(e.Employee_ID AS INT64) = SAFE_CAST(s.Employee_ID AS INT64) AND s.rn = 1
         WHERE e.Employee_ID = @employeeId
       ) e
-      ON SAFE_CAST(c.Employee_ID AS STRING) = SAFE_CAST(e.Employee_ID AS STRING) AND c.Month = @month
+      ON c.Employee_ID = e.Employee_ID AND c.Month = @month
       WHEN MATCHED THEN
         UPDATE SET
           Approved = TRUE,
-          Approved_At = CURRENT_DATETIME(),
+          Approved_At = CURRENT_TIMESTAMP(),
           Approved_By = @approvedBy,
-          Updated_At = CURRENT_DATETIME()
+          Updated_At = CURRENT_TIMESTAMP()
       WHEN NOT MATCHED THEN
         INSERT (
           Employee_ID, Employee_Name, Probation_End_Date, Confirmation_Date,
@@ -508,8 +508,8 @@ export async function approveConfirmation(
         )
         VALUES (
           e.Employee_ID, e.Employee_Name, e.Probation_End_Date, CURRENT_DATE(),
-          'PKR', e.Updated_Salary, @month, TRUE, CURRENT_DATETIME(), @approvedBy,
-          CURRENT_DATETIME(), CURRENT_DATETIME()
+          'PKR', e.Updated_Salary, @month, TRUE, CURRENT_TIMESTAMP(), @approvedBy,
+          CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
         )
     `;
     
