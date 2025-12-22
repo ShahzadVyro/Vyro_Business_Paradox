@@ -252,7 +252,7 @@ const DashboardOverview = () => {
             </div>
           </section>
 
-          <section className="rounded-4xl border border-slate-200 bg-gradient-to-r from-slate-900 to-slate-700 p-6 text-white">
+          <section className="rounded-4xl border border-slate-200 bg-linear-to-r from-slate-900 to-slate-700 p-6 text-white">
             <h2 className="text-2xl font-semibold">Need the raw sheets?</h2>
             <p className="mt-2 text-sm text-slate-200">Jump directly to the dedicated directory, salary, or EOBI workspace.</p>
             <div className="mt-4 flex flex-wrap gap-3">

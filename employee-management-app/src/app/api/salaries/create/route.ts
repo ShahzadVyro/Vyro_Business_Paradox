@@ -54,6 +54,11 @@ export async function POST(request: Request) {
     // 2. Resigned/Terminated employees where Employment_End_Date is in selected month or next month
     // 3. New hires from Pay_Template_New_Hires for that month
 
+    // Build employee filter condition
+    const employeeFilter = employeeId 
+      ? `AND e.Employee_ID = @employeeId`
+      : ``;
+
     const eligibleEmployeesQuery = `
       SELECT DISTINCT
         e.Employee_ID,
@@ -83,6 +88,7 @@ export async function POST(request: Request) {
           AND e.Employment_End_Date <= DATE_ADD(DATE_TRUNC(CAST(@payrollMonth AS DATE), MONTH), INTERVAL 2 MONTH)
         )
       )
+      ${employeeFilter}
       AND NOT EXISTS (
         SELECT 1 FROM ${salariesTableRef} s
         WHERE s.Employee_ID = e.Employee_ID

@@ -102,7 +102,6 @@ export interface SalaryRecord {
   IBFT_IFT?: string | null;
   Slack_ID?: string | null;
   EOBI_Number?: string | null;
-  Last_Month_Salary?: number | null;
   Increment_or_New_Addition?: number | null;
   Date_of_Increment?: string | null;
   Payable_From?: string | null;
