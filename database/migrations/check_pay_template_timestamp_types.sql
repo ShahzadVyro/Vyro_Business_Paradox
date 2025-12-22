@@ -1,16 +1,11 @@
--- ============================================================================
--- DIAGNOSTIC QUERY: Check Pay Template Table Column Types
--- ============================================================================
--- This query checks the actual data types of timestamp columns in Pay_Template tables
--- Run this in BigQuery to verify if columns are DATETIME or TIMESTAMP
--- ============================================================================
+-- Diagnostic query to check actual column types in Pay Template tables
+-- Run this in BigQuery to see if columns are DATETIME or TIMESTAMP
 
 SELECT
   table_name,
   column_name,
   data_type,
-  is_nullable,
-  column_default
+  is_nullable
 FROM
   `test-imagine-web.Vyro_Business_Paradox.INFORMATION_SCHEMA.COLUMNS`
 WHERE
@@ -18,8 +13,3 @@ WHERE
   AND column_name IN ('Created_At', 'Updated_At', 'Approved_At')
 ORDER BY
   table_name, column_name;
-
--- Expected result if tables are correct:
--- All data_type values should be 'TIMESTAMP'
---
--- If you see 'DATETIME', the tables need to be migrated to TIMESTAMP
