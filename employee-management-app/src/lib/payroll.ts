@@ -3,6 +3,12 @@ import type { SalaryRecord, EOBIRecord } from "@/types/api/payroll";
 import type { SalaryFilters, EobiFilters, MonthOption, PayrollSummaryRow, EobiSummary } from "@/types/payroll";
 import { getBigQueryClient } from "./bigquery";
 import { convertDateToString } from "./formatters";
+import { 
+  calculateProratedPay, 
+  getTotalDaysInMonth, 
+  calculateWorkedDays,
+  calculateGrossIncome 
+} from "./payroll-calculations";
 
 const projectId = process.env.GCP_PROJECT_ID;
 const dataset = process.env.BQ_DATASET;
@@ -290,36 +296,121 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
     const mappedRows = rows
       .map((row): SalaryRecord | null => {
         try {
+          // Extract employee fields from join
+          const employeeName = (row as any).Employee_Name ?? row.Employee_Name ?? null;
+          const designation = (row as any).Designation ?? row.Designation ?? null;
+          const department = (row as any).Department ?? row.Department ?? null;
+          const joiningDate = (row as any).Date_of_Joining_Display 
+            ? convertDateToString((row as any).Date_of_Joining_Display) ?? null 
+            : (row.Joining_Date ? convertDateToString(row.Joining_Date) ?? null : null);
+          const leavingDate = (row as any).Date_of_Leaving_Display 
+            ? convertDateToString((row as any).Date_of_Leaving_Display) ?? null 
+            : (row.Employment_End_Date ? convertDateToString(row.Employment_End_Date) ?? null : null);
+          const email = (row as any).Email ?? row.Official_Email ?? row.Personal_Email ?? null;
+          
+          // Debug logging for missing employee fields
+          if (!employeeName && row.Employee_ID) {
+            console.warn('[FETCH_SALARIES] Employee join may have failed', {
+              employeeId: row.Employee_ID,
+              hasDesignation: !!designation,
+              hasDepartment: !!department,
+              hasEmail: !!email
+            });
+          }
+          
+          // Get payroll month for calculations
+          const payrollMonth = convertDateToString(row.Payroll_Month) ?? null;
+          // Extract YYYY-MM from date string (handles both YYYY-MM-DD and YYYY-MM formats)
+          let payrollMonthDate: Date | null = null;
+          if (payrollMonth) {
+            const dateMatch = payrollMonth.match(/^(\d{4})-(\d{2})/);
+            if (dateMatch) {
+              const [, year, month] = dateMatch;
+              payrollMonthDate = new Date(parseInt(year, 10), parseInt(month, 10) - 1, 1);
+            } else {
+              // Fallback: try parsing the full string
+              const parsed = Date.parse(payrollMonth);
+              if (!Number.isNaN(parsed)) {
+                payrollMonthDate = new Date(parsed);
+              }
+            }
+          }
+          
+          // Calculate Worked_Days if missing
+          let workedDays = row.Worked_Days;
+          if ((!workedDays || workedDays === null) && payrollMonthDate) {
+            workedDays = calculateWorkedDays(joiningDate, leavingDate, payrollMonthDate);
+          }
+          
+          // Get total days in month for calculations
+          const totalDaysInMonth = payrollMonthDate ? getTotalDaysInMonth(payrollMonthDate) : 30;
+          
+          // Get Revised_with_OPD
+          const revisedWithOPD = (row as any).Revised_with_OPD ?? row.Revised_with_OPD ?? null;
+          
+          // Calculate Regular_Pay if missing: (Revised_with_OPD / total_days_in_month) * Worked_Days
+          let regularPay = row.Regular_Pay;
+          if ((!regularPay || regularPay === null) && revisedWithOPD && workedDays && totalDaysInMonth > 0) {
+            regularPay = (revisedWithOPD / totalDaysInMonth) * workedDays;
+          }
+          
+          // Calculate Prorated_Pay if missing
+          let proratedPay = row.Prorated_Pay;
+          if ((!proratedPay || proratedPay === null) && revisedWithOPD && workedDays && totalDaysInMonth > 0) {
+            proratedPay = calculateProratedPay(revisedWithOPD, totalDaysInMonth, workedDays);
+          }
+          
+          // Recalculate Gross_Income if components are available
+          let grossIncome = row.Gross_Income;
+          if ((!grossIncome || grossIncome === null) && proratedPay !== null) {
+            grossIncome = calculateGrossIncome(
+              proratedPay,
+              row.Performance_Bonus ?? null,
+              row.Paid_Overtime ?? null,
+              row.Reimbursements ?? null,
+              row.Other ?? null,
+              (row as any).Payable_from_Last_Month ?? row.Payable_from_Last_Month ?? null
+            );
+          }
+          
           const normalized = {
             ...row,
             Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
               ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
               : null,
-            Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
+            Employee_Name: employeeName ?? row.Employee_Name ?? null,
+            Designation: designation ?? row.Designation ?? null,
+            Department: department ?? row.Department ?? null,
+            Payroll_Month: payrollMonth,
             Loaded_At: row.Loaded_At ? convertDateToString(row.Loaded_At) ?? null : null,
             Created_At: 'Created_At' in row && row.Created_At ? convertDateToString(row.Created_At as unknown) ?? null : null,
-            Joining_Date: row.Joining_Date ? convertDateToString(row.Joining_Date) ?? null : null,
+            Joining_Date: joiningDate,
             Date_of_Birth: row.Date_of_Birth ? convertDateToString(row.Date_of_Birth) ?? null : null,
             Spouse_DOB: row.Spouse_DOB ? convertDateToString(row.Spouse_DOB) ?? null : null,
             Date_of_Increment: row.Date_of_Increment ? convertDateToString(row.Date_of_Increment) ?? null : null,
             Payable_From: row.Payable_From ? convertDateToString(row.Payable_From) ?? null : null,
             Salary_Effective_Date: row.Salary_Effective_Date ? convertDateToString(row.Salary_Effective_Date) ?? null : null,
-            // New fields - handle both direct fields and display fields from query
-            Date_of_Joining: (row as any).Date_of_Joining_Display 
-              ? convertDateToString((row as any).Date_of_Joining_Display) ?? null 
-              : (row.Date_of_Joining ? convertDateToString(row.Date_of_Joining) ?? null : null),
-            Date_of_Leaving: (row as any).Date_of_Leaving_Display 
-              ? convertDateToString((row as any).Date_of_Leaving_Display) ?? null 
-              : (row.Date_of_Leaving ? convertDateToString(row.Date_of_Leaving) ?? null : null),
+            // Date fields
+            Date_of_Joining: joiningDate,
+            Date_of_Leaving: leavingDate,
             Date_of_Increment_Decrement: row.Date_of_Increment_Decrement ? convertDateToString(row.Date_of_Increment_Decrement) ?? null : null,
-            Email: (row as any).Email ?? row.Official_Email ?? row.Personal_Email ?? null,
+            // Employee fields
+            Email: email,
+            Official_Email: row.Official_Email ?? null,
+            Personal_Email: row.Personal_Email ?? null,
+            // Calculated fields
+            Worked_Days: workedDays ?? row.Worked_Days ?? null,
+            Regular_Pay: regularPay ?? row.Regular_Pay ?? null,
+            Revised_with_OPD: revisedWithOPD,
+            Prorated_Pay: proratedPay ?? row.Prorated_Pay ?? null,
+            Gross_Income: grossIncome ?? row.Gross_Income ?? null,
+            // Other fields
             Month_Key: (row as any).Month_Key ?? null,
             Key: (row as any).Key ?? null,
             Status: (row as any).Status ?? null,
             Last_Month_Salary: (row as any).Last_Month_Salary ?? null,
             New_Addition_Increment_Decrement: (row as any).New_Addition_Increment_Decrement ?? null,
             Payable_from_Last_Month: (row as any).Payable_from_Last_Month ?? null,
-            Revised_with_OPD: (row as any).Revised_with_OPD ?? null,
             Salary_Status: (row as any).Salary_Status ?? null,
             PaySlip_Status: (row as any).PaySlip_Status ?? null,
             Month: (row as any).Month_Abbrev ?? null,
