@@ -240,12 +240,31 @@ export async function POST(request: Request) {
 
     for (const emp of allEmployees) {
       const employeeId = emp.Employee_ID;
-      const joiningDate = emp.Joining_Date
-        ? new Date(emp.Joining_Date).toISOString().split("T")[0]
-        : null;
-      const leavingDate = emp.Employment_End_Date
-        ? new Date(emp.Employment_End_Date).toISOString().split("T")[0]
-        : null;
+      
+      // Safely parse dates - handle invalid dates
+      let joiningDate: string | null = null;
+      if (emp.Joining_Date) {
+        try {
+          const date = new Date(emp.Joining_Date);
+          if (!isNaN(date.getTime())) {
+            joiningDate = date.toISOString().split("T")[0];
+          }
+        } catch (e) {
+          console.warn(`Invalid joining date for employee ${employeeId}: ${emp.Joining_Date}`);
+        }
+      }
+      
+      let leavingDate: string | null = null;
+      if (emp.Employment_End_Date) {
+        try {
+          const date = new Date(emp.Employment_End_Date);
+          if (!isNaN(date.getTime())) {
+            leavingDate = date.toISOString().split("T")[0];
+          }
+        } catch (e) {
+          console.warn(`Invalid leaving date for employee ${employeeId}: ${emp.Employment_End_Date}`);
+        }
+      }
 
       // Calculate worked days
       const workedDays = calculateWorkedDays(

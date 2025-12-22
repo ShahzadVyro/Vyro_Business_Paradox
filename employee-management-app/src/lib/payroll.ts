@@ -189,7 +189,7 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
     params.month = filters.month;
   }
   if (filters.currency) {
-    conditions.push(`Currency = @currency`);
+    conditions.push(`s.Currency = @currency`);
     params.currency = filters.currency;
   }
   if (filters.status) {
