@@ -394,8 +394,8 @@ export async function addIncrement(
         CAST(@effectiveDate AS DATE),
         @comments,
         @remarks,
-        CURRENT_TIMESTAMP(),
-        CURRENT_TIMESTAMP()
+        CURRENT_DATETIME(),
+        CURRENT_DATETIME()
       FROM ${employeesTableRef}
       WHERE Employee_ID = @employeeId
     `;
@@ -497,9 +497,9 @@ export async function approveConfirmation(
       WHEN MATCHED THEN
         UPDATE SET
           Approved = TRUE,
-          Approved_At = CURRENT_TIMESTAMP(),
+          Approved_At = CURRENT_DATETIME(),
           Approved_By = @approvedBy,
-          Updated_At = CURRENT_TIMESTAMP()
+          Updated_At = CURRENT_DATETIME()
       WHEN NOT MATCHED THEN
         INSERT (
           Employee_ID, Employee_Name, Probation_End_Date, Confirmation_Date,
@@ -508,8 +508,8 @@ export async function approveConfirmation(
         )
         VALUES (
           e.Employee_ID, e.Employee_Name, e.Probation_End_Date, CURRENT_DATE(),
-          'PKR', e.Updated_Salary, @month, TRUE, CURRENT_TIMESTAMP(), @approvedBy,
-          CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
+          'PKR', e.Updated_Salary, @month, TRUE, CURRENT_DATETIME(), @approvedBy,
+          CURRENT_DATETIME(), CURRENT_DATETIME()
         )
     `;
     
