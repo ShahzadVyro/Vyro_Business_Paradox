@@ -426,6 +426,78 @@ export async function addIncrement(
       ...(Object.keys(queryTypes).length > 0 && { types: queryTypes }),
     });
     
+    // Insert/Update Employee_Salaries table with new salary
+    // Calculate Payroll_Month (first day of the month from effectiveDate)
+    const effectiveDateObj = new Date(effectiveDate);
+    const payrollMonth = new Date(effectiveDateObj.getFullYear(), effectiveDateObj.getMonth(), 1)
+      .toISOString()
+      .split('T')[0];
+    
+    // Get next Salary_ID
+    const maxSalaryIdQuery = `
+      SELECT COALESCE(MAX(Salary_ID), 0) as max_id
+      FROM ${salariesTableRef}
+    `;
+    const [maxIdRows] = await bigquery.query({ query: maxSalaryIdQuery });
+    const nextSalaryId = ((maxIdRows[0] as { max_id: number })?.max_id ?? 0) + 1;
+    
+    // Get employee details for payroll snapshot
+    const employeeDetailsQuery = `
+      SELECT Designation, Department, Bank_Name, Account_Number_IBAN
+      FROM ${employeesTableRef}
+      WHERE Employee_ID = @employeeId
+    `;
+    const [empRows] = await bigquery.query({
+      query: employeeDetailsQuery,
+      params: { employeeId: employeeIdNum },
+    });
+    const empDetails = empRows[0] as {
+      Designation?: string;
+      Department?: string;
+      Bank_Name?: string;
+      Account_Number_IBAN?: string;
+    } | undefined;
+    
+    // Insert new salary record
+    const insertSalaryQuery = `
+      INSERT INTO ${salariesTableRef}
+        (Salary_ID, Employee_ID, Payroll_Month, Currency, Gross_Income,
+         Salary_Effective_Date, Designation_At_Payroll, Department_At_Payroll,
+         Bank_Name_At_Payroll, Bank_Account_At_Payroll, Created_At)
+      VALUES
+        (@salaryId, @employeeId, CAST(@payrollMonth AS DATE), @currency, @grossIncome,
+         CAST(@effectiveDate AS DATE), @designation, @department,
+         @bankName, @bankAccount, CURRENT_TIMESTAMP())
+    `;
+    
+    const salaryParams: Record<string, unknown> = {
+      salaryId: nextSalaryId,
+      employeeId: employeeIdNum,
+      payrollMonth,
+      currency,
+      grossIncome: updatedSalary,
+      effectiveDate,
+      designation: designation ?? empDetails?.Designation ?? null,
+      department: department ?? empDetails?.Department ?? null,
+      bankName: empDetails?.Bank_Name ?? null,
+      bankAccount: empDetails?.Account_Number_IBAN ?? null,
+    };
+    
+    const salaryTypes: Record<string, string> = {
+      payrollMonth: "DATE",
+      effectiveDate: "DATE",
+    };
+    if (salaryParams.designation === null) salaryTypes.designation = "STRING";
+    if (salaryParams.department === null) salaryTypes.department = "STRING";
+    if (salaryParams.bankName === null) salaryTypes.bankName = "STRING";
+    if (salaryParams.bankAccount === null) salaryTypes.bankAccount = "STRING";
+    
+    await bigquery.query({
+      query: insertSalaryQuery,
+      params: salaryParams,
+      ...(Object.keys(salaryTypes).length > 0 && { types: salaryTypes }),
+    });
+    
     // Update Employees table (only Designation and Department, salary is managed in Salaries table)
     const updateFields: string[] = [];
     const updateParams: Record<string, unknown> = {
