@@ -204,6 +204,10 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
   const limit = filters.limit ?? 50;
   const offset = filters.offset ?? 0;
 
+  // Note: s.* includes all columns from Employee_Salaries table
+  // Explicit column references below are for aliasing/joining purposes
+  // If any of these columns don't exist in the table, the query will fail
+  // and the error will be logged with full details for debugging
   const dataQuery = `
     SELECT 
       s.*,
@@ -218,17 +222,11 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
       COALESCE(s.Email, e.Official_Email, e.Personal_Email) AS Email,
       COALESCE(s.Date_of_Joining, e.Joining_Date) AS Date_of_Joining_Display,
       COALESCE(s.Date_of_Leaving, e.Employment_End_Date) AS Date_of_Leaving_Display,
-      s.Month_Key,
-      s.Key,
-      s.Status,
-      s.Last_Month_Salary,
-      s.New_Addition_Increment_Decrement,
-      s.Date_of_Increment_Decrement,
-      s.Payable_from_Last_Month,
-      s.Revised_with_OPD,
-      s.Salary_Status,
-      s.PaySlip_Status,
-      FORMAT_DATE('%b %Y', s.Payroll_Month) AS Month_Abbrev
+      CASE 
+        WHEN s.Payroll_Month IS NOT NULL 
+        THEN FORMAT_DATE('%b %Y', s.Payroll_Month) 
+        ELSE NULL 
+      END AS Month_Abbrev
     FROM ${salariesRef} s
     LEFT JOIN ${employeeRef} e ON s.Employee_ID = e.Employee_ID
     ${whereClause}
@@ -243,66 +241,156 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
     ${whereClause}
   `;
 
-  const [rowsPromise, countPromise] = await Promise.all([
-    bigquery.query({
-      query: dataQuery,
-      params: { ...params, limit, offset },
-    }),
-    bigquery.query({
-      query: countQuery,
-      params,
-    }),
-  ]);
+  const queryStartTime = Date.now();
+  console.log('[FETCH_SALARIES] Starting queries', { filters, limit, offset });
+  
+  let rows: SalaryRecord[] = [];
+  let total = 0;
+  
+  try {
+    const [rowsPromise, countPromise] = await Promise.all([
+      bigquery.query({
+        query: dataQuery,
+        params: { ...params, limit, offset },
+      }),
+      bigquery.query({
+        query: countQuery,
+        params,
+      }),
+    ]);
 
-  const rows = rowsPromise[0] as SalaryRecord[];
-  const total = Number((countPromise[0][0] as { total: number })?.total ?? 0);
+    const queryEndTime = Date.now();
+    console.log('[FETCH_SALARIES] Queries completed', { 
+      duration: `${queryEndTime - queryStartTime}ms`,
+      rowsCount: rowsPromise[0]?.length ?? 0,
+      total: countPromise[0]?.[0] 
+    });
+
+    rows = rowsPromise[0] as SalaryRecord[];
+    total = Number((countPromise[0][0] as { total: number })?.total ?? 0);
+  } catch (error) {
+    const queryEndTime = Date.now();
+    console.error('[FETCH_SALARIES] Query error', {
+      duration: `${queryEndTime - queryStartTime}ms`,
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error,
+      query: dataQuery.substring(0, 200) + '...',
+      params: { ...params, limit, offset }
+    });
+    throw error;
+  }
 
   // Convert Employee_ID from string to number, normalize dates, and filter out NULL Employee_IDs
-  const convertedRows = rows
-    .map((row) => {
-      const normalized = {
-        ...row,
-        Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
-          ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
-          : null,
-        Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
-        Loaded_At: row.Loaded_At ? convertDateToString(row.Loaded_At) ?? null : null,
-        Created_At: 'Created_At' in row && row.Created_At ? convertDateToString(row.Created_At as unknown) ?? null : null,
-        Joining_Date: row.Joining_Date ? convertDateToString(row.Joining_Date) ?? null : null,
-        Date_of_Birth: row.Date_of_Birth ? convertDateToString(row.Date_of_Birth) ?? null : null,
-        Spouse_DOB: row.Spouse_DOB ? convertDateToString(row.Spouse_DOB) ?? null : null,
-        Date_of_Increment: row.Date_of_Increment ? convertDateToString(row.Date_of_Increment) ?? null : null,
-        Payable_From: row.Payable_From ? convertDateToString(row.Payable_From) ?? null : null,
-        Salary_Effective_Date: row.Salary_Effective_Date ? convertDateToString(row.Salary_Effective_Date) ?? null : null,
-        // New fields - handle both direct fields and display fields from query
-        Date_of_Joining: (row as any).Date_of_Joining_Display 
-          ? convertDateToString((row as any).Date_of_Joining_Display) ?? null 
-          : (row.Date_of_Joining ? convertDateToString(row.Date_of_Joining) ?? null : null),
-        Date_of_Leaving: (row as any).Date_of_Leaving_Display 
-          ? convertDateToString((row as any).Date_of_Leaving_Display) ?? null 
-          : (row.Date_of_Leaving ? convertDateToString(row.Date_of_Leaving) ?? null : null),
-        Date_of_Increment_Decrement: row.Date_of_Increment_Decrement ? convertDateToString(row.Date_of_Increment_Decrement) ?? null : null,
-        Email: (row as any).Email ?? row.Official_Email ?? row.Personal_Email ?? null,
-        Month_Key: (row as any).Month_Key ?? null,
-        Key: (row as any).Key ?? null,
-        Status: (row as any).Status ?? null,
-        Last_Month_Salary: (row as any).Last_Month_Salary ?? null,
-        New_Addition_Increment_Decrement: (row as any).New_Addition_Increment_Decrement ?? null,
-        Payable_from_Last_Month: (row as any).Payable_from_Last_Month ?? null,
-        Revised_with_OPD: (row as any).Revised_with_OPD ?? null,
-        Salary_Status: (row as any).Salary_Status ?? null,
-        PaySlip_Status: (row as any).PaySlip_Status ?? null,
-        Month: (row as any).Month_Abbrev ?? null,
-      };
-      
-      return normalized;
-    })
-    .filter((row) => row.Employee_ID !== null); // Filter out records with NULL Employee_ID
+  let convertedRows: SalaryRecord[] = [];
+  try {
+    console.log('[FETCH_SALARIES] Starting data transformation', { rowsCount: rows.length });
+    convertedRows = rows
+      .map((row) => {
+        try {
+          const normalized = {
+            ...row,
+            Employee_ID: row.Employee_ID !== null && row.Employee_ID !== undefined
+              ? (typeof row.Employee_ID === 'string' ? parseInt(row.Employee_ID, 10) : row.Employee_ID)
+              : null,
+            Payroll_Month: convertDateToString(row.Payroll_Month) ?? null,
+            Loaded_At: row.Loaded_At ? convertDateToString(row.Loaded_At) ?? null : null,
+            Created_At: 'Created_At' in row && row.Created_At ? convertDateToString(row.Created_At as unknown) ?? null : null,
+            Joining_Date: row.Joining_Date ? convertDateToString(row.Joining_Date) ?? null : null,
+            Date_of_Birth: row.Date_of_Birth ? convertDateToString(row.Date_of_Birth) ?? null : null,
+            Spouse_DOB: row.Spouse_DOB ? convertDateToString(row.Spouse_DOB) ?? null : null,
+            Date_of_Increment: row.Date_of_Increment ? convertDateToString(row.Date_of_Increment) ?? null : null,
+            Payable_From: row.Payable_From ? convertDateToString(row.Payable_From) ?? null : null,
+            Salary_Effective_Date: row.Salary_Effective_Date ? convertDateToString(row.Salary_Effective_Date) ?? null : null,
+            // New fields - handle both direct fields and display fields from query
+            Date_of_Joining: (row as any).Date_of_Joining_Display 
+              ? convertDateToString((row as any).Date_of_Joining_Display) ?? null 
+              : (row.Date_of_Joining ? convertDateToString(row.Date_of_Joining) ?? null : null),
+            Date_of_Leaving: (row as any).Date_of_Leaving_Display 
+              ? convertDateToString((row as any).Date_of_Leaving_Display) ?? null 
+              : (row.Date_of_Leaving ? convertDateToString(row.Date_of_Leaving) ?? null : null),
+            Date_of_Increment_Decrement: row.Date_of_Increment_Decrement ? convertDateToString(row.Date_of_Increment_Decrement) ?? null : null,
+            Email: (row as any).Email ?? row.Official_Email ?? row.Personal_Email ?? null,
+            Month_Key: (row as any).Month_Key ?? null,
+            Key: (row as any).Key ?? null,
+            Status: (row as any).Status ?? null,
+            Last_Month_Salary: (row as any).Last_Month_Salary ?? null,
+            New_Addition_Increment_Decrement: (row as any).New_Addition_Increment_Decrement ?? null,
+            Payable_from_Last_Month: (row as any).Payable_from_Last_Month ?? null,
+            Revised_with_OPD: (row as any).Revised_with_OPD ?? null,
+            Salary_Status: (row as any).Salary_Status ?? null,
+            PaySlip_Status: (row as any).PaySlip_Status ?? null,
+            Month: (row as any).Month_Abbrev ?? null,
+          };
+          
+          return normalized;
+        } catch (rowError) {
+          console.error('[FETCH_SALARIES] Error transforming row', {
+            error: rowError instanceof Error ? {
+              message: rowError.message,
+              stack: rowError.stack
+            } : rowError,
+            employeeId: (row as any).Employee_ID
+          });
+          return null;
+        }
+      })
+      .filter((row): row is SalaryRecord => row !== null && row.Employee_ID !== null); // Filter out NULL Employee_IDs and failed transformations
+    
+    console.log('[FETCH_SALARIES] Data transformation completed', { 
+      originalCount: rows.length,
+      convertedCount: convertedRows.length 
+    });
+  } catch (error) {
+    console.error('[FETCH_SALARIES] Data transformation error', {
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error
+    });
+    throw error;
+  }
 
   // Still use directory lookup for backward compatibility with old data
-  const directoryLookup = await fetchDirectoryLookup();
-  const enrichedRows = convertedRows.map((row) => enrichSalaryRow(row, directoryLookup));
-  const filteredRows = enrichedRows.filter((row) => shouldIncludeRow(row, filters.month));
+  let directoryLookup: DirectoryLookup;
+  try {
+    console.log('[FETCH_SALARIES] Fetching directory lookup');
+    directoryLookup = await fetchDirectoryLookup();
+    console.log('[FETCH_SALARIES] Directory lookup completed');
+  } catch (error) {
+    console.error('[FETCH_SALARIES] Directory lookup error', {
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error
+    });
+    // Continue with empty lookup if directory fetch fails
+    directoryLookup = { byEmail: new Map(), byId: new Map(), byKey: new Map() };
+  }
+
+  let enrichedRows: SalaryRecord[] = [];
+  let filteredRows: SalaryRecord[] = [];
+  try {
+    enrichedRows = convertedRows.map((row) => enrichSalaryRow(row, directoryLookup));
+    filteredRows = enrichedRows.filter((row) => shouldIncludeRow(row, filters.month));
+    console.log('[FETCH_SALARIES] Enrichment and filtering completed', {
+      enrichedCount: enrichedRows.length,
+      filteredCount: filteredRows.length
+    });
+  } catch (error) {
+    console.error('[FETCH_SALARIES] Enrichment/filtering error', {
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error
+    });
+    throw error;
+  }
 
   return { rows: filteredRows, total };
 }
@@ -481,63 +569,114 @@ const normaliseKey = (value?: string | null) => {
 async function fetchDirectoryLookup(): Promise<DirectoryLookup> {
   const now = Date.now();
   if (directoryCache && now - directoryCache.fetchedAt < DIRECTORY_CACHE_TTL_MS) {
+    console.log('[FETCH_DIRECTORY_LOOKUP] Using cached lookup');
     return directoryCache.lookup;
   }
 
-  const bigquery = getBigQueryClient();
-  const query = `
-    SELECT
-      CAST(Employee_ID AS STRING) AS Employee_ID,
-      Full_Name,
-      Department,
-      LOWER(Official_Email) AS Official_Email,
-      LOWER(Personal_Email) AS Personal_Email,
-      Employment_End_Date,
-      Employment_Status,
-      LOWER(TRIM(Full_Name)) AS Full_Name_Key
-    FROM ${employeeRef}
-  `;
-  const [rows] = await bigquery.query({ query });
-  const byEmail = new Map<string, DirectoryRecord>();
-  const byId = new Map<string, DirectoryRecord>();
-  const byKey = new Map<string, DirectoryRecord>();
+  const queryStartTime = Date.now();
+  console.log('[FETCH_DIRECTORY_LOOKUP] Starting query');
+  
+  try {
+    const bigquery = getBigQueryClient();
+    const query = `
+      SELECT
+        CAST(Employee_ID AS STRING) AS Employee_ID,
+        Full_Name,
+        Department,
+        LOWER(Official_Email) AS Official_Email,
+        LOWER(Personal_Email) AS Personal_Email,
+        Employment_End_Date,
+        Employment_Status,
+        LOWER(TRIM(Full_Name)) AS Full_Name_Key
+      FROM ${employeeRef}
+    `;
+    
+    const [rows] = await bigquery.query({ query });
+    const queryEndTime = Date.now();
+    console.log('[FETCH_DIRECTORY_LOOKUP] Query completed', {
+      duration: `${queryEndTime - queryStartTime}ms`,
+      rowsCount: rows?.length ?? 0
+    });
 
-  (rows as DirectoryRecord[]).forEach((row) => {
-    // Normalize Employment_End_Date using convertDateToString to handle BigQueryDate objects
-    const employmentEndDate = convertDateToString(row.Employment_End_Date);
-    const record: DirectoryRecord = {
-      Employee_ID: preferValue(String(row.Employee_ID)),
-      Full_Name: preferValue(row.Full_Name),
-      Department: preferValue(row.Department),
-      Official_Email: normaliseEmail(row.Official_Email),
-      Personal_Email: normaliseEmail(row.Personal_Email),
-      Employment_End_Date: employmentEndDate,
-      Employment_End_Date_ISO: employmentEndDate,
-      Employment_Status: preferValue(row.Employment_Status),
-      Full_Name_Key: normaliseKey(row.Full_Name_Key ?? row.Full_Name),
-      Key: normaliseKey(row.Full_Name_Key ?? row.Full_Name ?? String(row.Employee_ID)),
-    };
+    const byEmail = new Map<string, DirectoryRecord>();
+    const byId = new Map<string, DirectoryRecord>();
+    const byKey = new Map<string, DirectoryRecord>();
 
-    const idKey = normaliseId(record.Employee_ID);
-    if (idKey) {
-      byId.set(idKey, record);
+    try {
+      (rows as DirectoryRecord[]).forEach((row) => {
+        try {
+          // Normalize Employment_End_Date using convertDateToString to handle BigQueryDate objects
+          const employmentEndDate = convertDateToString(row.Employment_End_Date);
+          const record: DirectoryRecord = {
+            Employee_ID: preferValue(String(row.Employee_ID)),
+            Full_Name: preferValue(row.Full_Name),
+            Department: preferValue(row.Department),
+            Official_Email: normaliseEmail(row.Official_Email),
+            Personal_Email: normaliseEmail(row.Personal_Email),
+            Employment_End_Date: employmentEndDate,
+            Employment_End_Date_ISO: employmentEndDate,
+            Employment_Status: preferValue(row.Employment_Status),
+            Full_Name_Key: normaliseKey(row.Full_Name_Key ?? row.Full_Name),
+            Key: normaliseKey(row.Full_Name_Key ?? row.Full_Name ?? String(row.Employee_ID)),
+          };
+
+          const idKey = normaliseId(record.Employee_ID);
+          if (idKey) {
+            byId.set(idKey, record);
+          }
+
+          if (record.Official_Email) {
+            byEmail.set(record.Official_Email, record);
+          }
+          if (record.Personal_Email) {
+            byEmail.set(record.Personal_Email, record);
+          }
+
+          if (record.Key) {
+            byKey.set(record.Key, record);
+          }
+        } catch (rowError) {
+          console.error('[FETCH_DIRECTORY_LOOKUP] Error processing row', {
+            error: rowError instanceof Error ? {
+              message: rowError.message,
+              stack: rowError.stack
+            } : rowError,
+            employeeId: (row as any).Employee_ID
+          });
+        }
+      });
+
+      const lookup = { byEmail, byId, byKey };
+      directoryCache = { lookup, fetchedAt: now };
+      console.log('[FETCH_DIRECTORY_LOOKUP] Lookup created', {
+        byEmailSize: byEmail.size,
+        byIdSize: byId.size,
+        byKeySize: byKey.size
+      });
+      return lookup;
+    } catch (processingError) {
+      console.error('[FETCH_DIRECTORY_LOOKUP] Error processing rows', {
+        error: processingError instanceof Error ? {
+          message: processingError.message,
+          stack: processingError.stack,
+          name: processingError.name
+        } : processingError
+      });
+      throw processingError;
     }
-
-    if (record.Official_Email) {
-      byEmail.set(record.Official_Email, record);
-    }
-    if (record.Personal_Email) {
-      byEmail.set(record.Personal_Email, record);
-    }
-
-    if (record.Key) {
-      byKey.set(record.Key, record);
-    }
-  });
-
-  const lookup = { byEmail, byId, byKey };
-  directoryCache = { lookup, fetchedAt: now };
-  return lookup;
+  } catch (error) {
+    const queryEndTime = Date.now();
+    console.error('[FETCH_DIRECTORY_LOOKUP] Query error', {
+      duration: `${queryEndTime - queryStartTime}ms`,
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error,
+      employeeRef
+    });
+    throw error;
+  }
 }
 
 const enrichSalaryRow = (row: SalaryRecord, lookup: DirectoryLookup): SalaryRecord => {

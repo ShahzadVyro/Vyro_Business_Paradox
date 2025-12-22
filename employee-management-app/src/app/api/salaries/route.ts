@@ -55,8 +55,19 @@ export async function GET(request: Request) {
       activeMonth,
     });
   } catch (error) {
-    console.error("[SALARY_LIST_ERROR]", error);
-    return NextResponse.json({ message: "Failed to fetch salary data" }, { status: 500 });
+    console.error("[SALARY_LIST_ERROR]", {
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error,
+      url: request.url,
+      searchParams: Object.fromEntries(new URL(request.url).searchParams)
+    });
+    return NextResponse.json({ 
+      message: "Failed to fetch salary data",
+      error: error instanceof Error ? error.message : "Unknown error"
+    }, { status: 500 });
   }
 }
 

@@ -122,8 +122,19 @@ export async function GET(request: Request) {
       activeMonth,
     });
   } catch (error) {
-    console.error("[EOBI_LIST_ERROR]", error);
-    return NextResponse.json({ message: "Failed to fetch EOBI data" }, { status: 500 });
+    console.error("[EOBI_LIST_ERROR]", {
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error,
+      url: request.url,
+      searchParams: Object.fromEntries(new URL(request.url).searchParams)
+    });
+    return NextResponse.json({ 
+      message: "Failed to fetch EOBI data",
+      error: error instanceof Error ? error.message : "Unknown error"
+    }, { status: 500 });
   }
 }
 
