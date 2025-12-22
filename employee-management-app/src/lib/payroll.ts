@@ -219,7 +219,7 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
       e.Employment_Status,
       e.Joining_Date,
       e.Employment_End_Date,
-      COALESCE(s.Email, e.Official_Email, e.Personal_Email) AS Email,
+      COALESCE(e.Official_Email, e.Personal_Email) AS Email,
       COALESCE(s.Date_of_Joining, e.Joining_Date) AS Date_of_Joining_Display,
       COALESCE(s.Date_of_Leaving, e.Employment_End_Date) AS Date_of_Leaving_Display,
       CASE 
