@@ -71,11 +71,19 @@ export async function POST(request: Request) {
         e.Employment_End_Date,
         e.Employment_Status,
         e.Probation_End_Date,
-        -- Regular pay will be fetched from latest salary record or Pay_Template_New_Hires
-        NULL as Regular_Pay_From_Employee,
+        -- Get regular pay from latest salary record for this currency
+        latest_salary.Regular_Pay as Regular_Pay_From_Employee,
         e.Bank_Name,
-        e.Account_Number_IBAN
+        e.Bank_Account_Number_IBAN as Account_Number_IBAN
       FROM ${employeesTableRef} e
+      LEFT JOIN (
+        SELECT 
+          Employee_ID,
+          Regular_Pay,
+          ROW_NUMBER() OVER (PARTITION BY Employee_ID, Currency ORDER BY Payroll_Month DESC) as rn
+        FROM ${salariesTableRef}
+        WHERE Currency = @currency
+      ) latest_salary ON e.Employee_ID = latest_salary.Employee_ID AND latest_salary.rn = 1
       WHERE (
         -- Active employees
         (e.Employment_Status = 'Active' AND e.Joining_Date <= LAST_DAY(CAST(@payrollMonth AS DATE)))

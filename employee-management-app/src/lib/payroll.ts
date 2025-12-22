@@ -185,7 +185,7 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
   const params: Record<string, unknown> = {};
 
   if (filters.month) {
-    conditions.push(`FORMAT_DATE('%Y-%m', Payroll_Month) = @month`);
+    conditions.push(`FORMAT_DATE('%Y-%m', s.Payroll_Month) = @month`);
     params.month = filters.month;
   }
   if (filters.currency) {
