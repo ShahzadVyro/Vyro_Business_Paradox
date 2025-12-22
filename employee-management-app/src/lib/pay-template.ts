@@ -400,6 +400,7 @@ export async function addIncrement(
     const month = effectiveDate.substring(0, 7); // Extract YYYY-MM from date
     
     // Insert into Pay_Template_Increments
+    // Note: Employee_ID in Pay_Template_Increments is STRING, but in Employees table it's INT64
     const insertIncrementQuery = `
       INSERT INTO ${payTemplateIncrementsTableRef} 
         (Type, Month, Employee_ID, Employee_Name, Currency, Previous_Salary, Updated_Salary, 
@@ -407,7 +408,7 @@ export async function addIncrement(
       SELECT 
         'Increment',
         @month,
-        @employeeId,
+        CAST(@employeeId AS STRING),
         Full_Name,
         @currency,
         @previousSalary,
