@@ -71,9 +71,8 @@ export async function POST(request: Request) {
         e.Employment_End_Date,
         e.Employment_Status,
         e.Probation_End_Date,
-        COALESCE(e.Basic_Salary, 0) + COALESCE(e.Medical_Allowance, 0) as Regular_Pay_From_Employee,
-        e.Basic_Salary,
-        e.Medical_Allowance,
+        -- Regular pay will be fetched from latest salary record or Pay_Template_New_Hires
+        NULL as Regular_Pay_From_Employee,
         e.Bank_Name,
         e.Account_Number_IBAN
       FROM ${employeesTableRef} e

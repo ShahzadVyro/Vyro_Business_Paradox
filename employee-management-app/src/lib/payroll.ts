@@ -376,8 +376,7 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
             ?? incrementAmountFromTemplate 
             ?? null;
           const dateOfIncrementDecrement = (row as any).Date_of_Increment_Decrement 
-            ?? incrementDateFromTemplate 
-            : null;
+            ?? incrementDateFromTemplate;
           
           // Get last month's salary from joined table if not already in salary record
           const lastMonthSalaryFromPrev = (row as any).Last_Month_Salary_From_Prev ?? null;
