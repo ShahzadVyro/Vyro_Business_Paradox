@@ -214,6 +214,10 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
   // Explicit column references below are for aliasing/joining purposes
   // If any of these columns don't exist in the table, the query will fail
   // and the error will be logged with full details for debugging
+  const projectId = process.env.GCP_PROJECT_ID;
+  const dataset = process.env.BQ_DATASET;
+  const payTemplateIncrementsTable = `\`${projectId}.${dataset}.Pay_Template_Increments\``;
+  
   const dataQuery = `
     SELECT 
       s.*,
@@ -225,9 +229,15 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
       e.Employment_Status,
       e.Joining_Date,
       e.Employment_End_Date,
+      e.Probation_End_Date,
       COALESCE(e.Official_Email, e.Personal_Email) AS Email,
       e.Joining_Date AS Date_of_Joining_Display,
       e.Employment_End_Date AS Date_of_Leaving_Display,
+      -- Join with increments table to get increment data for this month
+      inc.Updated_Salary AS Increment_Amount_From_Template,
+      inc.Effective_Date AS Increment_Date_From_Template,
+      -- Calculate last month's salary (from previous month's Gross_Income)
+      prev.Gross_Income AS Last_Month_Salary_From_Prev,
       CASE 
         WHEN s.Payroll_Month IS NOT NULL 
         THEN FORMAT_DATE('%b %Y', s.Payroll_Month) 
@@ -235,6 +245,16 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
       END AS Month_Abbrev
     FROM ${salariesRef} s
     LEFT JOIN ${employeeRef} e ON s.Employee_ID = e.Employee_ID
+    -- Join with increments table for this payroll month
+    LEFT JOIN ${payTemplateIncrementsTable} inc 
+      ON s.Employee_ID = inc.Employee_ID 
+      AND FORMAT_DATE('%Y-%m', s.Payroll_Month) = inc.Month
+      AND s.Currency = inc.Currency
+    -- Join with previous month's salary to get last month's gross income
+    LEFT JOIN ${salariesRef} prev 
+      ON s.Employee_ID = prev.Employee_ID 
+      AND s.Currency = prev.Currency
+      AND prev.Payroll_Month = DATE_SUB(DATE_TRUNC(s.Payroll_Month, MONTH), INTERVAL 1 MONTH)
     ${whereClause}
     ORDER BY s.Payroll_Month DESC, s.Currency ASC, e.Full_Name ASC
     LIMIT @limit OFFSET @offset
@@ -345,13 +365,46 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
           // Get total days in month for calculations
           const totalDaysInMonth = payrollMonthDate ? getTotalDaysInMonth(payrollMonthDate) : 30;
           
-          // Get Revised_with_OPD
-          const revisedWithOPD = (row as any).Revised_with_OPD ?? row.Revised_with_OPD ?? null;
+          // Get increment data from joined table if not already in salary record
+          const incrementAmountFromTemplate = (row as any).Increment_Amount_From_Template ?? null;
+          const incrementDateFromTemplate = (row as any).Increment_Date_From_Template 
+            ? convertDateToString((row as any).Increment_Date_From_Template) ?? null 
+            : null;
           
-          // Calculate Regular_Pay if missing: (Revised_with_OPD / total_days_in_month) * Worked_Days
+          // Use increment from template if salary record doesn't have it
+          const newAdditionIncrementDecrement = (row as any).New_Addition_Increment_Decrement 
+            ?? incrementAmountFromTemplate 
+            ?? null;
+          const dateOfIncrementDecrement = (row as any).Date_of_Increment_Decrement 
+            ?? incrementDateFromTemplate 
+            : null;
+          
+          // Get last month's salary from joined table if not already in salary record
+          const lastMonthSalaryFromPrev = (row as any).Last_Month_Salary_From_Prev ?? null;
+          const lastMonthSalary = (row as any).Last_Month_Salary 
+            ?? lastMonthSalaryFromPrev 
+            ?? null;
+          
+          // Get Regular_Pay (base salary)
           let regularPay = row.Regular_Pay;
-          if ((!regularPay || regularPay === null) && revisedWithOPD && workedDays && totalDaysInMonth > 0) {
-            regularPay = (revisedWithOPD / totalDaysInMonth) * workedDays;
+          
+          // Calculate Revised_with_OPD if missing (Regular Pay + 21 for USD if not in probation)
+          let revisedWithOPD = (row as any).Revised_with_OPD ?? row.Revised_with_OPD ?? null;
+          if ((!revisedWithOPD || revisedWithOPD === null) && regularPay && row.Currency === "USD" && payrollMonthDate) {
+            // Check if employee is in probation
+            const probationEndDate = (row as any).Probation_End_Date 
+              ? new Date((row as any).Probation_End_Date) 
+              : null;
+            const isInProbation = probationEndDate && probationEndDate > payrollMonthDate;
+            
+            if (!isInProbation) {
+              revisedWithOPD = regularPay + 21;
+            } else {
+              revisedWithOPD = regularPay;
+            }
+          } else if ((!revisedWithOPD || revisedWithOPD === null) && regularPay) {
+            // For PKR or if already past probation, Revised_with_OPD = Regular_Pay
+            revisedWithOPD = regularPay;
           }
           
           // Calculate Prorated_Pay if missing
@@ -408,11 +461,12 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
             Month_Key: (row as any).Month_Key ?? null,
             Key: (row as any).Key ?? null,
             Status: (row as any).Status ?? null,
-            Last_Month_Salary: (row as any).Last_Month_Salary ?? null,
-            New_Addition_Increment_Decrement: (row as any).New_Addition_Increment_Decrement ?? null,
+            Last_Month_Salary: lastMonthSalary,
+            New_Addition_Increment_Decrement: newAdditionIncrementDecrement,
+            Date_of_Increment_Decrement: dateOfIncrementDecrement,
             Payable_from_Last_Month: (row as any).Payable_from_Last_Month ?? null,
-            Salary_Status: (row as any).Salary_Status ?? null,
-            PaySlip_Status: (row as any).PaySlip_Status ?? null,
+            Salary_Status: (row as any).Salary_Status ?? "HOLD",
+            PaySlip_Status: (row as any).PaySlip_Status ?? "Not Sent",
             Month: (row as any).Month_Abbrev ?? null,
           };
           

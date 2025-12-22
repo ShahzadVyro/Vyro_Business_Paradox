@@ -429,6 +429,24 @@ export default function EmployeeSalaryComponentsForm({ employee, onCancel }: Emp
             </div>
             <p className="mt-1 text-xs text-slate-500">Calculated automatically</p>
           </div>
+
+          {/* Payable from Last Month */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-900 mb-1">Payable from Last Month</label>
+            {isEditing ? (
+              <input
+                type="number"
+                value={formData.Payable_from_Last_Month ?? ""}
+                onChange={(e) => handleFieldChange("Payable_from_Last_Month", e.target.value ? parseFloat(e.target.value) : null)}
+                className="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm"
+                step="0.01"
+              />
+            ) : (
+              <div className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm">
+                {formatCurrency(formData.Payable_from_Last_Month, currentSalary.Currency)}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* PKR-specific fields */}
