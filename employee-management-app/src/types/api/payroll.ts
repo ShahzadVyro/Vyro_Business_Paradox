@@ -47,6 +47,8 @@ export interface SalaryRecord {
   Email?: string | null;
   Last_Month_Salary?: number | null;
   New_Addition_Increment_Decrement?: number | null;
+  Month_Key?: string | null;
+  Month?: string | null;
   
   // Employee State at Payroll (new fields)
   Designation_At_Payroll?: string | null;
