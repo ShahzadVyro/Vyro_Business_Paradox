@@ -20,9 +20,11 @@ const formatByCurrency = (value?: number | null, currency?: string | null) => {
   }).format(value);
 };
 
-const formatNumber = (value?: number | null) => {
-  if (!value && value !== 0) return "—";
-  return value.toLocaleString();
+const formatNumber = (value?: string | number | null) => {
+  if (value === null || value === undefined || value === "") return "—";
+  const numValue = typeof value === "string" ? parseFloat(value) : value;
+  if (isNaN(numValue)) return "—";
+  return numValue.toLocaleString();
 };
 
 interface CreateSheetModalProps {
@@ -391,7 +393,7 @@ const SalaryExplorer = () => {
                           field="Unpaid_Leaves"
                           onSave={async (field, value) => handleUpdate({ [field]: value } as Partial<SalaryRecord>)}
                           type="number"
-                          formatValue={(val) => formatNumber(val as number | null)}
+                          formatValue={formatNumber}
                           parseValue={(val) => (val === "" ? null : parseFloat(val))}
                         />
                         <EditableCell
