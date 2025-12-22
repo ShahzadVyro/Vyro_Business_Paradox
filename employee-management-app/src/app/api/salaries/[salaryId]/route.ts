@@ -44,10 +44,10 @@ interface UpdateSalaryRequest {
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { salaryId: string } }
+  { params }: { params: Promise<{ salaryId: string }> }
 ) {
   try {
-    const salaryId = params.salaryId;
+    const { salaryId } = await params;
     const body: UpdateSalaryRequest = await request.json();
 
     if (!salaryId) {
