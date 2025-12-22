@@ -71,7 +71,7 @@ export async function POST(request: Request) {
         e.Employment_End_Date,
         e.Employment_Status,
         e.Probation_End_Date,
-        e.Gross_Salary as Regular_Pay_From_Employee,
+        COALESCE(e.Basic_Salary, 0) + COALESCE(e.Medical_Allowance, 0) as Regular_Pay_From_Employee,
         e.Basic_Salary,
         e.Medical_Allowance,
         e.Bank_Name,

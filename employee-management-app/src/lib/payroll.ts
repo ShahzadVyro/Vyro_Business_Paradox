@@ -910,19 +910,33 @@ const shouldIncludeRow = (row: SalaryRecord, filterMonth?: string | null) => {
   return endMonth === filterMonth;
 };
 
-export const shapeSalaryRow = (row: SalaryRecord) => ({
-  Salary_ID: row.Salary_ID,
-  Employee_ID: row.Employee_ID,
-  Employee_Name: row.Employee_Name,
-  Department: row.Department,
-  Payroll_Month: row.Payroll_Month,
-  Currency: row.Currency,
-  Gross_Income: row.Gross_Income,
-  Net_Income: row.Net_Income,
-  Tax_Deduction: row.Tax_Deduction,
-  Employment_Status: row.Employment_Status ?? row.Status,
-  Status: row.Status,
-  Official_Email: row.Official_Email,
-  Personal_Email: row.Personal_Email,
-  Key: (typeof row.Key === "string" ? row.Key : null) ?? null,
-});
+export const shapeSalaryRow = (row: SalaryRecord) => {
+  // Return the full row object to include all fields needed by the UI
+  // This ensures Designation, Email, dates, calculated fields, etc. are all included
+  return {
+    ...row,
+    // Ensure these critical fields are explicitly included
+    Designation: row.Designation ?? null,
+    Email: row.Email ?? null,
+    Date_of_Joining: row.Date_of_Joining ?? null,
+    Date_of_Leaving: row.Date_of_Leaving ?? null,
+    Worked_Days: row.Worked_Days ?? null,
+    Regular_Pay: row.Regular_Pay ?? null,
+    Revised_with_OPD: row.Revised_with_OPD ?? null,
+    Prorated_Pay: row.Prorated_Pay ?? null,
+    Performance_Bonus: row.Performance_Bonus ?? null,
+    Paid_Overtime: row.Paid_Overtime ?? null,
+    Reimbursements: row.Reimbursements ?? null,
+    Other: row.Other ?? null,
+    Last_Month_Salary: row.Last_Month_Salary ?? null,
+    New_Addition_Increment_Decrement: row.New_Addition_Increment_Decrement ?? null,
+    Date_of_Increment_Decrement: row.Date_of_Increment_Decrement ?? null,
+    Payable_from_Last_Month: row.Payable_from_Last_Month ?? null,
+    Unpaid_Leaves: row.Unpaid_Leaves ?? null,
+    Deductions: row.Deductions ?? null,
+    Comments: row.Comments ?? null,
+    Internal_Comments: row.Internal_Comments ?? null,
+    Salary_Status: row.Salary_Status ?? null,
+    PaySlip_Status: row.PaySlip_Status ?? null,
+  };
+};
