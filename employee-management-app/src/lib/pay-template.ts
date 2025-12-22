@@ -51,12 +51,12 @@ export async function lookupEmployeeId(name: string, email?: string): Promise<st
   }
 }
 
-// Lookup Previous Salary from Salaries table or Employees table
+// Lookup Previous Salary from Salaries table
 export async function lookupPreviousSalary(employeeId: string, currency: string): Promise<number | null> {
   try {
     const bigquery = getBigQueryClient();
     
-    // First try: Get latest Gross_Income from Salaries table
+    // Get latest Gross_Income from Salaries table
     const salariesQuery = `
       SELECT Gross_Income
       FROM ${salariesTableRef}
@@ -78,27 +78,6 @@ export async function lookupPreviousSalary(employeeId: string, currency: string)
       const grossIncome = (salaryRows[0] as { Gross_Income: number }).Gross_Income;
       if (grossIncome != null) {
         return Number(grossIncome);
-      }
-    }
-    
-    // Second try: Get Gross_Salary from Employees table
-    const employeesQuery = `
-      SELECT Gross_Salary
-      FROM ${employeesTableRef}
-      WHERE Employee_ID = @employeeId
-    `;
-    
-    const [employeeRows] = await bigquery.query({
-      query: employeesQuery,
-      params: {
-        employeeId: Number(employeeId),
-      },
-    });
-    
-    if (employeeRows.length > 0) {
-      const grossSalary = (employeeRows[0] as { Gross_Salary: number }).Gross_Salary;
-      if (grossSalary != null) {
-        return Number(grossSalary);
       }
     }
     
@@ -412,7 +391,7 @@ export async function addIncrement(
         @currency,
         @previousSalary,
         @updatedSalary,
-        @effectiveDate,
+        CAST(@effectiveDate AS DATE),
         @comments,
         @remarks,
         CURRENT_TIMESTAMP(),
@@ -433,8 +412,10 @@ export async function addIncrement(
       remarks: remarks ?? null,
     };
 
-    // Specify types for parameters that can be null (required by BigQuery)
-    const queryTypes: Record<string, string> = {};
+    // Specify types for parameters (required by BigQuery for null values and DATE casting)
+    const queryTypes: Record<string, string> = {
+      effectiveDate: "DATE",
+    };
     if (queryParams.previousSalary === null) queryTypes.previousSalary = "FLOAT64";
     if (queryParams.comments === null) queryTypes.comments = "STRING";
     if (queryParams.remarks === null) queryTypes.remarks = "STRING";
