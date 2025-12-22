@@ -8,6 +8,7 @@ export interface SalaryRecord {
   
   // Salary Components (new schema)
   Regular_Pay: number | null;
+  Revised_with_OPD?: number | null;
   Prorated_Pay: number | null;
   Prorated_Base_Pay: number | null;
   Prorated_Medical_Allowance: number | null;
