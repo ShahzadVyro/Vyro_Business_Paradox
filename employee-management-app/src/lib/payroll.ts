@@ -274,11 +274,15 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
         Date_of_Increment: row.Date_of_Increment ? convertDateToString(row.Date_of_Increment) ?? null : null,
         Payable_From: row.Payable_From ? convertDateToString(row.Payable_From) ?? null : null,
         Salary_Effective_Date: row.Salary_Effective_Date ? convertDateToString(row.Salary_Effective_Date) ?? null : null,
-        // New fields
-        Date_of_Joining: row.Date_of_Joining_Display ? convertDateToString(row.Date_of_Joining_Display) ?? null : null,
-        Date_of_Leaving: row.Date_of_Leaving_Display ? convertDateToString(row.Date_of_Leaving_Display) ?? null : null,
+        // New fields - handle both direct fields and display fields from query
+        Date_of_Joining: (row as any).Date_of_Joining_Display 
+          ? convertDateToString((row as any).Date_of_Joining_Display) ?? null 
+          : (row.Date_of_Joining ? convertDateToString(row.Date_of_Joining) ?? null : null),
+        Date_of_Leaving: (row as any).Date_of_Leaving_Display 
+          ? convertDateToString((row as any).Date_of_Leaving_Display) ?? null 
+          : (row.Date_of_Leaving ? convertDateToString(row.Date_of_Leaving) ?? null : null),
         Date_of_Increment_Decrement: row.Date_of_Increment_Decrement ? convertDateToString(row.Date_of_Increment_Decrement) ?? null : null,
-        Email: row.Email ?? null,
+        Email: (row as any).Email ?? row.Official_Email ?? row.Personal_Email ?? null,
         Month_Key: row.Month_Key ?? null,
         Key: row.Key ?? null,
         Status: row.Status ?? null,
