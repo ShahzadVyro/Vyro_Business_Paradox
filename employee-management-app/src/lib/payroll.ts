@@ -220,8 +220,8 @@ export async function fetchSalaries(filters: SalaryFilters): Promise<{ rows: Sal
       e.Joining_Date,
       e.Employment_End_Date,
       COALESCE(e.Official_Email, e.Personal_Email) AS Email,
-      COALESCE(s.Date_of_Joining, e.Joining_Date) AS Date_of_Joining_Display,
-      COALESCE(s.Date_of_Leaving, e.Employment_End_Date) AS Date_of_Leaving_Display,
+      e.Joining_Date AS Date_of_Joining_Display,
+      e.Employment_End_Date AS Date_of_Leaving_Display,
       CASE 
         WHEN s.Payroll_Month IS NOT NULL 
         THEN FORMAT_DATE('%b %Y', s.Payroll_Month) 
