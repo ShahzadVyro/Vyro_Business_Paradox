@@ -11,7 +11,29 @@ import { useCancelOffboarding, useScheduleOffboarding } from "@/hooks/use-offboa
 import { useOPDByEmployee } from "@/hooks/use-opd";
 import EmployeeEditModal from "./employee-edit-modal";
 import ChangeHistory from "./change-history";
+import DocumentViewer from "../ui/document-viewer";
+import { getDrivePreviewUrl, getDriveDownloadUrl, extractDriveFileId } from "@/lib/drive-urls";
 import axios from "axios";
+
+const DOCUMENT_URL_KEYS = [
+  "Degree_Transcript_URL",
+  "Last_Salary_Slip_URL",
+  "Experience_Letter_URL",
+  "Resume_URL",
+  "Passport_Photo_URL",
+  "CNIC_Front_URL",
+  "CNIC_Back_URL",
+] as const;
+
+const DOCUMENT_LABELS: Record<string, string> = {
+  Degree_Transcript_URL: "Degree / Transcript",
+  Last_Salary_Slip_URL: "Last Salary Slip",
+  Experience_Letter_URL: "Experience Letter",
+  Resume_URL: "Resume / CV",
+  Passport_Photo_URL: "Passport Photo",
+  CNIC_Front_URL: "CNIC Front",
+  CNIC_Back_URL: "CNIC Back",
+};
 
 interface Props {
   view: DashboardView;
@@ -233,17 +255,92 @@ const DetailBody = ({
   );
 };
 
+const DocumentsSection = ({ profile }: { profile: Record<string, unknown> }) => {
+  const [viewer, setViewer] = useState<{
+    title: string;
+    previewUrl: string;
+    downloadUrl: string;
+  } | null>(null);
+
+  const entries = DOCUMENT_URL_KEYS.filter((key) => {
+    const v = profile[key];
+    return typeof v === "string" && v.trim() && extractDriveFileId(v);
+  });
+
+  if (entries.length === 0) return null;
+
+  return (
+    <>
+      <div>
+        <p className="text-xs uppercase tracking-wide text-slate-400">Documents</p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {entries.map((key) => {
+            const url = String(profile[key]);
+            const previewUrl = getDrivePreviewUrl(url);
+            const downloadUrl = getDriveDownloadUrl(url);
+            const label = DOCUMENT_LABELS[key] ?? key.replace(/_/g, " ");
+            return (
+              <div
+                key={key}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
+              >
+                <span className="text-sm font-medium text-slate-900">{label}</span>
+                <div className="flex gap-2">
+                  {previewUrl && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setViewer({
+                          title: label,
+                          previewUrl,
+                          downloadUrl: downloadUrl ?? previewUrl,
+                        })
+                      }
+                      className="rounded-full bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-slate-800"
+                    >
+                      View
+                    </button>
+                  )}
+                  {downloadUrl && (
+                    <a
+                      href={downloadUrl}
+                      download
+                      className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+                    >
+                      Download
+                    </a>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <DocumentViewer
+        open={!!viewer}
+        onClose={() => setViewer(null)}
+        previewUrl={viewer?.previewUrl ?? null}
+        downloadUrl={viewer?.downloadUrl ?? null}
+        title={viewer?.title ?? ""}
+      />
+    </>
+  );
+};
+
 const DirectoryView = ({ profile }: { profile: NonNullable<EmployeeFullDetail["profile"]> }) => (
-  <div className="grid gap-4 md:grid-cols-2">
-    <Detail label="Official Email" value={profile.Official_Email} />
-    <Detail label="Personal Email" value={profile.Personal_Email} />
-    <Detail label="Joining Date" value={formatDate(profile.Joining_Date)} />
-    <Detail label="Employment End Date" value={formatDate(profile.Employment_End_Date)} />
-    <Detail label="Probation End" value={formatDate(profile.Probation_End_Date)} />
-    <Detail label="Gross Salary" value={formatCurrency(profile.Gross_Salary)} />
-    <Detail label="Reporting Manager" value={profile.Reporting_Manager} />
-    <Detail label="Contact Number" value={profile.Contact_Number} />
-    <Detail label="Job Location" value={profile.Job_Location} />
+  <div className="space-y-6">
+    <DocumentsSection profile={profile as unknown as Record<string, unknown>} />
+    <div className="grid gap-4 md:grid-cols-2">
+      <Detail label="Official Email" value={profile.Official_Email} />
+      <Detail label="Personal Email" value={profile.Personal_Email} />
+      <Detail label="Joining Date" value={formatDate(profile.Joining_Date)} />
+      <Detail label="Employment End Date" value={formatDate(profile.Employment_End_Date)} />
+      <Detail label="Probation End" value={formatDate(profile.Probation_End_Date)} />
+      <Detail label="Gross Salary" value={formatCurrency(profile.Gross_Salary)} />
+      <Detail label="Reporting Manager" value={profile.Reporting_Manager} />
+      <Detail label="Contact Number" value={profile.Contact_Number} />
+      <Detail label="Job Location" value={profile.Job_Location} />
+    </div>
   </div>
 );
 
@@ -505,7 +602,12 @@ const AllFieldsView = ({
   tax: EmployeeFullDetail["tax"];
 }) => (
   <div className="space-y-10">
-    <KeyValueDump title="Directory Fields" data={profile as unknown as Record<string, unknown>} />
+    <DocumentsSection profile={profile as unknown as Record<string, unknown>} />
+    <KeyValueDump
+      title="Directory Fields"
+      data={profile as unknown as Record<string, unknown>}
+      skipKeys={DOCUMENT_URL_KEYS as unknown as string[]}
+    />
     <KeyValueDump title="Salary Sheet Fields" data={salary as unknown as Record<string, unknown>} />
     <KeyValueDump title="EOBI Fields" data={eobi as unknown as Record<string, unknown>} />
     {opd && opd.length > 0 && <KeyValueDump title="OPD Benefits" data={opd[0] as unknown as Record<string, unknown>} />}
@@ -534,19 +636,25 @@ const NoteBlock = ({ title, text }: { title: string; text: string }) => (
 const KeyValueDump = ({
   title,
   data,
+  skipKeys,
 }: {
   title: string;
   data: Record<string, unknown> | null | undefined;
+  skipKeys?: string[];
 }) => {
   if (!data) {
     return <Placeholder message={`No ${title.toLowerCase()} available.`} />;
   }
 
+  const entries = skipKeys?.length
+    ? Object.entries(data).filter(([key]) => !skipKeys.includes(key))
+    : Object.entries(data);
+
   return (
     <div>
       <p className="text-xs uppercase tracking-wide text-slate-400">{title}</p>
       <div className="mt-3 grid gap-3 md:grid-cols-2">
-        {Object.entries(data).map(([key, value]) => (
+        {entries.map(([key, value]) => (
           <Detail key={key} label={toLabel(key)} value={normaliseValue(value)} />
         ))}
       </div>

@@ -1,7 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import DocumentViewer from "@/components/ui/document-viewer";
+import { getDrivePreviewUrl, getDriveDownloadUrl, extractDriveFileId } from "@/lib/drive-urls";
 import type { OnboardingSubmission } from "@/types/onboarding";
+
+const DOCUMENT_URL_KEYS = new Set([
+  "Degree_Transcript_URL",
+  "Last_Salary_Slip_URL",
+  "Experience_Letter_URL",
+  "Resume_URL",
+  "Passport_Photo_URL",
+  "CNIC_Front_URL",
+  "CNIC_Back_URL",
+]);
 
 const sections: Array<{ title: string; fields: Array<{ key: string; label: string }> }> = [
   {
@@ -86,8 +99,37 @@ const sections: Array<{ title: string; fields: Array<{ key: string; label: strin
   },
 ];
 
-const formatValue = (value: unknown) => {
+function formatValue(
+  value: unknown,
+  fieldKey: string,
+  fieldLabel: string,
+  onOpenDocument: (title: string, previewUrl: string, downloadUrl: string) => void
+) {
   if (!value || value === null || value === "") return "—";
+  if (typeof value === "string" && DOCUMENT_URL_KEYS.has(fieldKey) && extractDriveFileId(value)) {
+    const previewUrl = getDrivePreviewUrl(value);
+    const downloadUrl = getDriveDownloadUrl(value);
+    if (previewUrl && downloadUrl) {
+      return (
+        <span className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onOpenDocument(fieldLabel, previewUrl, downloadUrl)}
+            className="rounded-full bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-slate-800"
+          >
+            View
+          </button>
+          <a
+            href={downloadUrl}
+            download
+            className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            Download
+          </a>
+        </span>
+      );
+    }
+  }
   if (typeof value === "string" && value.startsWith("http")) {
     return (
       <a href={value} target="_blank" rel="noreferrer" className="text-slate-900 underline hover:text-slate-700">
@@ -96,7 +138,7 @@ const formatValue = (value: unknown) => {
     );
   }
   return String(value);
-};
+}
 
 interface SubmissionDetailProps {
   submission: OnboardingSubmission;
@@ -105,6 +147,16 @@ interface SubmissionDetailProps {
 }
 
 export default function SubmissionDetail({ submission, showHeader = false, showSlackLink = true }: SubmissionDetailProps) {
+  const [viewer, setViewer] = useState<{
+    title: string;
+    previewUrl: string;
+    downloadUrl: string;
+  } | null>(null);
+
+  const openDocument = (title: string, previewUrl: string, downloadUrl: string) => {
+    setViewer({ title, previewUrl, downloadUrl });
+  };
+
   return (
     <div className="space-y-4">
       {showHeader && (
@@ -152,7 +204,9 @@ export default function SubmissionDetail({ submission, showHeader = false, showS
                 return (
                   <div key={field.key} className="text-sm">
                     <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{field.label}</p>
-                    <p className="font-medium text-slate-900">{formatValue(value)}</p>
+                    <p className="font-medium text-slate-900">
+                      {formatValue(value, field.key, field.label, openDocument)}
+                    </p>
                   </div>
                 );
               })}
@@ -160,6 +214,14 @@ export default function SubmissionDetail({ submission, showHeader = false, showS
           </section>
         ))}
       </div>
+      <DocumentViewer
+        open={!!viewer}
+        onClose={() => setViewer(null)}
+        previewUrl={viewer?.previewUrl ?? null}
+        downloadUrl={viewer?.downloadUrl ?? null}
+        title={viewer?.title ?? ""}
+      />
     </div>
   );
 }
+
