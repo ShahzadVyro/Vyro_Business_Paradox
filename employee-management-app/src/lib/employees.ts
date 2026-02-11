@@ -431,6 +431,11 @@ export async function updateEmploymentStatus(
       status,
       endDate: endDate ?? null,
     },
+    types: {
+      employeeId: "INT64",
+      status: "STRING",
+      endDate: "DATE",
+    },
   });
 
   if (auditTableRef) {
@@ -449,6 +454,13 @@ export async function updateEmploymentStatus(
           newValue: status,
           updatedBy: updatedBy ?? 'dashboard@vyro.ai',
           reason: reason ?? null,
+        },
+        types: {
+          employeeId: "INT64",
+          oldValue: "STRING",
+          newValue: "STRING",
+          updatedBy: "STRING",
+          reason: "STRING",
         },
       });
     } catch (error) {
@@ -607,6 +619,10 @@ export async function updateEmploymentEndDate(employeeId: string, endDate?: stri
     params: {
       employeeId: employeeIdNum,
       endDate: endDate ?? null,
+    },
+    types: {
+      employeeId: "INT64",
+      endDate: "DATE",
     },
   });
 }
