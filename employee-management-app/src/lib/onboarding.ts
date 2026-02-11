@@ -387,7 +387,7 @@ export const insertEmployeeFromSubmission = async (submission: OnboardingSubmiss
     `;
     await bigquery.query({
       query: lifecycleEventQuery,
-      params: { employeeId: Number(employeeId) },
+      params: { employeeId: parseInt(employeeId, 10) },
       types: { employeeId: "INT64" },
     });
   } catch (e) {
