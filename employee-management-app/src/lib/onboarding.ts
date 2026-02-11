@@ -290,7 +290,7 @@ export const insertEmployeeFromSubmission = async (submission: OnboardingSubmiss
   
   // Build params for BigQuery query
   const queryParams: Record<string, unknown> = {
-    employeeId,
+    employeeId: Number(employeeId),
     fullName: input.Full_Name,
     cnicId: input.CNIC_ID,
     personalEmail: input.Personal_Email,
@@ -343,6 +343,7 @@ export const insertEmployeeFromSubmission = async (submission: OnboardingSubmiss
 
   // Specify types for parameters that can be null (required by BigQuery)
   const queryTypes: Record<string, string> = {
+    employeeId: "INT64",
     contactNumber: "STRING",
     emergencyContactNumber: "STRING",
     officialEmail: "STRING",
