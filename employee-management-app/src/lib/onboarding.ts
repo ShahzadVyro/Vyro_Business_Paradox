@@ -387,7 +387,8 @@ export const insertEmployeeFromSubmission = async (submission: OnboardingSubmiss
     `;
     await bigquery.query({
       query: lifecycleEventQuery,
-      params: { employeeId },
+      params: { employeeId: Number(employeeId) },
+      types: { employeeId: "INT64" },
     });
   } catch (e) {
     // Lifecycle events table might not exist yet - that's OK
