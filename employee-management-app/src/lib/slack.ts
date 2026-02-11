@@ -2,8 +2,8 @@ import crypto from "crypto";
 import axios from "axios";
 import { getEnv, getEnvArray } from "@/lib/env";
 
-const SLACK_BOT_TOKEN = getEnv("SLACK_BOT_TOKEN");
-const SLACK_SIGNING_SECRET = getEnv("SLACK_SIGNING_SECRET");
+const SLACK_BOT_TOKEN = getEnv("SLACK_BOT_TOKEN")?.trim();
+const SLACK_SIGNING_SECRET = getEnv("SLACK_SIGNING_SECRET")?.trim();
 
 export const SLACK_CHANNEL_ID = getEnv("SLACK_CHANNEL_ID") ?? "C06NPGT6EGM";
 const allowedUsersEnv = getEnvArray("SLACK_ALLOWED_USERS");
@@ -68,13 +68,22 @@ export const getSlackUserInfo = async (userId: string): Promise<{ name: string; 
 };
 
 export const verifySlackSignature = async (rawBody: Buffer, headers: Headers) => {
-  if (!SLACK_SIGNING_SECRET) return true; // fallback for local dev
-  const timestamp = headers.get("x-slack-request-timestamp");
-  const signature = headers.get("x-slack-signature");
-  if (!timestamp || !signature) return false;
+  if (!SLACK_SIGNING_SECRET) {
+    // Only allow unsigned requests in non-production environments.
+    if (process.env.NODE_ENV !== "production") return true;
+    console.warn("[SLACK_SIGNATURE_INVALID] SLACK_SIGNING_SECRET is not set");
+    return false;
+  }
+  const timestamp = headers.get("x-slack-request-timestamp")?.trim();
+  const signature = headers.get("x-slack-signature")?.trim();
+  if (!timestamp || !signature) {
+    console.warn("[SLACK_SIGNATURE_INVALID] Missing Slack signature headers");
+    return false;
+  }
 
   const fiveMinutesAgo = Math.floor(Date.now() / 1000) - 60 * 5;
   if (Number(timestamp) < fiveMinutesAgo) {
+    console.warn("[SLACK_SIGNATURE_INVALID] Slack timestamp too old");
     return false;
   }
 
@@ -82,6 +91,14 @@ export const verifySlackSignature = async (rawBody: Buffer, headers: Headers) =>
   const hmac = crypto.createHmac("sha256", SLACK_SIGNING_SECRET);
   hmac.update(baseString);
   const computedSignature = `v0=${hmac.digest("hex")}`;
-  return crypto.timingSafeEqual(Buffer.from(computedSignature), Buffer.from(signature));
+  if (computedSignature.length !== signature.length) {
+    console.warn("[SLACK_SIGNATURE_INVALID] Signature length mismatch");
+    return false;
+  }
+  const ok = crypto.timingSafeEqual(Buffer.from(computedSignature), Buffer.from(signature));
+  if (!ok) {
+    console.warn("[SLACK_SIGNATURE_INVALID] Signature mismatch");
+  }
+  return ok;
 };
 
