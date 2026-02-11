@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { createOnboardingSubmission, listOnboardingSubmissions, notifySlackForSubmission } from "@/lib/onboarding";
+import { uploadOnboardingFile, SUBFOLDER_NAMES } from "@/lib/google-drive";
+import type { OnboardingFormInput } from "@/types/onboarding";
 
 const requiredFields = [
   "Full_Name",
@@ -32,6 +34,23 @@ const requiredFields = [
   "Introduction",
   "Fun_Fact",
   "Shirt_Size",
+  "Resume_URL",
+];
+
+const fileFieldNames = Object.keys(SUBFOLDER_NAMES) as (keyof typeof SUBFOLDER_NAMES)[];
+
+/** All form field names (text + file) for building payload from FormData */
+const allFormFieldNames = [
+  ...requiredFields,
+  "LinkedIn_URL",
+  "Age",
+  "Number_of_Children",
+  "Spouse_Name",
+  "Spouse_DOB",
+  "Employment_Location",
+  "National_Tax_Number",
+  "Vehicle_Number",
+  ...fileFieldNames,
 ];
 
 export const dynamic = "force-dynamic";
@@ -50,20 +69,60 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const contentType = request.headers.get("content-type") ?? "";
+    const isMultipart = contentType.includes("multipart/form-data");
+
+    let body: Record<string, string>;
+
+    if (isMultipart) {
+      const formData = await request.formData();
+      body = {} as Record<string, string>;
+
+      for (const name of allFormFieldNames) {
+        const value = formData.get(name);
+        if (value == null) {
+          body[name] = "";
+          continue;
+        }
+        if (value instanceof File) {
+          if (value.size === 0) {
+            body[name] = "";
+            continue;
+          }
+          const buffer = Buffer.from(await value.arrayBuffer());
+          const url = await uploadOnboardingFile(name as keyof typeof SUBFOLDER_NAMES, {
+            buffer,
+            mimeType: value.type || "application/octet-stream",
+            originalName: value.name || name,
+          });
+          body[name] = url ?? "";
+          continue;
+        }
+        body[name] = String(value);
+      }
+    } else {
+      body = await request.json();
+    }
+
     for (const field of requiredFields) {
       if (!body[field] || typeof body[field] !== "string" || body[field].trim().length === 0) {
         return NextResponse.json({ message: `${field} is required` }, { status: 400 });
       }
     }
 
-    const { submissionId, payload } = await createOnboardingSubmission(body);
+    const { submissionId, payload } = await createOnboardingSubmission(body as unknown as OnboardingFormInput);
     await notifySlackForSubmission({ submissionId, submission: payload });
 
     return NextResponse.json({ success: true, submissionId });
   } catch (error) {
     console.error("[ONBOARDING_CREATE_ERROR]", error);
-    return NextResponse.json({ message: "Failed to submit onboarding form" }, { status: 500 });
+    const details =
+      error instanceof Error
+        ? error.message
+        : typeof error === "string"
+          ? error
+          : "Unknown error";
+    return NextResponse.json({ message: "Failed to submit onboarding form", details }, { status: 500 });
   }
 }
 

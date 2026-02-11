@@ -159,7 +159,7 @@ export const updateSubmissionMeta = async (
       Slack_Channel = COALESCE(@slackChannel, Slack_Channel),
       Approved_By = COALESCE(@approvedBy, Approved_By),
       Employee_ID = COALESCE(@employeeId, Employee_ID),
-      Updated_At = CURRENT_DATETIME()
+      Updated_At = CURRENT_TIMESTAMP()
     WHERE Submission_ID = @submissionId
   `;
   await bigquery.query({
@@ -171,6 +171,14 @@ export const updateSubmissionMeta = async (
       slackChannel: updates.slackChannel ?? null,
       approvedBy: updates.approvedBy ?? null,
       employeeId: updates.employeeId ?? null,
+    },
+    types: {
+      submissionId: "STRING",
+      status: "STRING",
+      slackTs: "STRING",
+      slackChannel: "STRING",
+      approvedBy: "STRING",
+      employeeId: "STRING",
     },
   });
 };

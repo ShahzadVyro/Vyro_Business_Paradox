@@ -4,10 +4,13 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { OnboardingSubmission } from "@/types/onboarding";
 
+const ALLOWED_FILE_TYPES = ["application/pdf", "image/png", "image/jpeg", "image/jpg", "image/webp"];
+const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
+
 interface FieldConfig {
   name: string;
   label: string;
-  type?: "text" | "email" | "tel" | "date" | "textarea" | "select";
+  type?: "text" | "email" | "tel" | "date" | "textarea" | "select" | "file";
   placeholder?: string;
   options?: string[];
   helper?: string;
@@ -98,10 +101,10 @@ const emergencyFields: FieldConfig[] = [
 ];
 
 const documentsFields: FieldConfig[] = [
-  { name: "Degree_Transcript_URL", label: "Degree / Latest Transcript URL", helper: "Share drive link" },
-  { name: "Last_Salary_Slip_URL", label: "Last Salary Slip URL" },
-  { name: "Experience_Letter_URL", label: "Previous Company Experience Letter URL" },
-  { name: "Resume_URL", label: "Resume / CV URL", required: true },
+  { name: "Degree_Transcript_URL", label: "Degree / Latest Transcript", type: "file", helper: "PDF or image" },
+  { name: "Last_Salary_Slip_URL", label: "Last Salary Slip", type: "file" },
+  { name: "Experience_Letter_URL", label: "Previous Company Experience Letter", type: "file" },
+  { name: "Resume_URL", label: "Resume / CV", type: "file", required: true },
 ];
 
 const bankFields: FieldConfig[] = [
@@ -113,9 +116,9 @@ const bankFields: FieldConfig[] = [
 ];
 
 const nstpFields: FieldConfig[] = [
-  { name: "Passport_Photo_URL", label: "Passport Size Picture URL", helper: "Upload to Drive and paste link" },
-  { name: "CNIC_Front_URL", label: "CNIC Front URL" },
-  { name: "CNIC_Back_URL", label: "CNIC Back URL" },
+  { name: "Passport_Photo_URL", label: "Passport Size Picture", type: "file", helper: "PDF or image" },
+  { name: "CNIC_Front_URL", label: "CNIC Front", type: "file" },
+  { name: "CNIC_Back_URL", label: "CNIC Back", type: "file" },
   { name: "Vehicle_Number", label: "Vehicle Number" },
 ];
 
@@ -135,7 +138,33 @@ const steps = [
   { title: "First Day at Vyro", fields: swagFields },
 ];
 
-const renderField = (field: FieldConfig, value: string, onChange: (value: string) => void) => {
+const renderField = (
+  field: FieldConfig,
+  value: string,
+  onChange: (value: string) => void,
+  file?: File | null,
+  onFileChange?: (file: File | null) => void,
+  existingUrl?: string
+) => {
+  if (field.type === "file") {
+    return (
+      <div className="flex flex-col gap-1">
+        <input
+          type="file"
+          accept={ALLOWED_FILE_TYPES.join(",")}
+          className="rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-700 file:mr-2 file:rounded-full file:border-0 file:bg-slate-100 file:px-4 file:py-1 file:text-sm file:font-semibold file:text-slate-700"
+          onChange={(e) => onFileChange?.(e.target.files?.[0] ?? null)}
+          required={field.required && !existingUrl}
+        />
+        {existingUrl && (
+          <a href={existingUrl} target="_blank" rel="noreferrer" className="text-xs font-semibold text-slate-900 underline">
+            View current file
+          </a>
+        )}
+        {file && <span className="text-xs text-slate-500">{file.name} ({(file.size / 1024).toFixed(1)} KB)</span>}
+      </div>
+    );
+  }
   if (field.type === "textarea") {
     return (
       <textarea
@@ -182,6 +211,15 @@ interface SubmissionEditFormProps {
 export default function SubmissionEditForm({ submission }: SubmissionEditFormProps) {
   const router = useRouter();
   const [step, setStep] = useState(0);
+  const fileFieldNames = [
+    "Degree_Transcript_URL",
+    "Last_Salary_Slip_URL",
+    "Experience_Letter_URL",
+    "Resume_URL",
+    "Passport_Photo_URL",
+    "CNIC_Front_URL",
+    "CNIC_Back_URL",
+  ];
   const [values, setValues] = useState<Record<string, string>>(() => {
     // Initialize form with submission data
     const initial: Record<string, string> = {};
@@ -190,6 +228,13 @@ export default function SubmissionEditForm({ submission }: SubmissionEditFormPro
         const submissionValue = (submission as unknown as Record<string, unknown>)[field.name];
         initial[field.name] = submissionValue ? String(submissionValue) : "";
       });
+    });
+    return initial;
+  });
+  const [files, setFiles] = useState<Record<string, File | null>>(() => {
+    const initial: Record<string, File | null> = {};
+    fileFieldNames.forEach((name) => {
+      initial[name] = null;
     });
     return initial;
   });
@@ -202,10 +247,36 @@ export default function SubmissionEditForm({ submission }: SubmissionEditFormPro
     setValues((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleFileChange = (name: string, file: File | null) => {
+    setFiles((prev) => ({ ...prev, [name]: file }));
+  };
+
+  const validateFile = (file: File): string | null => {
+    const type = file.type?.toLowerCase() || "";
+    const allowed = ALLOWED_FILE_TYPES.some((t) => type === t || (t === "image/jpeg" && type === "image/jpg"));
+    if (!allowed) return `Allowed types: PDF, PNG, JPEG, WebP`;
+    if (file.size > MAX_FILE_SIZE_BYTES) return `File must be under ${MAX_FILE_SIZE_BYTES / 1024 / 1024}MB`;
+    return null;
+  };
+
   const validateStep = () => {
     const fields = steps[step].fields;
     for (const field of fields) {
-      if (field.required && !values[field.name]?.trim()) {
+      if (field.type === "file") {
+        const existingUrl = values[field.name]?.trim();
+        const file = files[field.name];
+        if (field.required && !existingUrl && !file) {
+          setError(`${field.label} is required`);
+          return false;
+        }
+        if (file) {
+          const fileError = validateFile(file);
+          if (fileError) {
+            setError(`${field.label}: ${fileError}`);
+            return false;
+          }
+        }
+      } else if (field.required && !values[field.name]?.trim()) {
         setError(`${field.label} is required`);
         return false;
       }
@@ -229,13 +300,20 @@ export default function SubmissionEditForm({ submission }: SubmissionEditFormPro
     setSaving(true);
     setError(null);
     try {
+      const formData = new FormData();
+      for (const [key, value] of Object.entries(values)) {
+        formData.append(key, value);
+      }
+      for (const name of fileFieldNames) {
+        const file = files[name];
+        if (file) formData.append(name, file);
+      }
       const res = await fetch(`/api/submissions/${submission.Submission_ID}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: formData,
       });
       if (!res.ok) {
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
         throw new Error(data?.message ?? "Failed to update submission");
       }
       router.push("/submissions");
@@ -265,7 +343,14 @@ export default function SubmissionEditForm({ submission }: SubmissionEditFormPro
         {fields.map((field) => (
           <label key={field.name} className="flex flex-col gap-1 text-sm font-semibold text-slate-700">
             {field.label}
-            {renderField(field, values[field.name] || "", (value) => handleChange(field.name, value))}
+            {renderField(
+              field,
+              values[field.name] || "",
+              (value) => handleChange(field.name, value),
+              field.type === "file" ? files[field.name] : undefined,
+              field.type === "file" ? (file) => handleFileChange(field.name, file) : undefined,
+              field.type === "file" ? values[field.name] : undefined
+            )}
             {field.helper && <span className="text-xs font-normal text-slate-500">{field.helper}</span>}
           </label>
         ))}
@@ -302,3 +387,4 @@ export default function SubmissionEditForm({ submission }: SubmissionEditFormPro
     </div>
   );
 }
+

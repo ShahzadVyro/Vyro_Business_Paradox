@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSubmissionById, updateSubmissionPayload } from "@/lib/onboarding";
 import type { OnboardingFormInput } from "@/types/onboarding";
+import { uploadOnboardingFile, SUBFOLDER_NAMES } from "@/lib/google-drive";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +33,42 @@ export async function PATCH(
 ) {
   try {
     const { submissionId } = await params;
-    const body: Partial<OnboardingFormInput> = await request.json();
+    const contentType = request.headers.get("content-type") ?? "";
+    const isMultipart = contentType.includes("multipart/form-data");
+
+    let body: Partial<OnboardingFormInput>;
+
+    if (isMultipart) {
+      const formData = await request.formData();
+      const updates: Record<string, unknown> = {};
+      const fileFieldNames = Object.keys(SUBFOLDER_NAMES) as (keyof typeof SUBFOLDER_NAMES)[];
+
+      for (const [key, value] of formData.entries()) {
+        if (value == null) continue;
+
+        if (value instanceof File) {
+          if (value.size === 0) continue;
+          if (!fileFieldNames.includes(key as keyof typeof SUBFOLDER_NAMES)) continue;
+
+          const buffer = Buffer.from(await value.arrayBuffer());
+          const url = await uploadOnboardingFile(key as keyof typeof SUBFOLDER_NAMES, {
+            buffer,
+            mimeType: value.type || "application/octet-stream",
+            originalName: value.name || key,
+          });
+          if (url) updates[key] = url;
+          continue;
+        }
+
+        const str = String(value);
+        if (str.trim().length === 0) continue;
+        updates[key] = str;
+      }
+
+      body = updates as unknown as Partial<OnboardingFormInput>;
+    } else {
+      body = await request.json();
+    }
 
     // Validate submission exists
     const existing = await getSubmissionById(submissionId);
@@ -56,3 +92,4 @@ export async function PATCH(
     );
   }
 }
+
